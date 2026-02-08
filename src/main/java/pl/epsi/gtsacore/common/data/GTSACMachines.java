@@ -25,7 +25,7 @@ import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
 
 public class GTSACMachines {
 
-    public static void init() {};
+    public static void init() {}
 
     public static final MultiblockMachineDefinition CLARIFIER = GTSAC_REGISTRATE
             .multiblock("clarifier", ClarifierMachine::new)
@@ -64,7 +64,8 @@ public class GTSACMachines {
             .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
             .model(createWorkableCasingMachineModel(
                     GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
-                    GTSubatomicCore.id("block/machines/clarifier")))
+                    GTSubatomicCore.id("block/machines/clarifier"))
+                    .andThen(b -> b.addDynamicRenderer(DynamicRenderHelper::makeRecipeFluidAreaRender)))
             .register();
 
     public static final MultiblockMachineDefinition NEUTRALIZATION_TANK = GTSAC_REGISTRATE
@@ -141,6 +142,7 @@ public class GTSACMachines {
             .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
             .model(createWorkableCasingMachineModel(
                     GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
-                    GTSubatomicCore.id("block/machines/neutralization_tank")))
+                    GTSubatomicCore.id("block/machines/neutralization_tank"))
+                    .andThen(b -> b.addDynamicRenderer(DynamicRenderHelper::makeRecipeFluidAreaRender)))
             .register();
 }
