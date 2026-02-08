@@ -18,15 +18,10 @@ import org.jetbrains.annotations.NotNull;
 import java.util.HashSet;
 import java.util.Set;
 
-public class NeutralizationTankMachine extends WorkableElectricMultiblockMachine implements IFluidRenderMulti {
+public class NeutralizationTankMachine extends WorkableElectricMultiblockMachine {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             NeutralizationTankMachine.class, WorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
-
-    @Setter
-    @DescSynced
-    @RequireRerender
-    private @NotNull Set<BlockPos> fluidBlockOffsets = new HashSet<>();
 
     public NeutralizationTankMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, args);
@@ -40,41 +35,10 @@ public class NeutralizationTankMachine extends WorkableElectricMultiblockMachine
     @Override
     public void onStructureFormed() {
         super.onStructureFormed();
-        IFluidRenderMulti.super.onStructureFormed();
     }
 
     @Override
     public void onStructureInvalid() {
         super.onStructureInvalid();
-        IFluidRenderMulti.super.onStructureInvalid();
-    }
-
-    @Override
-    public @NotNull Set<BlockPos> getFluidBlockOffsets() {
-        return fluidBlockOffsets;
-    }
-
-    @Override
-    public @NotNull Set<BlockPos> saveOffsets() {
-        Direction up = RelativeDirection.UP.getRelative(getFrontFacing(), getUpwardsFacing(), isFlipped());
-        Direction back = getFrontFacing().getOpposite();
-        Direction clockWise = RelativeDirection.RIGHT.getRelative(getFrontFacing(), getUpwardsFacing(), isFlipped());
-        Direction counterClockWise = RelativeDirection.LEFT.getRelative(getFrontFacing(), getUpwardsFacing(),
-                isFlipped());
-
-        BlockPos pos = getPos();
-        BlockPos center = pos.relative(up, 3);
-
-        Set<BlockPos> offsets = new HashSet<>();
-
-        for (int i = 0; i < 3; i++) {
-            center = center.relative(back);
-            if (i % 2 == 0) {
-                offsets.add(center.subtract(pos));
-            }
-            offsets.add(center.relative(clockWise).subtract(pos));
-            offsets.add(center.relative(counterClockWise).subtract(pos));
-        }
-        return offsets;
     }
 }
