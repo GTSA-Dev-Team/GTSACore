@@ -9,21 +9,28 @@ import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.RequireRerender;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 
+import lombok.Getter;
+import net.minecraft.MethodsReturnNonnullByDefault;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 
 import lombok.Setter;
+import net.minecraft.core.Vec3i;
 import org.jetbrains.annotations.NotNull;
 
+import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
 import java.util.Set;
 
+@ParametersAreNonnullByDefault
+@MethodsReturnNonnullByDefault
 public class ClarifierMachine extends WorkableElectricMultiblockMachine implements IFluidRenderMulti {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             ClarifierMachine.class, WorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
 
     @Setter
+    @Getter
     @DescSynced
     @RequireRerender
     private @NotNull Set<BlockPos> fluidBlockOffsets = new HashSet<>();
@@ -33,7 +40,7 @@ public class ClarifierMachine extends WorkableElectricMultiblockMachine implemen
     }
 
     @Override
-    public @NotNull ManagedFieldHolder getFieldHolder() {
+    public ManagedFieldHolder getFieldHolder() {
         return MANAGED_FIELD_HOLDER;
     }
 
@@ -49,32 +56,37 @@ public class ClarifierMachine extends WorkableElectricMultiblockMachine implemen
         IFluidRenderMulti.super.onStructureInvalid();
     }
 
+    @NotNull
     @Override
-    public @NotNull Set<BlockPos> getFluidBlockOffsets() {
-        return fluidBlockOffsets;
-    }
+    public Set<BlockPos> saveOffsets() {
+        Direction up = RelativeDirection.UP.getRelative(
+                getFrontFacing(), getUpwardsFacing(), isFlipped());
 
-    @Override
-    public @NotNull Set<BlockPos> saveOffsets() {
-        Direction up = RelativeDirection.UP.getRelative(getFrontFacing(), getUpwardsFacing(), isFlipped());
         Direction back = getFrontFacing().getOpposite();
-        Direction clockWise = RelativeDirection.RIGHT.getRelative(getFrontFacing(), getUpwardsFacing(), isFlipped());
-        Direction counterClockWise = RelativeDirection.LEFT.getRelative(getFrontFacing(), getUpwardsFacing(),
-                isFlipped());
 
-        BlockPos pos = getPos();
-        BlockPos center = pos.relative(up, 3);
+        Direction right = RelativeDirection.RIGHT.getRelative(
+                getFrontFacing(), getUpwardsFacing(), isFlipped());
+
+        BlockPos center = getPos()
+                .relative(up)
+                .relative(back)
+                .relative(back, 4);
 
         Set<BlockPos> offsets = new HashSet<>();
 
-        for (int i = 0; i < 3; i++) {
-            center = center.relative(back);
-            if (i % 2 == 0) {
-                offsets.add(center.subtract(pos));
+        for (int x = -4; x <= 4; x++) {
+            for (int z = -4; z <= 4; z++) {
+                if ((Math.abs(x) == 4) && (Math.abs(z) == 4))
+                    continue;
+
+                BlockPos p = center
+                        .relative(right, x)
+                        .relative(back, z);
+
+                offsets.add(p.subtract(getPos()));
             }
-            offsets.add(center.relative(clockWise).subtract(pos));
-            offsets.add(center.relative(counterClockWise).subtract(pos));
         }
         return offsets;
     }
+
 }

@@ -13,7 +13,14 @@ plugins {
     id "eclipse"
     id "maven-publish"
     id 'net.neoforged.moddev.legacyforge' version '2.0.91'
-    id 'com.diffplug.spotless' version '7.0.2'
+    //id 'com.diffplug.spotless' version '7.0.2'
+}
+
+idea {
+    module {
+        downloadSources = true
+        downloadJavadoc = true
+    }
 }
 
 sourceSets {
@@ -129,11 +136,11 @@ legacyForge {
 }
 jar {
     manifest.attributes([
-            "MixinConfigs": "examplemod.mixins.json"
+            "MixinConfigs": "${mod_id}.mixins.json"
     ])
 }
 
-apply from: "$rootDir/gradle/scripts/spotless.gradle"
+//apply from: "$rootDir/gradle/scripts/spotless.gradle"
 
 dependencies {
     compileOnly("org.jetbrains:annotations:26.0.1")

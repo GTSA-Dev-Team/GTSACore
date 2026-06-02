@@ -2,12 +2,16 @@ package pl.epsi.gtsacore;
 
 import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
+import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 
+import com.gregtechceu.gtceu.data.pack.GTDynamicDataPack;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
+import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 
@@ -15,6 +19,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import pl.epsi.gtsacore.common.data.GTSACMachines;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
+import pl.epsi.gtsacore.common.data.GTSACRecipes;
 
 @Mod(GTSubatomicCore.MOD_ID)
 @SuppressWarnings("removal")
@@ -34,6 +39,11 @@ public class GTSubatomicCore {
         MinecraftForge.EVENT_BUS.register(this);
     }
 
+    @SubscribeEvent
+    public static void registerCommand(RegisterCommandsEvent event) {
+        //event.getDispatcher().register(literal())
+    }
+
     /**
      * Create a ResourceLocation in the format "modid:path"
      *
@@ -51,4 +61,5 @@ public class GTSubatomicCore {
     private void registerMachines(GTCEuAPI.RegisterEvent<ResourceLocation, MachineDefinition> event) {
         GTSACMachines.init();
     }
+
 }

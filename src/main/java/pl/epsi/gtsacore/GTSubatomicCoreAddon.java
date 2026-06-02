@@ -3,6 +3,11 @@ package pl.epsi.gtsacore;
 import com.gregtechceu.gtceu.api.addon.GTAddon;
 import com.gregtechceu.gtceu.api.addon.IGTAddon;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
+import com.gregtechceu.gtceu.data.pack.GTDynamicDataPack;
+import net.minecraft.data.recipes.FinishedRecipe;
+import pl.epsi.gtsacore.common.data.GTSACRecipes;
+
+import java.util.function.Consumer;
 
 @GTAddon
 public class GTSubatomicCoreAddon implements IGTAddon {
@@ -19,4 +24,10 @@ public class GTSubatomicCoreAddon implements IGTAddon {
     public String addonModId() {
         return GTSubatomicCore.MOD_ID;
     }
+
+    @Override
+    public void addRecipes(Consumer<FinishedRecipe> provider) {
+        GTSACRecipes.init(provider);
+    }
+
 }

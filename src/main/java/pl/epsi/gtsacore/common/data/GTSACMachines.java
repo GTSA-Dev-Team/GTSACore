@@ -61,6 +61,7 @@ public class GTSACMachines {
                     .where("D", Predicates.blocks(GTBlocks.CASING_STEEL_PIPE.get()))
                     .where("E", Predicates.blocks(GTBlocks.CASING_STEEL_GEARBOX.get()))
                     .build())
+            .hasBER(true)
             .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
             .model(createWorkableCasingMachineModel(
                     GTCEu.id("block/casings/solid/machine_casing_solid_steel"),

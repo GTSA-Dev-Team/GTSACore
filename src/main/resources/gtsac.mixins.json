@@ -3,7 +3,9 @@
   "package": "pl.epsi.gtsacore.mixin",
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
-  "mixins": [],
+  "mixins": [
+    "DummyMixin"
+  ],
   "client": [],
   "injectors": {
     "defaultRequire": 1

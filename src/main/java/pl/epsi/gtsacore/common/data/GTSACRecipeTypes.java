@@ -13,14 +13,14 @@ public class GTSACRecipeTypes {
     public static final GTRecipeType CLARIFIER_RECIPES = GTRecipeTypes.register("clarifier", "multiblock")
             .setMaxIOSize(3, 3, 3, 3)
             .setEUIO(IO.IN)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_BATH, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.BATH);
 
     public static final GTRecipeType NEUTRALIZATION_TANK_RECIPES = GTRecipeTypes
             .register("neutralization", "multiblock")
             .setMaxIOSize(6, 6, 6, 6)
             .setEUIO(IO.IN)
-            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.BATH);
 
     public static void init() {}
