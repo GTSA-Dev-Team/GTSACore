@@ -7,6 +7,10 @@
       "offset_face": -0.125,
       "overwrite_light": true,
       "sky_light": 15
+    },
+    {
+      "type": "gtsac:obj_renderer",
+      "obj_ident": "gtsac:obj_models/cyberblade.obj"
     }
   ],
   "loader": "gtceu:machine",

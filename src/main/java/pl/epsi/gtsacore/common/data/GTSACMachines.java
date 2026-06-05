@@ -16,12 +16,14 @@ import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderHelper;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.GTRecipeModifiers;
 
+import net.minecraft.resources.ResourceLocation;
 import pl.epsi.gtsacore.GTSubatomicCore;
+import pl.epsi.gtsacore.api.renderer.machine.CustomObjDynamicMultiRenderer;
 import pl.epsi.gtsacore.common.machine.multiblock.ClarifierMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.NeutralizationTankMachine;
 
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.createWorkableCasingMachineModel;
-import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
+import static pl.epsi.gtsacore.GTSubatomicCore.*;
 
 public class GTSACMachines {
 
@@ -66,7 +68,12 @@ public class GTSACMachines {
             .model(createWorkableCasingMachineModel(
                     GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
                     GTSubatomicCore.id("block/machines/clarifier"))
-                    .andThen(b -> b.addDynamicRenderer(DynamicRenderHelper::makeRecipeFluidAreaRender)))
+                    .andThen(b -> {
+                        b.addDynamicRenderer(DynamicRenderHelper::makeRecipeFluidAreaRender);
+                    })
+                    .andThen(b -> {
+                        b.addDynamicRenderer(() -> CustomObjDynamicMultiRenderer.makeObjRenderer(GTSubatomicCore.id("obj_models/cyberblade.obj")));
+                    }))
             .register();
 
     public static final MultiblockMachineDefinition NEUTRALIZATION_TANK = GTSAC_REGISTRATE

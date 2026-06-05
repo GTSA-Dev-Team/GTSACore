@@ -16,7 +16,11 @@ import net.minecraft.core.Direction;
 
 import lombok.Setter;
 import net.minecraft.core.Vec3i;
+import net.minecraft.resources.ResourceLocation;
 import org.jetbrains.annotations.NotNull;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import pl.epsi.gtsacore.api.machine.feature.multiblock.ICustomObjRendererMulti;
 
 import javax.annotation.ParametersAreNonnullByDefault;
 import java.util.HashSet;
@@ -24,7 +28,7 @@ import java.util.Set;
 
 @ParametersAreNonnullByDefault
 @MethodsReturnNonnullByDefault
-public class ClarifierMachine extends WorkableElectricMultiblockMachine implements IFluidRenderMulti {
+public class ClarifierMachine extends WorkableElectricMultiblockMachine implements IFluidRenderMulti, ICustomObjRendererMulti {
 
     protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             ClarifierMachine.class, WorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
@@ -89,4 +93,10 @@ public class ClarifierMachine extends WorkableElectricMultiblockMachine implemen
         return offsets;
     }
 
+    @Override
+    public Matrix4f getModelMatrix() {
+        return getCenteredMatrix()
+                .translate(0, 5, 0)
+                .rotateY((float) (System.nanoTime() * 1e-9));
+    }
 }
