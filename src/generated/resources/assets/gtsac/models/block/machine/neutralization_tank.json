@@ -19,7 +19,11 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+          "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
+          "overlay_front": "gtceu:block/machines/chemical_bath/overlay_front",
+          "overlay_front_emissive": "gtceu:block/machines/chemical_bath/overlay_front_emissive",
+          "overlay_side": "gtceu:block/machines/chemical_bath/overlay_side",
+          "overlay_side_emissive": "gtceu:block/machines/chemical_bath/overlay_side_emissive"
         }
       }
     },
@@ -27,7 +31,11 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+          "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
+          "overlay_front": "gtceu:block/machines/chemical_bath/overlay_front",
+          "overlay_front_emissive": "gtceu:block/machines/chemical_bath/overlay_front_emissive",
+          "overlay_side": "gtceu:block/machines/chemical_bath/overlay_side",
+          "overlay_side_emissive": "gtceu:block/machines/chemical_bath/overlay_side_emissive"
         }
       }
     },
@@ -35,7 +43,11 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+          "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
+          "overlay_front": "gtceu:block/machines/chemical_bath/overlay_front_active",
+          "overlay_front_emissive": "gtceu:block/machines/chemical_bath/overlay_front_active_emissive",
+          "overlay_side": "gtceu:block/machines/chemical_bath/overlay_side_active",
+          "overlay_side_emissive": "gtceu:block/machines/chemical_bath/overlay_side_active_emissive"
         }
       }
     },
@@ -43,7 +55,11 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+          "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
+          "overlay_front": "gtceu:block/machines/chemical_bath/overlay_front_active",
+          "overlay_front_emissive": "gtceu:block/machines/chemical_bath/overlay_front_active_emissive",
+          "overlay_side": "gtceu:block/machines/chemical_bath/overlay_side_active",
+          "overlay_side_emissive": "gtceu:block/machines/chemical_bath/overlay_side_active_emissive"
         }
       }
     },
@@ -51,7 +67,11 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+          "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
+          "overlay_front": "gtceu:block/machines/chemical_bath/overlay_front",
+          "overlay_front_emissive": "gtceu:block/machines/chemical_bath/overlay_front_emissive",
+          "overlay_side": "gtceu:block/machines/chemical_bath/overlay_side",
+          "overlay_side_emissive": "gtceu:block/machines/chemical_bath/overlay_side_emissive"
         }
       }
     },
@@ -59,7 +79,11 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+          "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
+          "overlay_front": "gtceu:block/machines/chemical_bath/overlay_front",
+          "overlay_front_emissive": "gtceu:block/machines/chemical_bath/overlay_front_emissive",
+          "overlay_side": "gtceu:block/machines/chemical_bath/overlay_side",
+          "overlay_side_emissive": "gtceu:block/machines/chemical_bath/overlay_side_emissive"
         }
       }
     },
@@ -67,7 +91,11 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+          "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
+          "overlay_front": "gtceu:block/machines/chemical_bath/overlay_front_active",
+          "overlay_front_emissive": "gtceu:block/machines/chemical_bath/overlay_front_active_emissive",
+          "overlay_side": "gtceu:block/machines/chemical_bath/overlay_side_active",
+          "overlay_side_emissive": "gtceu:block/machines/chemical_bath/overlay_side_active_emissive"
         }
       }
     },
@@ -75,7 +103,11 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_solid_steel"
+          "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
+          "overlay_front": "gtceu:block/machines/chemical_bath/overlay_front_active",
+          "overlay_front_emissive": "gtceu:block/machines/chemical_bath/overlay_front_active_emissive",
+          "overlay_side": "gtceu:block/machines/chemical_bath/overlay_side_active",
+          "overlay_side_emissive": "gtceu:block/machines/chemical_bath/overlay_side_active_emissive"
         }
       }
     }
