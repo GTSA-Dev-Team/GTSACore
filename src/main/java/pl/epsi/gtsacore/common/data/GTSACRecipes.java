@@ -12,12 +12,12 @@ import static pl.epsi.gtsacore.common.data.GTSACRecipeTypes.CLARIFIER_RECIPES;
 public class GTSACRecipes {
 
     public static void init(Consumer<FinishedRecipe> provider) {
-        CLARIFIER_RECIPES.recipeBuilder("somethingsth")
-                .inputItems(new ItemStack[]{ new ItemStack(Items.STICK) })
-                .inputFluids(GTMaterials.Radon, 1)
-                .outputItems(new ItemStack[]{ new ItemStack(Items.STICK) })
-                .EUt(8)
-                .duration(20 * 60).save(provider);
+//        CLARIFIER_RECIPES.recipeBuilder("somethingsth")
+//                .inputItems(new ItemStack[]{ new ItemStack(Items.STICK) })
+//                .inputFluids(GTMaterials.Radon, 1)
+//                .outputItems(new ItemStack[]{ new ItemStack(Items.STICK) })
+//                .EUt(8)
+//                .duration(20 * 60).save(provider);
     }
 
 }

@@ -1,4 +1,6 @@
 {
   "block.gtsac.clarifier": "Clarifier",
-  "block.gtsac.neutralization_tank": "Neutralization Tank"
+  "block.gtsac.neutralization_tank": "Neutralization Tank",
+  "block.gtsac.steam_input_hatch": "Steam Fluid Input Hatch",
+  "block.gtsac.steam_output_hatch": "Steam Fluid Output Hatch"
 }
