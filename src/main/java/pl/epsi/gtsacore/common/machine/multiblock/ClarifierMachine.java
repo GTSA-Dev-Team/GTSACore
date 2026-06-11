@@ -17,6 +17,7 @@ import net.minecraft.core.Direction;
 import lombok.Setter;
 import net.minecraft.core.Vec3i;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.block.Blocks;
 import org.jetbrains.annotations.NotNull;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -52,6 +53,7 @@ public class ClarifierMachine extends WorkableElectricMultiblockMachine implemen
     public void onStructureFormed() {
         super.onStructureFormed();
         IFluidRenderMulti.super.onStructureFormed();
+        getLevel().setBlock(new BlockPos(5, -57, -4), Blocks.BARRIER.defaultBlockState(), 3);
     }
 
     @Override
@@ -95,8 +97,15 @@ public class ClarifierMachine extends WorkableElectricMultiblockMachine implemen
 
     @Override
     public Matrix4f getModelMatrix() {
-        return getCenteredMatrix()
-                .translate(0, 5, 0)
-                .rotateY((float) (System.nanoTime() * 1e-9));
+        Matrix4f base = getCenteredMatrix()
+                .translate(0, 2, 0)
+                .translate(getBackNormal().mul(5))
+                .scale(0.5f, 0.5f, 0.5f);
+
+        if (this.recipeLogic.isActive()) {
+            return base.rotateY(System.nanoTime() * 1e-9f);
+        }
+
+        return base;
     }
 }
