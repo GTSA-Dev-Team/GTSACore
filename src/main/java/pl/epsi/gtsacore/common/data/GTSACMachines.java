@@ -2,9 +2,12 @@ package pl.epsi.gtsacore.common.data;
 
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTCEuAPI;
+import com.gregtechceu.gtceu.api.GTValues;
+import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.data.RotationState;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
@@ -13,11 +16,14 @@ import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
 import com.gregtechceu.gtceu.api.pattern.Predicates;
 import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
+import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderHelper;
 import com.gregtechceu.gtceu.common.block.BoilerFireboxType;
 import com.gregtechceu.gtceu.common.block.FusionCasingBlock;
 import com.gregtechceu.gtceu.common.data.*;
 
+import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
+import net.minecraft.network.chat.Component;
 import com.gregtechceu.gtceu.common.machine.multiblock.steam.SteamParallelMultiblockMachine;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import net.minecraft.world.level.block.Block;
@@ -26,6 +32,12 @@ import pl.epsi.gtsacore.common.machine.multiblock.ClarifierMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.NeutralizationTankMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.SteelAugmentedPBFMachine;
 
+import java.util.Locale;
+
+import static com.gregtechceu.gtceu.api.GTValues.VNF;
+import static com.gregtechceu.gtceu.api.capability.recipe.IO.OUT;
+import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
+import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
 import java.util.function.Supplier;
 
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.casingTextures;
@@ -35,6 +47,35 @@ import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
 public class GTSACMachines {
 
     public static void init() {}
+
+    public static final MachineDefinition STEAM_FLUID_IMPORT_HATCH = GTSAC_REGISTRATE
+            .machine("steam_input_hatch", (holder) ->
+                    new FluidHatchPartMachine(holder, 0, IO.IN, 4000, 1))
+            .rotationState(RotationState.ALL)
+            .abilities(GTSACPartAbilities.STEAM_IMPORT_FLUIDS)
+            .modelProperty(IS_FORMED, false)
+            .colorOverlaySteamHullModel(GTCEu.id("block/overlay/machine/" + OVERLAY_FLUID_HATCH_INPUT),
+                    GTCEu.id("block/overlay/machine/overlay_pipe"), GTCEu.id("block/overlay/machine/overlay_pipe_in_emissive"))
+            .langValue("Steam Fluid Input Hatch")
+            .tooltips(Component.translatable("gtceu.machine.fluid_hatch.import.tooltip"),
+                    Component.translatable("gtceu.machine.steam_bus.tooltip"),
+                    Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 4000))
+            .allowCoverOnFront(true)
+            .register();
+    public static final MachineDefinition STEAM_FLUID_EXPORT_HATCH = GTSAC_REGISTRATE
+            .machine("steam_output_hatch", (holder) ->
+                    new FluidHatchPartMachine(holder, 0, IO.OUT, 4000, 1))
+            .rotationState(RotationState.ALL)
+            .abilities(GTSACPartAbilities.STEAM_EXPORT_FLUIDS)
+            .modelProperty(IS_FORMED, false)
+            .colorOverlaySteamHullModel(GTCEu.id("block/overlay/machine/" + OVERLAY_FLUID_HATCH_OUTPUT),
+                    GTCEu.id("block/overlay/machine/overlay_pipe"), GTCEu.id("block/overlay/machine/overlay_pipe_in_emissive"))
+            .langValue("Steam Fluid Output Hatch")
+            .tooltips(Component.translatable("gtceu.machine.fluid_hatch.export.tooltip"),
+                    Component.translatable("gtceu.machine.steam_bus.tooltip"),
+                    Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 4000))
+            .allowCoverOnFront(true)
+            .register();
 
     public static final MultiblockMachineDefinition CLARIFIER = GTSAC_REGISTRATE
             .multiblock("clarifier", ClarifierMachine::new)
