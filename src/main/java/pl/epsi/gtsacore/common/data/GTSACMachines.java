@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
+import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
@@ -17,14 +18,19 @@ import com.gregtechceu.gtceu.api.pattern.Predicates;
 import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderHelper;
-import com.gregtechceu.gtceu.common.data.GTBlocks;
-import com.gregtechceu.gtceu.common.data.GTRecipeModifiers;
+import com.gregtechceu.gtceu.common.block.BoilerFireboxType;
+import com.gregtechceu.gtceu.common.block.FusionCasingBlock;
+import com.gregtechceu.gtceu.common.data.*;
 
 import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import net.minecraft.network.chat.Component;
+import com.gregtechceu.gtceu.common.machine.multiblock.steam.SteamParallelMultiblockMachine;
+import com.tterrag.registrate.util.entry.BlockEntry;
+import net.minecraft.world.level.block.Block;
 import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.common.machine.multiblock.ClarifierMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.NeutralizationTankMachine;
+import pl.epsi.gtsacore.common.machine.multiblock.SteelAugmentedPBFMachine;
 
 import java.util.Locale;
 
@@ -32,6 +38,10 @@ import static com.gregtechceu.gtceu.api.GTValues.VNF;
 import static com.gregtechceu.gtceu.api.capability.recipe.IO.OUT;
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
+import java.util.function.Supplier;
+
+import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.casingTextures;
+import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.createWorkableCasingMachineModel;
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
 
 public class GTSACMachines {
@@ -105,7 +115,7 @@ public class GTSACMachines {
             .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
             .model(createWorkableCasingMachineModel(
                     GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
-                    GTSubatomicCore.id("block/machines/clarifier"))
+                    GTCEu.id("block/machines/mixer"))
                     .andThen(b -> b.addDynamicRenderer(DynamicRenderHelper::makeRecipeFluidAreaRender)))
             .register();
 
@@ -183,8 +193,36 @@ public class GTSACMachines {
             .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
             .model(createWorkableCasingMachineModel(
                     GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
-                    GTSubatomicCore.id("block/machines/neutralization_tank"))
+                    GTCEu.id("block/machines/chemical_bath"))
                     .andThen(b -> b.addDynamicRenderer(DynamicRenderHelper::makeRecipeFluidAreaRender)))
             .register();
 
+    public static final MultiblockMachineDefinition STEEL_AUGMENTED_PBF = GTSAC_REGISTRATE
+            .multiblock("steel_augmented_pbf", SteelAugmentedPBFMachine::new)
+            .langValue("Steel-Augmented Bricked (Up) Blast Furnace")
+            .rotationState(RotationState.ALL)
+            .recipeType(GTRecipeTypes.PRIMITIVE_BLAST_FURNACE_RECIPES)
+            .appearanceBlock(GTBlocks.CASING_PRIMITIVE_BRICKS)
+            .recipeModifiers(true, SteelAugmentedPBFMachine::recipeModifier, GTRecipeModifiers.BATCH_MODE)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("FBF", "BBB", "BBB", " B ", " B ")
+                    .aisle("FBF", "B B", "B B", "B B", "B B")
+                    .aisle("FBF", "B@B", "BBB", " B ", " B ")
+                    .where(" ", Predicates.any())
+                    .where("F", Predicates.blocks(GTBlocks.FIREBOX_STEEL.get()))
+                    .where("@", Predicates.controller(Predicates.blocks(definition.get())))
+                    .where("B", Predicates.blocks(GTBlocks.CASING_PRIMITIVE_BRICKS.get())
+                            .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
+                            .or(Predicates.abilities(PartAbility.EXPORT_ITEMS)))
+                    .build())
+            .hasBER(true)
+            .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
+            .model(createWorkableCasingMachineModel(
+                    GTCEu.id("block/casings/solid/machine_primitive_bricks"),
+                    GTCEu.id("block/multiblock/primitive_blast_furnace"))
+                    .andThen(b -> b.addDynamicRenderer(
+                            () -> DynamicRenderHelper.makeBoilerPartRender(
+                                    BoilerFireboxType.STEEL_FIREBOX, GTBlocks.CASING_PRIMITIVE_BRICKS)))
+                    .andThen(b -> b.addDynamicRenderer(DynamicRenderHelper::createPBFLavaRender)))
+            .register();
 }
