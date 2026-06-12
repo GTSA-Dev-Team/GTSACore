@@ -243,7 +243,7 @@ public class GTSACMachines {
             .multiblock("large_primitive_smelter", LargePrimitiveSmelterMachine::new)
             .langValue("Large Primitive Smelter")
             .rotationState(RotationState.ALL)
-            .recipeTypes(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES, GTRecipeTypes.FURNACE_RECIPES)
+            .recipeTypes(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES)
             .appearanceBlock(() -> Blocks.NETHER_BRICKS)
             .recipeModifiers(true, LargePrimitiveSmelterMachine::recipeModifier, GTRecipeModifiers.BATCH_MODE)
             .pattern(definition -> FactoryBlockPattern.start()
@@ -265,9 +265,10 @@ public class GTSACMachines {
     public static final MachineDefinition PRIMITIVE_FUEL_HATCH = GTSAC_REGISTRATE
             .machine("primitive_fuel_hatch", PrimitiveFuelHatchPartMachine::new)
             .langValue("Primitive Fuel Hatch")
+            .tooltips(Component.literal("Fuel Input for The Large Primitive Smelter"))
             .rotationState(RotationState.ALL)
             .modelProperty(IS_FORMED, false)
-            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_fuel_hatch", GTSubatomicCore.id("block/primitive_bricks")))
+            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_fuel_hatch", GTCEu.id("block/casings/voltage/ulv")))
             .tier(GTValues.ULV)
             .register();
 
