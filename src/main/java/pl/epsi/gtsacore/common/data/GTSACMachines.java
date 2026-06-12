@@ -11,6 +11,8 @@ import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
+import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
+import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
@@ -22,15 +24,26 @@ import com.gregtechceu.gtceu.common.block.BoilerFireboxType;
 import com.gregtechceu.gtceu.common.block.FusionCasingBlock;
 import com.gregtechceu.gtceu.common.data.*;
 
+import com.gregtechceu.gtceu.common.machine.multiblock.part.ItemBusPartMachine;
+import com.gregtechceu.gtceu.common.machine.multiblock.primitive.PrimitivePumpMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import net.minecraft.network.chat.Component;
 import com.gregtechceu.gtceu.common.machine.multiblock.steam.SteamParallelMultiblockMachine;
 import com.tterrag.registrate.util.entry.BlockEntry;
+import mezz.jei.api.constants.RecipeTypes;
+import net.minecraft.client.Minecraft;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
+import net.minecraftforge.common.Tags;
 import pl.epsi.gtsacore.GTSubatomicCore;
+import pl.epsi.gtsacore.common.block.GTSACBlocks;
 import pl.epsi.gtsacore.common.machine.multiblock.ClarifierMachine;
+import pl.epsi.gtsacore.common.machine.multiblock.LargePrimitiveSmelterMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.NeutralizationTankMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.SteelAugmentedPBFMachine;
+import pl.epsi.gtsacore.common.machine.part.PrimitiveFuelHatchPartMachine;
+import pl.epsi.gtsacore.data.models.GTSACMachineModels;
 
 import java.util.Locale;
 
@@ -40,8 +53,8 @@ import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelPropertie
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
 import java.util.function.Supplier;
 
-import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.casingTextures;
-import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.createWorkableCasingMachineModel;
+import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
+import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
 
 public class GTSACMachines {
@@ -211,7 +224,7 @@ public class GTSACMachines {
                     .where(" ", Predicates.any())
                     .where("F", Predicates.blocks(GTBlocks.FIREBOX_STEEL.get()))
                     .where("@", Predicates.controller(Predicates.blocks(definition.get())))
-                    .where("B", Predicates.blocks(GTBlocks.CASING_PRIMITIVE_BRICKS.get())
+                    .where("B", Predicates.blocks(GTBlocks.CASING_PRIMITIVE_BRICKS.get()).setMinGlobalLimited(20)
                             .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
                             .or(Predicates.abilities(PartAbility.EXPORT_ITEMS)))
                     .build())
@@ -225,4 +238,37 @@ public class GTSACMachines {
                                     BoilerFireboxType.STEEL_FIREBOX, GTBlocks.CASING_PRIMITIVE_BRICKS)))
                     .andThen(b -> b.addDynamicRenderer(DynamicRenderHelper::createPBFLavaRender)))
             .register();
+
+    public static final MultiblockMachineDefinition LARGE_PRIMITIVE_SMELTER = GTSAC_REGISTRATE
+            .multiblock("large_primitive_smelter", LargePrimitiveSmelterMachine::new)
+            .langValue("Large Primitive Smelter")
+            .rotationState(RotationState.ALL)
+            .recipeTypes(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES, GTRecipeTypes.FURNACE_RECIPES)
+            .appearanceBlock(() -> Blocks.NETHER_BRICKS)
+            .recipeModifiers(true, LargePrimitiveSmelterMachine::recipeModifier, GTRecipeModifiers.BATCH_MODE)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("BBB", "BBB", " B ")
+                    .aisle("BBB", "B B", "B B")
+                    .aisle("BBB", "B@B", " B ")
+                    .where(" ", Predicates.any())
+                    .where("@", Predicates.controller(Predicates.blocks(definition.get())))
+                    .where("B", Predicates.blocks(GTSACBlocks.PRIMITIVE_BRICKS.get()).setMinGlobalLimited(12)
+                            .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
+                            .or(Predicates.abilities(PartAbility.EXPORT_ITEMS))
+                            .or(Predicates.machines(GTSACMachines.PRIMITIVE_FUEL_HATCH).setExactLimit(1)))
+                    .build())
+            .model(createWorkableCasingMachineModel(
+                    GTSubatomicCore.id("block/primitive_bricks"),
+                    GTCEu.id("block/machines/electric_furnace")))
+            .register();
+
+    public static final MachineDefinition PRIMITIVE_FUEL_HATCH = GTSAC_REGISTRATE
+            .machine("primitive_fuel_hatch", PrimitiveFuelHatchPartMachine::new)
+            .langValue("Primitive Fuel Hatch")
+            .rotationState(RotationState.ALL)
+            .modelProperty(IS_FORMED, false)
+            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_fuel_hatch", GTSubatomicCore.id("block/primitive_bricks")))
+            .tier(GTValues.ULV)
+            .register();
+
 }

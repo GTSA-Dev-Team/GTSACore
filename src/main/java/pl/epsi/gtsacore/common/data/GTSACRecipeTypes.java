@@ -23,5 +23,11 @@ public class GTSACRecipeTypes {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.BATH);
 
+    public static final GTRecipeType PRIMITIVE_SMELTER_RECIPES = GTRecipeTypes
+            .register("large_primitive_smelter", "multiblock")
+            .setMaxIOSize(2, 2, 0, 0)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
+            .setSound(GTSoundEntries.FURNACE);
+
     public static void init() {}
 }
