@@ -1,0 +1,36 @@
+{
+  "parent": "minecraft:block/block",
+  "loader": "gtceu:machine",
+  "machine": "gtsac:primitive_fuel_hatch",
+  "replaceable_textures": [
+    "bottom",
+    "top",
+    "side"
+  ],
+  "variants": {
+    "is_formed=false": {
+      "model": {
+        "parent": "gtceu:block/overlay/2_layer/front_emissive",
+        "textures": {
+          "bottom": "gtceu:block/casings/voltage/ulv/bottom",
+          "overlay": "gtsac:block/overlay/machine/primitive_fuel_hatch_base",
+          "overlay_emissive": "gtsac:block/overlay/machine/primitive_fuel_hatch_emissive",
+          "side": "gtceu:block/casings/voltage/ulv/side",
+          "top": "gtceu:block/casings/voltage/ulv/top"
+        }
+      }
+    },
+    "is_formed=true": {
+      "model": {
+        "parent": "gtceu:block/overlay/2_layer/front_emissive",
+        "textures": {
+          "bottom": "gtceu:block/casings/voltage/ulv/bottom",
+          "overlay": "gtsac:block/overlay/machine/primitive_fuel_hatch_base",
+          "overlay_emissive": "gtsac:block/overlay/machine/primitive_fuel_hatch_emissive",
+          "side": "gtceu:block/casings/voltage/ulv/side",
+          "top": "gtceu:block/casings/voltage/ulv/top"
+        }
+      }
+    }
+  }
+}

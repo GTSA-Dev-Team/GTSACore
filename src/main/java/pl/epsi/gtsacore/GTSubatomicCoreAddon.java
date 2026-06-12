@@ -8,6 +8,8 @@ import com.gregtechceu.gtceu.data.pack.GTDynamicDataPack;
 import net.minecraft.data.recipes.FinishedRecipe;
 import pl.epsi.gtsacore.api.renderer.machine.CustomObjDynamicMultiRenderer;
 import pl.epsi.gtsacore.common.data.GTSACRecipes;
+import pl.epsi.gtsacore.common.data.materials.GTSACElements;
+import pl.epsi.gtsacore.common.data.materials.GTSACPeriodicTableMaterials;
 
 import java.util.function.Consumer;
 
@@ -32,6 +34,12 @@ public class GTSubatomicCoreAddon implements IGTAddon {
     @Override
     public void addRecipes(Consumer<FinishedRecipe> provider) {
         GTSACRecipes.init(provider);
+    }
+
+    @Override
+    public void registerElements() {
+        IGTAddon.super.registerElements();
+        GTSACElements.init();
     }
 
 }

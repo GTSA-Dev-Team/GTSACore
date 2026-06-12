@@ -1,7 +1,12 @@
 {
   "block.gtsac.clarifier": "Clarifier",
+  "block.gtsac.large_primitive_smelter": "Large Primitive Smelter",
   "block.gtsac.neutralization_tank": "Neutralization Tank",
+  "block.gtsac.primitive_bricks": "Primitive Bricks",
+  "block.gtsac.primitive_fuel_hatch": "Primitive Fuel Hatch",
   "block.gtsac.steam_input_hatch": "Steam Fluid Input Hatch",
   "block.gtsac.steam_output_hatch": "Steam Fluid Output Hatch",
-  "block.gtsac.steel_augmented_pbf": "Steel-Augmented Bricked (Up) Blast Furnace"
+  "block.gtsac.steel_augmented_pbf": "Steel-Augmented Bricked (Up) Blast Furnace",
+  "item.gtsac.zeta_fluxon": "Zeta Fluxon",
+  "itemGroup.gtsac.creative_tab": "GregTech: Subatomic Age - Core"
 }
