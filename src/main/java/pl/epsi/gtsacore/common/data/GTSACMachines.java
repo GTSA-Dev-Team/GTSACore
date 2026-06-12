@@ -2,14 +2,12 @@ package pl.epsi.gtsacore.common.data;
 
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTCEuAPI;
-import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.data.RotationState;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
-import com.gregtechceu.gtceu.api.machine.multiblock.MultiblockControllerMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
@@ -18,16 +16,17 @@ import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
 import com.gregtechceu.gtceu.api.pattern.Predicates;
 import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
-import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderHelper;
 import com.gregtechceu.gtceu.common.block.BoilerFireboxType;
-import com.gregtechceu.gtceu.common.block.FusionCasingBlock;
 import com.gregtechceu.gtceu.common.data.*;
 
 import com.gregtechceu.gtceu.common.machine.multiblock.part.ItemBusPartMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.primitive.PrimitivePumpMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import net.minecraft.network.chat.Component;
+import net.minecraft.world.level.block.Blocks;
+import pl.epsi.gtsacore.GTSubatomicCore;
+import pl.epsi.gtsacore.api.renderer.machine.CustomObjDynamicMultiRenderer;
 import com.gregtechceu.gtceu.common.machine.multiblock.steam.SteamParallelMultiblockMachine;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import mezz.jei.api.constants.RecipeTypes;
@@ -45,14 +44,11 @@ import pl.epsi.gtsacore.common.machine.multiblock.SteelAugmentedPBFMachine;
 import pl.epsi.gtsacore.common.machine.part.PrimitiveFuelHatchPartMachine;
 import pl.epsi.gtsacore.data.models.GTSACMachineModels;
 
-import java.util.Locale;
-
-import static com.gregtechceu.gtceu.api.GTValues.VNF;
-import static com.gregtechceu.gtceu.api.capability.recipe.IO.OUT;
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
-import java.util.function.Supplier;
 
+import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.createWorkableCasingMachineModel;
+import static pl.epsi.gtsacore.GTSubatomicCore.*;
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
@@ -121,15 +117,23 @@ public class GTSACMachines {
                             .or(Predicates.abilities(PartAbility.EXPORT_FLUIDS))
                             .or(Predicates.abilities(PartAbility.INPUT_ENERGY).setMaxGlobalLimited(2))
                             .or(Predicates.abilities(PartAbility.MAINTENANCE).setExactLimit(1)))
-                    .where("D", Predicates.blocks(GTBlocks.CASING_STEEL_PIPE.get()))
+                    .where("D", Predicates.blocks(GTBlocks.CASING_STEEL_PIPE.get(), Blocks.BARRIER))
                     .where("E", Predicates.blocks(GTBlocks.CASING_STEEL_GEARBOX.get()))
                     .build())
             .hasBER(true)
             .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
             .model(createWorkableCasingMachineModel(
                     GTCEu.id("block/casings/solid/machine_casing_solid_steel"),
-                    GTCEu.id("block/machines/mixer"))
-                    .andThen(b -> b.addDynamicRenderer(DynamicRenderHelper::makeRecipeFluidAreaRender)))
+                    GTSubatomicCore.id("block/machines/clarifier"))
+                    .andThen(b -> {
+                        b.addDynamicRenderer(DynamicRenderHelper::makeRecipeFluidAreaRender);
+                    })
+                    .andThen(b -> {
+                        b.addDynamicRenderer(() -> CustomObjDynamicMultiRenderer.makeObjRenderer(
+                                GTSubatomicCore.id("obj_models/clarifier_arms.obj"),
+                                GTCEu.id("textures/block/casings/pipe/machine_casing_pipe_steel.png"),
+                                true));
+                    }))
             .register();
 
     public static final MultiblockMachineDefinition NEUTRALIZATION_TANK = GTSAC_REGISTRATE
