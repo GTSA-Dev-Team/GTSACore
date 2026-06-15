@@ -5,12 +5,12 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import org.jetbrains.annotations.NotNull;
-import pl.epsi.gtsacore.common.data.item.casting.AbstractCastItem;
 
 public class CastingTableBlockEntity extends BlockEntity {
 
@@ -21,8 +21,8 @@ public class CastingTableBlockEntity extends BlockEntity {
         super(type, pos, blockState);
     }
 
-    public void setItem(AbstractCastItem item) {
-        this.item = new ItemStack(item);
+    public void setItem(ItemStack item) {
+        this.item = item;
         this.setChanged();
         level.sendBlockUpdated(
                 worldPosition,
@@ -44,6 +44,8 @@ public class CastingTableBlockEntity extends BlockEntity {
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
+
+        item = ItemStack.EMPTY;
 
         if (tag.contains("Item")) {
             item = ItemStack.of(

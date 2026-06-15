@@ -1,9 +1,12 @@
 package pl.epsi.gtsacore.common.data.block.casting;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.Items;
 import net.minecraft.world.level.BlockGetter;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.BaseEntityBlock;
@@ -66,15 +69,50 @@ public class CastingTableBlock extends BaseEntityBlock {
         return RenderShape.MODEL;
     }
 
+    public void tryGiveBack(Player player, CastingTableBlockEntity be) {
+        if (be.getItem().is(Items.AIR)) return;
+        player.addItem(be.getItem());
+        be.setItem(ItemStack.EMPTY);
+    }
+
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide) {
-            if (level.getBlockEntity(pos) instanceof CastingTableBlockEntity be && player.getItemInHand(hand).getItem() instanceof AbstractCastItem castItem) {
-                be.setItem(castItem);
-                player.getItemInHand(hand).shrink(1);
+            if (level.getBlockEntity(pos) instanceof CastingTableBlockEntity be) {
+                ItemStack holding = player.getItemInHand(hand);
+
+                if (holding.getItem() instanceof AbstractCastItem cast) {
+                    tryGiveBack(player, be);
+                    be.setItem(new ItemStack(cast));
+                    holding.shrink(1);
+                    return InteractionResult.sidedSuccess(false);
+                }
+
+                if (holding.is(Items.AIR)) {
+                    tryGiveBack(player, be);
+                }
             }
         }
 
         return InteractionResult.sidedSuccess(level.isClientSide);
     }
+
+    @Override
+    public void onRemove(BlockState state, Level level, BlockPos pos, BlockState newState, boolean movedByPiston) {
+        if (!state.is(newState.getBlock())) {
+            BlockEntity be = level.getBlockEntity(pos);
+
+            if (be instanceof CastingTableBlockEntity table) {
+
+                ItemStack item = table.getItem();
+
+                if (!item.isEmpty()) {
+                    Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), item);
+                }
+            }
+
+            super.onRemove(state, level, pos, newState, movedByPiston);
+        }
+    }
+
 }

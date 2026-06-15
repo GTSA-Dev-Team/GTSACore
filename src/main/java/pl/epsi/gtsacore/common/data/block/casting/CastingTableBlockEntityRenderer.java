@@ -4,6 +4,7 @@ import com.mojang.blaze3d.vertex.PoseStack;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Items;
 import org.jetbrains.annotations.NotNull;
 import org.lwjgl.opengl.GL45;
 import pl.epsi.gtsacore.common.data.item.casting.AbstractCastItem;
@@ -13,6 +14,7 @@ public class CastingTableBlockEntityRenderer implements BlockEntityRenderer<Cast
 
     @Override
     public void render(CastingTableBlockEntity castingTableBlockEntity, float v, @NotNull PoseStack poseStack, @NotNull MultiBufferSource multiBufferSource, int packedLight, int overlay) {
+        if (castingTableBlockEntity.getItem().isEmpty()) return;
         Item item = castingTableBlockEntity.getItem().getItem();
         if (item instanceof AbstractCastItem cast) {
             GL45.glEnable(GL45.GL_DEPTH_TEST);
