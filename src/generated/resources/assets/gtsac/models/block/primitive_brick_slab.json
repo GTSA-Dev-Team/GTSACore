@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/slab",
+  "textures": {
+    "bottom": "gtsac:block/primitive_bricks",
+    "side": "gtsac:block/primitive_bricks",
+    "top": "gtsac:block/primitive_bricks"
+  }
+}

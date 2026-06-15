@@ -1,5 +1,4 @@
 {
-  "block.gtsac.casting_table": "Casting Table",
   "block.gtsac.clarifier": "Clarifier",
   "block.gtsac.large_primitive_smelter": "Large Primitive Smelter",
   "block.gtsac.neutralization_tank": "Neutralization Tank",
@@ -8,9 +7,6 @@
   "block.gtsac.steam_input_hatch": "Steam Fluid Input Hatch",
   "block.gtsac.steam_output_hatch": "Steam Fluid Output Hatch",
   "block.gtsac.steel_augmented_pbf": "Steel-Augmented Bricked (Up) Blast Furnace",
-  "item.gtsac.ceramic_ingot_mold": "Ceramic Ingot Mold",
-  "item.gtsac.ceramic_plate_mold": "Ceramic Plate Mold",
-  "item.gtsac.ceramic_rod_mold": "Ceramic Rod Mold",
   "item.gtsac.zeta_fluxon": "Zeta Fluxon",
   "itemGroup.gtsac.creative_tab": "GregTech: Subatomic Age - Core"
 }

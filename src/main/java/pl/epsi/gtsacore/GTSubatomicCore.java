@@ -22,6 +22,7 @@ import pl.epsi.gtsacore.common.data.GTSACBlocks;
 import pl.epsi.gtsacore.common.data.GTSACMachines;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
 import pl.epsi.gtsacore.common.data.item.GTSACItems;
+import pl.epsi.gtsacore.common.data.materials.GTSACMaterials;
 import pl.epsi.gtsacore.common.data.materials.GTSACPeriodicTableMaterials;
 
 @Mod(GTSubatomicCore.MOD_ID)
@@ -92,6 +93,7 @@ public class GTSubatomicCore {
 
     private void modifyMaterials(PostMaterialEvent event) {
         GTSACPeriodicTableMaterials.modifyMaterials();
+        GTSACMaterials.modifyMaterials();
     }
 
 

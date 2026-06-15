@@ -18,7 +18,6 @@ public class GTSACRecipes {
                 .inputItems(new ItemStack(Items.IRON_ORE))
                 .outputItems(new ItemStack(Items.IRON_INGOT))
                 .duration(30*20).save(provider);
-
         CLARIFIER_RECIPES.recipeBuilder("somethingsth")
                 .inputItems(new ItemStack[]{ new ItemStack(Items.STICK) })
                 .inputFluids(GTMaterials.Radon, 1)
