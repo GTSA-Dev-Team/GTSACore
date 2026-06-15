@@ -65,23 +65,6 @@ public class GTSACItems {
             .lang("Ceramic")
             .register();
 
-    public static final ItemEntry<Item> UNFIRED_CERAMIC_INGOT_MOLD = registerCeramicMold("Ingot", "Unfired");
-    public static final ItemEntry<Item> UNFIRED_CERAMIC_PLATE_MOLD = registerCeramicMold("Plate", "Unfired");
-    public static final ItemEntry<Item> UNFIRED_CERAMIC_ROD_MOLD = registerCeramicMold("Rod", "Unfired");
-
-    public static final ItemEntry<Item> CERAMIC_INGOT_MOLD = registerCeramicMold("Ingot", "");
-    public static final ItemEntry<Item> CERAMIC_PLATE_MOLD = registerCeramicMold("Plate", "");
-    public static final ItemEntry<Item> CERAMIC_ROD_MOLD = registerCeramicMold("Rod", "");
-
-
-    private static ItemEntry<Item> registerCeramicMold(String type, String fired) {
-        return GTSAC_REGISTRATE
-                .item(fired.toLowerCase() + (fired.isEmpty() ? "" : "_") + "ceramic_" + type.toLowerCase() + "_mold", Item::new)
-                .lang(fired + " Ceramic " + type + " Mold")
-                .register();
-    }
-
-
     public static final ItemEntry<? extends AbstractCastItem> INGOT_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Ingot Mold", "ceramic_ingot_mold", "obj_models/mold/ingot.obj", 0.46875f);
     public static final ItemEntry<? extends AbstractCastItem> PLATE_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Plate Mold", "ceramic_plate_mold", "obj_models/mold/plate.obj", 0.5f);
     public static final ItemEntry<? extends AbstractCastItem> ROD_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Rod Mold", "ceramic_rod_mold", "obj_models/mold/rod.obj", 0.46875f);
