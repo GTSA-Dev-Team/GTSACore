@@ -22,6 +22,7 @@ import com.gregtechceu.gtceu.common.block.BoilerFireboxType;
 import com.gregtechceu.gtceu.common.data.*;
 
 import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
+import com.gregtechceu.gtceu.common.machine.multiblock.part.ItemBusPartMachine;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Blocks;
 import pl.epsi.gtsacore.GTSubatomicCore;
