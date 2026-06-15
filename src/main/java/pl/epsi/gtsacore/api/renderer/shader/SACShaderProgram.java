@@ -64,6 +64,11 @@ public class SACShaderProgram {
         GL45.glUniform1i(location, slot);
     }
 
+    public void uniformFloat2(String name, float f1, float f2) {
+        int location = GL45.glGetUniformLocation(this.ID, name);
+        GL45.glUniform2f(location, f1, f2);
+    }
+
     public void uniformIntArray(String name, int[] array) {
         int location = GL45.glGetUniformLocation(this.ID, name);
         GL45.glUniform1iv(location, array);

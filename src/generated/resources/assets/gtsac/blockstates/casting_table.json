@@ -1,0 +1,7 @@
+{
+  "variants": {
+    "": {
+      "model": "gtsac:block/casting_table"
+    }
+  }
+}

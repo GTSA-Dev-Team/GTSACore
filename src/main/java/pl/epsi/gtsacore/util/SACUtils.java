@@ -10,7 +10,6 @@ import java.io.InputStreamReader;
 public class SACUtils {
 
     public static InputStream asInputStream(ResourceLocation rl) {
-        System.out.println("/assets/" + rl.getNamespace() + "/" + rl.getPath());
         return SACUtils.class.getResourceAsStream("/assets/" + rl.getNamespace() + "/" + rl.getPath());
     }
 

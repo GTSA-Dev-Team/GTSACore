@@ -2,6 +2,7 @@ package pl.epsi.gtsacore.common.data;
 
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.GTCEuAPI;
+import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.data.RotationState;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
@@ -9,8 +10,6 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
-import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
-import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
@@ -20,23 +19,11 @@ import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderHelper;
 import com.gregtechceu.gtceu.common.block.BoilerFireboxType;
 import com.gregtechceu.gtceu.common.data.*;
 
-import com.gregtechceu.gtceu.common.machine.multiblock.part.ItemBusPartMachine;
-import com.gregtechceu.gtceu.common.machine.multiblock.primitive.PrimitivePumpMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Blocks;
 import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.api.renderer.machine.CustomObjDynamicMultiRenderer;
-import com.gregtechceu.gtceu.common.machine.multiblock.steam.SteamParallelMultiblockMachine;
-import com.tterrag.registrate.util.entry.BlockEntry;
-import mezz.jei.api.constants.RecipeTypes;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import pl.epsi.gtsacore.GTSubatomicCore;
-import pl.epsi.gtsacore.common.block.GTSACBlocks;
 import pl.epsi.gtsacore.common.machine.multiblock.ClarifierMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.LargePrimitiveSmelterMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.NeutralizationTankMachine;
@@ -48,9 +35,6 @@ import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelPropertie
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
 
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.createWorkableCasingMachineModel;
-import static pl.epsi.gtsacore.GTSubatomicCore.*;
-import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
-import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
 
 public class GTSACMachines {

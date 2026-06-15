@@ -1,5 +1,6 @@
-package pl.epsi.gtsacore.common.block;
+package pl.epsi.gtsacore.common.data;
 
+import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullBiFunction;
 import net.minecraft.tags.BlockTags;
@@ -7,11 +8,11 @@ import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
-import net.minecraft.world.level.block.StairBlock;
-import net.minecraft.world.level.block.state.BlockBehaviour;
-import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.GTSubatomicCore;
+import pl.epsi.gtsacore.common.data.block.casting.CastingTableBlock;
+import pl.epsi.gtsacore.common.data.block.casting.CastingTableBlockEntity;
+import pl.epsi.gtsacore.common.data.block.casting.CastingTableBlockEntityRenderer;
 
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
 
@@ -37,4 +38,22 @@ public class GTSACBlocks {
 
     public static final BlockEntry<Block> PRIMITIVE_BRICKS = registerSimpleBlock(
             "Primitive Bricks", "primitive_bricks", "primitive_bricks", BlockItem::new);
+
+    public static final BlockEntry<CastingTableBlock> CASTING_TABLE = GTSAC_REGISTRATE
+            .block("casting_table", CastingTableBlock::new)
+            .initialProperties(() -> Blocks.IRON_BLOCK)
+            .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+            .properties(p -> p.strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion())
+            .blockstate((ctx, prov) -> {
+                prov.simpleBlock(ctx.getEntry(), prov.models().getExistingFile(GTSubatomicCore.id("block/casting_table")));
+            })
+            .lang("Casting Table")
+            .item(BlockItem::new).build()
+            .register();
+    public static final BlockEntityEntry<CastingTableBlockEntity> CASTING_TABLE_BE = GTSAC_REGISTRATE
+            .blockEntity("casting_table", CastingTableBlockEntity::new)
+            .validBlocks(CASTING_TABLE)
+            .renderer(() -> ctx -> new CastingTableBlockEntityRenderer())
+            .register();
+
 }

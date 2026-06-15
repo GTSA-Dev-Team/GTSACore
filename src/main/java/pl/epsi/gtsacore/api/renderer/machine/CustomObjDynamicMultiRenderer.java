@@ -8,6 +8,7 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
@@ -19,8 +20,11 @@ import pl.epsi.gtsacore.api.model.ObjParser;
 import pl.epsi.gtsacore.api.model.ObjVertexFormat;
 import pl.epsi.gtsacore.api.renderer.data.StaticVertexBuffer;
 import pl.epsi.gtsacore.api.renderer.shader.SACShaderProgram;
+import pl.epsi.gtsacore.common.render.ObjRenderer;
 
 import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 public class CustomObjDynamicMultiRenderer extends DynamicRender<ICustomObjRendererMulti, CustomObjDynamicMultiRenderer> {
 
@@ -39,9 +43,7 @@ public class CustomObjDynamicMultiRenderer extends DynamicRender<ICustomObjRende
     @Getter
     private final boolean alwaysRender;
     private final StaticVertexBuffer<ObjVertexFormat> buf;
-
-    private final SACShaderProgram shader;
-    private int glTexID;
+    private final Map<Integer, Integer> textures = new HashMap<>();
 
     public CustomObjDynamicMultiRenderer(ResourceLocation objIdent, ResourceLocation textureIdent, boolean alwaysRender) {
         this.objIdent = objIdent;
@@ -54,20 +56,14 @@ public class CustomObjDynamicMultiRenderer extends DynamicRender<ICustomObjRende
             throw new RuntimeException(e);
         }
 
-        if (textureIdent == null || Minecraft.getInstance() == null) {
-            glTexID = 0;
-        } else {
-            RenderSystem.recordRenderCall(() -> {
-                AbstractTexture texture =
-                        Minecraft.getInstance()
-                                .getTextureManager()
-                                .getTexture(textureIdent);
+        RenderSystem.recordRenderCall(() -> {
+            AbstractTexture texture =
+                    Minecraft.getInstance()
+                            .getTextureManager()
+                            .getTexture(textureIdent);
 
-                glTexID = texture.getId();
-            });
-        }
-
-        this.shader = new SACShaderProgram(GTSubatomicCore.id("shader/default.vsh"), GTSubatomicCore.id("shader/default.fsh"));
+            textures.put(0, texture.getId());
+        });
     }
 
     @Override
@@ -80,35 +76,18 @@ public class CustomObjDynamicMultiRenderer extends DynamicRender<ICustomObjRende
         if (!machine.isFormed()) return;
         if (!machine.isActive() && !alwaysRender) return;
 
-        int oldVao = GL45.glGetInteger(GL45.GL_VERTEX_ARRAY_BINDING);
-
-        buf.bind();
-        GL45.glBindBuffer(GL45.GL_ELEMENT_ARRAY_BUFFER, buf.getIBO());
         GL45.glEnable(GL45.GL_DEPTH_TEST);
-
-        shader.use();
-
-        if (glTexID != 0) {
-            GL45.glActiveTexture(GL45.GL_TEXTURE0);
-            GL45.glBindTexture(GL45.GL_TEXTURE_2D, glTexID);
-            shader.uniformTexture("tex0", 0);
-        }
 
         poseStack.pushPose();
         poseStack.mulPoseMatrix(machine.getModelMatrix());
 
-        shader.uniformMat4f("projMatrix", RenderSystem.getProjectionMatrix());
-        shader.uniformMat4f("modelViewMatrix", poseStack.last().pose());
+        ObjRenderer.render(buf, poseStack, packedLight, textures, true);
 
         poseStack.popPose();
         //GL45.glPolygonMode(GL45.GL_FRONT_AND_BACK, GL45.GL_LINE);
-        buf.draw();
         //GL45.glPolygonMode(GL45.GL_FRONT_AND_BACK, GL45.GL_FILL);
-        buf.unbind();
 
         GL45.glDisable(GL45.GL_DEPTH_TEST);
-
-        GL45.glBindVertexArray(oldVao);
     }
 
     public static DynamicRender<?, ?> makeObjRenderer(ResourceLocation obj, ResourceLocation tex, boolean alwaysRender) {

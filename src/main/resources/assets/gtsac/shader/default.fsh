@@ -4,6 +4,8 @@ in vec3 fNormal;
 in vec2 fUV;
 
 uniform sampler2D tex0;
+uniform sampler2D tex1;
+uniform vec2 packedLight;
 
 out vec4 FragColor;
 
@@ -23,5 +25,5 @@ void main()
 
     vec3 color = baseColor * (ambient + diff * 0.75);
 
-    FragColor = texture(tex0, fUV) * vec4(color, 1.0);
+    FragColor = texture(tex0, fUV) * texture(tex1, packedLight); // * vec4(color, 1.0);
 }
