@@ -7,6 +7,12 @@
       "offset_face": -0.125,
       "overwrite_light": true,
       "sky_light": 15
+    },
+    {
+      "type": "gtsac:obj_renderer",
+      "always_render": true,
+      "obj_ident": "gtsac:obj_models/clarifier_arms.obj",
+      "tex_ident": "gtceu:textures/block/casings/pipe/machine_casing_pipe_steel.png"
     }
   ],
   "loader": "gtceu:machine",
