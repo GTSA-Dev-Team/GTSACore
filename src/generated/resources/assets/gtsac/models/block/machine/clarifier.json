@@ -20,10 +20,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
-          "overlay_back": "gtceu:block/machines/mixer/overlay_back",
-          "overlay_front": "gtceu:block/machines/mixer/overlay_front",
-          "overlay_side": "gtceu:block/machines/mixer/overlay_side",
-          "overlay_top": "gtceu:block/machines/mixer/overlay_top"
+          "overlay_front": "gtsac:block/machines/clarifier/overlay_front"
         }
       }
     },
@@ -32,10 +29,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
-          "overlay_back": "gtceu:block/machines/mixer/overlay_back",
-          "overlay_front": "gtceu:block/machines/mixer/overlay_front",
-          "overlay_side": "gtceu:block/machines/mixer/overlay_side",
-          "overlay_top": "gtceu:block/machines/mixer/overlay_top"
+          "overlay_front": "gtsac:block/machines/clarifier/overlay_front"
         }
       }
     },
@@ -44,10 +38,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
-          "overlay_back": "gtceu:block/machines/mixer/overlay_back_active",
-          "overlay_front": "gtceu:block/machines/mixer/overlay_front_active",
-          "overlay_side": "gtceu:block/machines/mixer/overlay_side_active",
-          "overlay_top": "gtceu:block/machines/mixer/overlay_top_active"
+          "overlay_front": "gtsac:block/machines/clarifier/overlay_front_active"
         }
       }
     },
@@ -56,10 +47,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
-          "overlay_back": "gtceu:block/machines/mixer/overlay_back_active",
-          "overlay_front": "gtceu:block/machines/mixer/overlay_front_active",
-          "overlay_side": "gtceu:block/machines/mixer/overlay_side_active",
-          "overlay_top": "gtceu:block/machines/mixer/overlay_top_active"
+          "overlay_front": "gtsac:block/machines/clarifier/overlay_front_active"
         }
       }
     },
@@ -68,10 +56,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
-          "overlay_back": "gtceu:block/machines/mixer/overlay_back",
-          "overlay_front": "gtceu:block/machines/mixer/overlay_front",
-          "overlay_side": "gtceu:block/machines/mixer/overlay_side",
-          "overlay_top": "gtceu:block/machines/mixer/overlay_top"
+          "overlay_front": "gtsac:block/machines/clarifier/overlay_front"
         }
       }
     },
@@ -80,10 +65,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
-          "overlay_back": "gtceu:block/machines/mixer/overlay_back",
-          "overlay_front": "gtceu:block/machines/mixer/overlay_front",
-          "overlay_side": "gtceu:block/machines/mixer/overlay_side",
-          "overlay_top": "gtceu:block/machines/mixer/overlay_top"
+          "overlay_front": "gtsac:block/machines/clarifier/overlay_front"
         }
       }
     },
@@ -92,10 +74,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
-          "overlay_back": "gtceu:block/machines/mixer/overlay_back_active",
-          "overlay_front": "gtceu:block/machines/mixer/overlay_front_active",
-          "overlay_side": "gtceu:block/machines/mixer/overlay_side_active",
-          "overlay_top": "gtceu:block/machines/mixer/overlay_top_active"
+          "overlay_front": "gtsac:block/machines/clarifier/overlay_front_active"
         }
       }
     },
@@ -104,10 +83,7 @@
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
           "all": "gtceu:block/casings/solid/machine_casing_solid_steel",
-          "overlay_back": "gtceu:block/machines/mixer/overlay_back_active",
-          "overlay_front": "gtceu:block/machines/mixer/overlay_front_active",
-          "overlay_side": "gtceu:block/machines/mixer/overlay_side_active",
-          "overlay_top": "gtceu:block/machines/mixer/overlay_top_active"
+          "overlay_front": "gtsac:block/machines/clarifier/overlay_front_active"
         }
       }
     }
