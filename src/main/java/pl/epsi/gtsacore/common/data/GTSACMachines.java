@@ -16,6 +16,8 @@ import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
 import com.gregtechceu.gtceu.api.pattern.Predicates;
 import com.gregtechceu.gtceu.api.recipe.OverclockingLogic;
+import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
+import com.gregtechceu.gtceu.client.model.machine.MachineModel;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderHelper;
 import com.gregtechceu.gtceu.common.block.BoilerFireboxType;
 import com.gregtechceu.gtceu.common.data.*;
@@ -65,7 +67,7 @@ public class GTSACMachines {
             .modelProperty(IS_FORMED, false)
             .colorOverlaySteamHullModel(GTCEu.id("block/overlay/machine/" + OVERLAY_FLUID_HATCH_INPUT),
                     GTCEu.id("block/overlay/machine/overlay_pipe"), GTCEu.id("block/overlay/machine/overlay_pipe_in_emissive"))
-            .langValue("Steam Fluid Input Hatch")
+            .langValue("Steam Input Hatch")
             .tooltips(Component.translatable("gtceu.machine.fluid_hatch.import.tooltip"),
                     Component.translatable("gtceu.machine.steam_bus.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 4000))
@@ -78,8 +80,8 @@ public class GTSACMachines {
             .abilities(GTSACPartAbilities.STEAM_EXPORT_FLUIDS)
             .modelProperty(IS_FORMED, false)
             .colorOverlaySteamHullModel(GTCEu.id("block/overlay/machine/" + OVERLAY_FLUID_HATCH_OUTPUT),
-                    GTCEu.id("block/overlay/machine/overlay_pipe"), GTCEu.id("block/overlay/machine/overlay_pipe_in_emissive"))
-            .langValue("Steam Fluid Output Hatch")
+                    GTCEu.id("block/overlay/machine/overlay_pipe"), GTCEu.id("block/overlay/machine/overlay_pipe_out_emissive"))
+            .langValue("Steam Output Hatch")
             .tooltips(Component.translatable("gtceu.machine.fluid_hatch.export.tooltip"),
                     Component.translatable("gtceu.machine.steam_bus.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity", 4000))
@@ -251,11 +253,13 @@ public class GTSACMachines {
             .appearanceBlock(() -> Blocks.NETHER_BRICKS)
             .recipeModifiers(true, LargePrimitiveSmelterMachine::recipeModifier, GTRecipeModifiers.BATCH_MODE)
             .pattern(definition -> FactoryBlockPattern.start()
-                    .aisle("BBB", "BBB", " B ")
-                    .aisle("BBB", "B B", "B B")
-                    .aisle("BBB", "B@B", " B ")
+                    .aisle("BBB", "BFB", "SSS")
+                    .aisle("BBB", "F F", "B B")
+                    .aisle("BBB", "B@B", "SSS")
                     .where(" ", Predicates.any())
                     .where("@", Predicates.controller(Predicates.blocks(definition.get())))
+                    .where("F", Predicates.blocks(GTSACBlocks.PRIMITIVE_BRICK_FENCE.get()))
+                    .where("S", Predicates.blocks(GTSACBlocks.PRIMITIVE_BRICK_STAIRS.get()))
                     .where("B", Predicates.blocks(GTSACBlocks.PRIMITIVE_BRICKS.get()).setMinGlobalLimited(12)
                             .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
                             .or(Predicates.abilities(PartAbility.EXPORT_ITEMS))
@@ -268,12 +272,42 @@ public class GTSACMachines {
 
     public static final MachineDefinition PRIMITIVE_FUEL_HATCH = GTSAC_REGISTRATE
             .machine("primitive_fuel_hatch", PrimitiveFuelHatchPartMachine::new)
-            .langValue("Primitive Fuel Hatch")
-            .tooltips(Component.literal("Fuel Input for The Large Primitive Smelter"))
+            .langValue("§7Primitive Fuel Hatch")
+            .tooltips(Component.literal("Low-Tech Fuel Input for Multiblocks"))
             .rotationState(RotationState.ALL)
             .modelProperty(IS_FORMED, false)
-            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_fuel_hatch", GTCEu.id("block/casings/voltage/ulv")))
+            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_fuel_hatch", GTSubatomicCore.id("block/casings/primitive_bricks")))
             .tier(GTValues.ULV)
             .register();
+
+    public static final MachineDefinition PRIMITIVE_ITEM_IMPORT_HATCH = GTSAC_REGISTRATE
+            .machine("primitive_input_bus", (holder) ->
+                    new ItemBusPartMachine(holder, GTValues.ULV, IO.IN))
+            .rotationState(RotationState.ALL)
+            .abilities(PartAbility.IMPORT_ITEMS)
+            .modelProperty(IS_FORMED, false)
+            .colorOverlayTieredHullModel(GTCEu.id("block/overlay/machine/" + OVERLAY_ITEM_HATCH_INPUT),
+                    GTCEu.id("block/overlay/machine/overlay_pipe"), GTCEu.id("block/overlay/machine/overlay_pipe_in_emissive"))
+            .langValue("§7Primitive Input Bus")
+            .tooltips(Component.literal("Low-Tech Item Input for Multiblocks"),
+                    Component.translatable("gtceu.universal.tooltip.item_storage_capacity",
+                            1))
+            .allowCoverOnFront(true)
+            .register();
+    public static final MachineDefinition PRIMITIVE_ITEM_EXPORT_HATCH = GTSAC_REGISTRATE
+            .machine("primitive_output_bus", (holder) ->
+                    new ItemBusPartMachine(holder, GTValues.ULV, IO.OUT))
+            .rotationState(RotationState.ALL)
+            .abilities(PartAbility.EXPORT_ITEMS)
+            .modelProperty(IS_FORMED, false)
+            .colorOverlayTieredHullModel(GTCEu.id("block/overlay/machine/" + OVERLAY_ITEM_HATCH_OUTPUT),
+                    GTCEu.id("block/overlay/machine/overlay_pipe"), GTCEu.id("block/overlay/machine/overlay_pipe_out_emissive"))
+            .langValue("§7Primitive Output Bus")
+            .tooltips(Component.literal("Low-Tech Item Output for Multiblocks"),
+                    Component.translatable("gtceu.universal.tooltip.item_storage_capacity",
+                            1))
+            .allowCoverOnFront(true)
+            .register();
+
 
 }

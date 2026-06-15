@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/generated",
+  "textures": {
+    "layer0": "gtsac:item/unfired_ceramic_rod_mold"
+  }
+}

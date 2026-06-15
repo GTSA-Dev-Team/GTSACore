@@ -12,11 +12,11 @@
       "model": {
         "parent": "gtceu:block/overlay/2_layer/front_emissive",
         "textures": {
-          "bottom": "gtceu:block/casings/voltage/ulv/bottom",
+          "bottom": "gtsac:block/casings/primitive_bricks/bottom",
           "overlay": "gtsac:block/overlay/machine/primitive_fuel_hatch_base",
           "overlay_emissive": "gtsac:block/overlay/machine/primitive_fuel_hatch_emissive",
-          "side": "gtceu:block/casings/voltage/ulv/side",
-          "top": "gtceu:block/casings/voltage/ulv/top"
+          "side": "gtsac:block/casings/primitive_bricks/side",
+          "top": "gtsac:block/casings/primitive_bricks/top"
         }
       }
     },
@@ -24,11 +24,11 @@
       "model": {
         "parent": "gtceu:block/overlay/2_layer/front_emissive",
         "textures": {
-          "bottom": "gtceu:block/casings/voltage/ulv/bottom",
+          "bottom": "gtsac:block/casings/primitive_bricks/bottom",
           "overlay": "gtsac:block/overlay/machine/primitive_fuel_hatch_base",
           "overlay_emissive": "gtsac:block/overlay/machine/primitive_fuel_hatch_emissive",
-          "side": "gtceu:block/casings/voltage/ulv/side",
-          "top": "gtceu:block/casings/voltage/ulv/top"
+          "side": "gtsac:block/casings/primitive_bricks/side",
+          "top": "gtsac:block/casings/primitive_bricks/top"
         }
       }
     }
