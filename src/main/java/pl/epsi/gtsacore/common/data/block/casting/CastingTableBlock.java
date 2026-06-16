@@ -70,9 +70,9 @@ public class CastingTableBlock extends BaseEntityBlock {
     }
 
     public void tryGiveBack(Player player, CastingTableBlockEntity be) {
-        if (be.getItem().is(Items.AIR)) return;
-        player.addItem(be.getItem());
-        be.setItem(ItemStack.EMPTY);
+        if (be.getMoldItem().is(Items.AIR)) return;
+        player.addItem(be.getMoldItem());
+        be.setMoldItem(ItemStack.EMPTY);
     }
 
     @Override
@@ -83,7 +83,7 @@ public class CastingTableBlock extends BaseEntityBlock {
 
                 if (holding.getItem() instanceof AbstractCastItem cast) {
                     tryGiveBack(player, be);
-                    be.setItem(new ItemStack(cast));
+                    be.setMoldItem(new ItemStack(cast));
                     holding.shrink(1);
                     return InteractionResult.sidedSuccess(false);
                 }
@@ -104,11 +104,12 @@ public class CastingTableBlock extends BaseEntityBlock {
 
             if (be instanceof CastingTableBlockEntity table) {
 
-                ItemStack item = table.getItem();
+                ItemStack item = table.getMoldItem();
 
                 if (!item.isEmpty()) {
                     Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), item);
                 }
+                table.setMoldItem(ItemStack.EMPTY);
             }
 
             super.onRemove(state, level, pos, newState, movedByPiston);

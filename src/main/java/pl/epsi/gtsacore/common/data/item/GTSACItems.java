@@ -6,7 +6,9 @@ import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.phys.AABB;
 import org.joml.Matrix4f;
+import org.joml.Vector3f;
 import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.api.model.ObjMesh;
 import pl.epsi.gtsacore.api.model.ObjParser;
@@ -65,28 +67,24 @@ public class GTSACItems {
             .lang("Ceramic")
             .register();
 
-    public static final ItemEntry<? extends AbstractCastItem> INGOT_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Ingot Mold", "ceramic_ingot_mold", "obj_models/mold/ingot.obj", 0.46875f);
-    public static final ItemEntry<? extends AbstractCastItem> PLATE_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Plate Mold", "ceramic_plate_mold", "obj_models/mold/plate.obj", 0.5f);
-    public static final ItemEntry<? extends AbstractCastItem> ROD_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Rod Mold", "ceramic_rod_mold", "obj_models/mold/rod.obj", 0.46875f);
+    public static final ItemEntry<? extends AbstractCastItem> INGOT_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Ingot Mold", "ceramic_ingot_mold",
+            "obj_models/mold/ingot.obj", "ingot",
+            new AABB(-0.09375, 0.125, -0.1875, 0.09375, 0.1875, 0.1875), 0.46875f);
+    public static final ItemEntry<? extends AbstractCastItem> PLATE_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Plate Mold", "ceramic_plate_mold",
+            "obj_models/mold/plate.obj", "plate",
+            new AABB(-0.125, 0.125, -0.1875, 0.125, 0.1875, 0.1875), 0.5f);
+    public static final ItemEntry<? extends AbstractCastItem> ROD_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Rod Mold", "ceramic_rod_mold",
+            "obj_models/mold/rod.obj", "rod",
+            new AABB(-0.04375, 0.125, -0.1875, 0.04375, 0.1875, 0.1875), 0.46875f);
 
-    public static ItemEntry<? extends AbstractCastItem> registerMold(GTRegistrate registrate, String lang, String name, String objPath, float xOffset) {
-        StaticVertexBuffer<ObjVertexFormat> buf = null;
-        try {
-            var mesh = ObjParser.load(GTSubatomicCore.id(objPath));
-            buf = new StaticVertexBuffer<>(mesh.vertices(), mesh.indices());
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to find model: " + objPath);
-        }
-
-        StaticVertexBuffer<ObjVertexFormat> finalBuf = buf;
-        return registrate.item(name, (props) -> new AbstractCastItem(props, ObjRenderer.getDefaultObjShader(), finalBuf, new Matrix4f().translate(xOffset, 0.9375f, 0.5f), () -> {
-            AbstractTexture tex =
-                    Minecraft.getInstance()
-                            .getTextureManager()
-                            .getTexture(GTSubatomicCore.id("textures/block/ceramic_block.png"));
-
-            return Map.of(0, tex.getId());
-        }) {}).lang(lang).register();
+    public static ItemEntry<? extends AbstractCastItem> registerMold(GTRegistrate registrate, String lang, String name, String objPath,
+                                                                     String suffix, AABB aabb, float xOffset) {
+        return registrate.item(name, (props) -> new AbstractCastItem(props,
+                        AbstractCastItem.CastRenderInfo.of(GTSubatomicCore.id(objPath),
+                                new Matrix4f().translate(xOffset, 0.9375f, 0.5f),
+                                aabb,
+                                new Vector3f(0, 0, 0)), suffix) {})
+                .lang(lang).register();
     }
 
 }

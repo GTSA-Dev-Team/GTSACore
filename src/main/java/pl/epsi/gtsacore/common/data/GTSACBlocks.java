@@ -13,9 +13,7 @@ import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.GTSubatomicCore;
-import pl.epsi.gtsacore.common.data.block.casting.CastingTableBlock;
-import pl.epsi.gtsacore.common.data.block.casting.CastingTableBlockEntity;
-import pl.epsi.gtsacore.common.data.block.casting.CastingTableBlockEntityRenderer;
+import pl.epsi.gtsacore.common.data.block.casting.*;
 
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_CREATIVE_TAB;
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
@@ -128,4 +126,21 @@ public class GTSACBlocks {
             .renderer(() -> ctx -> new CastingTableBlockEntityRenderer())
             .register();
 
+    public static final BlockEntry<FaucetBlock> FAUCET = GTSAC_REGISTRATE
+            .block("faucet", FaucetBlock::new)
+            .initialProperties(() -> Blocks.IRON_BLOCK)
+            .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+            .properties(p -> p.strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion())
+            .blockstate((ctx, prov) -> {
+                prov.horizontalBlock(ctx.getEntry(), prov.models().getExistingFile(GTSubatomicCore.id("block/faucet")));
+            })
+            .lang("Faucet")
+            .item(BlockItem::new).build()
+            .register();
+
+    public static final BlockEntityEntry<FaucetBlockEntity> FAUCET_BE = GTSAC_REGISTRATE
+            .blockEntity("faucet", FaucetBlockEntity::new)
+            .validBlocks(FAUCET)
+            .renderer(() -> ctx -> new FaucetBlockEntityRenderer())
+            .register();
 }
