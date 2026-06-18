@@ -4,6 +4,7 @@ import org.lwjgl.opengl.GL45;
 import org.lwjgl.system.MemoryStack;
 
 import java.nio.IntBuffer;
+import java.util.Arrays;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -25,7 +26,14 @@ public class SACRenderState {
     }
 
     public void saveTextures(int... slots) {
-        saveTextures(slots);
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer buf = stack.callocInt(1);
+            for (int slot : slots) {
+                GL45.glGetIntegeri_v(GL45.GL_TEXTURE_BINDING_2D, slot, buf);
+                textures.put(slot, buf.get(0));
+                buf.clear();
+            }
+        }
     }
 
     public void saveTextures(Integer[] slots) {

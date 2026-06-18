@@ -126,6 +126,18 @@ public class GTSACBlocks {
             .renderer(() -> ctx -> new CastingTableBlockEntityRenderer())
             .register();
 
+    public static final BlockEntry<CrucibleAssemblyBlock> CRUCIBLE_ASSEMBLY = GTSAC_REGISTRATE
+            .block("crucible_assembly", CrucibleAssemblyBlock::new)
+            .initialProperties(() -> Blocks.IRON_BLOCK)
+            .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+            .properties(p -> p.strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion())
+            .blockstate((ctx, prov) -> {
+                prov.simpleBlock(ctx.getEntry(), prov.models().getExistingFile(GTSubatomicCore.id("block/crucible_assembly")));
+            })
+            .lang("Crucible Assembly")
+            .item(BlockItem::new).build()
+            .register();
+
     public static final BlockEntry<FaucetBlock> FAUCET = GTSAC_REGISTRATE
             .block("faucet", FaucetBlock::new)
             .initialProperties(() -> Blocks.IRON_BLOCK)

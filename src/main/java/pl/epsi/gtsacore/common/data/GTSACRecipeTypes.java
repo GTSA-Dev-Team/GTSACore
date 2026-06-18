@@ -7,6 +7,7 @@ import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import com.gregtechceu.gtceu.common.data.GTSoundEntries;
 
 import com.lowdragmc.lowdraglib.gui.texture.ProgressTexture;
+import mezz.jei.api.constants.RecipeTypes;
 
 public class GTSACRecipeTypes {
 
@@ -28,6 +29,8 @@ public class GTSACRecipeTypes {
             .setMaxIOSize(2, 2, 0, 0)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.FURNACE);
+
+
 
     public static void init() {}
 }

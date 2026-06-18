@@ -5,6 +5,7 @@
     "gtsac:primitive_brick_fence",
     "gtsac:primitive_brick_slab",
     "gtsac:casting_table",
+    "gtsac:crucible_assembly",
     "gtsac:faucet"
   ]
 }

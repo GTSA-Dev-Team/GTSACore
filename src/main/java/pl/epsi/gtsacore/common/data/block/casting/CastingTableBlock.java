@@ -13,6 +13,8 @@ import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -69,6 +71,11 @@ public class CastingTableBlock extends BaseEntityBlock {
         return RenderShape.MODEL;
     }
 
+    @Override
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+        return level.isClientSide ? null : (lvl, pos, st, be) -> ((CastingTableBlockEntity) be).serverTick();
+    }
+
     public void tryGiveBack(Player player, CastingTableBlockEntity be) {
         if (be.getMoldItem().is(Items.AIR)) return;
         player.addItem(be.getMoldItem());
@@ -80,6 +87,13 @@ public class CastingTableBlock extends BaseEntityBlock {
         if (!level.isClientSide) {
             if (level.getBlockEntity(pos) instanceof CastingTableBlockEntity be) {
                 ItemStack holding = player.getItemInHand(hand);
+                if (be.getReturnItem() != null && !be.getReturnItem().isEmpty()) {
+                    player.addItem(be.getReturnItem());
+                    be.takeOutReturnItem();
+                    return InteractionResult.SUCCESS;
+                }
+
+                if (be.getCastingState() != CastingState.IDLE) return InteractionResult.SUCCESS;
 
                 if (holding.getItem() instanceof AbstractCastItem cast) {
                     tryGiveBack(player, be);
@@ -103,13 +117,21 @@ public class CastingTableBlock extends BaseEntityBlock {
             BlockEntity be = level.getBlockEntity(pos);
 
             if (be instanceof CastingTableBlockEntity table) {
+                if (level.getBlockEntity(pos.above()) instanceof FaucetBlockEntity fe) {
+                    fe.setCastingState(CastingState.IDLE, null);
+                }
 
                 ItemStack item = table.getMoldItem();
 
                 if (!item.isEmpty()) {
                     Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), item);
                 }
+                ItemStack result = table.getReturnItem();
+                if (!result.isEmpty()) {
+                    Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), result);
+                }
                 table.setMoldItem(ItemStack.EMPTY);
+                table.setReturnItem(ItemStack.EMPTY);
             }
 
             super.onRemove(state, level, pos, newState, movedByPiston);

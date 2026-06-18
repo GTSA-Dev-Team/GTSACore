@@ -47,10 +47,12 @@ public class StaticVertexBuffer<T extends Vertex> {
 
         GL45.glBufferData(GL45.GL_ARRAY_BUFFER, data, GL45.GL_STATIC_DRAW);
         GL45.glBufferData(GL45.GL_ELEMENT_ARRAY_BUFFER, indexBuffer, GL45.GL_STATIC_DRAW);
-        Arrays.stream(vertices).forEach(v -> v.vertexFormat().setupState());
+        //Arrays.stream(vertices).forEach(v -> v.vertexFormat().setupState());
+        vertices[0].vertexFormat().setupState();
 
         this.unbind();
-        Arrays.stream(vertices).forEach(v -> v.vertexFormat().cleanupState());
+        vertices[0].vertexFormat().cleanupState();
+        //Arrays.stream(vertices).forEach(v -> v.vertexFormat().cleanupState());
     }
 
     public void bind() {
@@ -61,7 +63,6 @@ public class StaticVertexBuffer<T extends Vertex> {
         GL45.glBindVertexArray(0);
         GL45.glBindBuffer(GL45.GL_ELEMENT_ARRAY_BUFFER, 0);
         GL45.glBindBuffer(GL45.GL_ARRAY_BUFFER, 0);
-
     }
 
     public void draw() {
