@@ -40,10 +40,7 @@ import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.common.block.GTSACBlocks;
-import pl.epsi.gtsacore.common.machine.multiblock.ClarifierMachine;
-import pl.epsi.gtsacore.common.machine.multiblock.LargePrimitiveSmelterMachine;
-import pl.epsi.gtsacore.common.machine.multiblock.NeutralizationTankMachine;
-import pl.epsi.gtsacore.common.machine.multiblock.SteelAugmentedPBFMachine;
+import pl.epsi.gtsacore.common.machine.multiblock.*;
 import pl.epsi.gtsacore.common.machine.part.PrimitiveFuelHatchPartMachine;
 import pl.epsi.gtsacore.data.models.GTSACMachineModels;
 
@@ -269,6 +266,52 @@ public class GTSACMachines {
             .model(createWorkableCasingMachineModel(
                     GTSubatomicCore.id("block/primitive_bricks"),
                     GTCEu.id("block/machines/electric_furnace")))
+            .register();
+
+    public static final MultiblockMachineDefinition LARGE_BRONZE_FIREBOX = GTSAC_REGISTRATE
+            .multiblock("large_bronze_firebox", LargeBronzeFireboxMachine::new)
+            .langValue("Large Bronze Firebox (WIP)")
+            .rotationState(RotationState.ALL)
+            .recipeType(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES)
+            .appearanceBlock(GTBlocks.FIREBOX_BRONZE)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("BBBBB", "BFFFB", "BBBBB")
+                    .aisle("BBBBB", "FBBBF", "B   B")
+                    .aisle("BBBBB", "FBBBF", "B   B")
+                    .aisle("BBBBB", "FBBBF", "B   B")
+                    .aisle("BBBBB", "BF@FB", "BBBBB")
+                    .where(" ", Predicates.any())
+                    .where("@", Predicates.controller(Predicates.blocks(definition.get())))
+                    .where("F", Predicates.blocks(GTBlocks.FIREBOX_BRONZE.get()))
+                    .where("B", Predicates.blocks(GTBlocks.CASING_BRONZE_BRICKS.get()).setMinGlobalLimited(50)
+                            .or(Predicates.machines(GTSACMachines.PRIMITIVE_FUEL_HATCH).setExactLimit(1)))
+                    .build())
+            .model(createWorkableCasingMachineModel(
+                    GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
+                    GTCEu.id("block/multiblock/primitive_blast_furnace")))
+            .register();
+
+    public static final MultiblockMachineDefinition LARGE_CRUCIBLE = GTSAC_REGISTRATE
+            .multiblock("large_crucible", LargeBronzeFireboxMachine::new)
+            .langValue("Large Crucible (WIP)")
+            .rotationState(RotationState.ALL)
+            .recipeType(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES)
+            .appearanceBlock(GTBlocks.CASING_PRIMITIVE_BRICKS)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("BBBBB", "BFFFB", "BBBBB")
+                    .aisle("BBBBB", "F   F", "BBBBB")
+                    .aisle("BBBBB", "F   F", "BBBBB")
+                    .aisle("BBBBB", "F   F", "BBBBB")
+                    .aisle("BBBBB", "BF@FB", "BBBBB")
+                    .where(" ", Predicates.any())
+                    .where("@", Predicates.controller(Predicates.blocks(definition.get())))
+                    .where("F", Predicates.blocks(GTBlocks.FIREBOX_BRONZE.get()))
+                    .where("B", Predicates.blocks(GTBlocks.CASING_BRONZE_BRICKS.get()).setMinGlobalLimited(50)
+                            .or(Predicates.machines(GTSACMachines.PRIMITIVE_FUEL_HATCH).setExactLimit(1)))
+                    .build())
+            .model(createWorkableCasingMachineModel(
+                    GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
+                    GTCEu.id("block/multiblock/primitive_blast_furnace")))
             .register();
 
     public static final MachineDefinition PRIMITIVE_FUEL_HATCH = GTSAC_REGISTRATE

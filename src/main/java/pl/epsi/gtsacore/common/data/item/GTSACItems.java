@@ -49,6 +49,21 @@ public class GTSACItems {
             .lang("Ceramic")
             .register();
 
+    public static final ItemEntry<Item> INGOT_WOOD = GTSAC_REGISTRATE
+            .item("ingot_wood", Item::new)
+            .lang("Suspiciously Ingot-Shaped piece of Wood™")
+            .register();
+
+    public static final ItemEntry<Item> PLATE_WOOD = GTSAC_REGISTRATE
+            .item("plate_wood", Item::new)
+            .lang("Suspiciously Plate-Shaped piece of Wood™")
+            .register();
+
+    public static final ItemEntry<Item> ROD_WOOD = GTSAC_REGISTRATE
+            .item("rod_wood", Item::new)
+            .lang("Suspiciously Rod-Shaped piece of Wood™")
+            .register();
+
     public static final ItemEntry<Item> UNFIRED_CERAMIC_INGOT_MOLD = registerCeramicMold("Ingot", "Unfired");
     public static final ItemEntry<Item> UNFIRED_CERAMIC_PLATE_MOLD = registerCeramicMold("Plate", "Unfired");
     public static final ItemEntry<Item> UNFIRED_CERAMIC_ROD_MOLD = registerCeramicMold("Rod", "Unfired");
