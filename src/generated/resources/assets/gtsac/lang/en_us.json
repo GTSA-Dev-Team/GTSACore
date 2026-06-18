@@ -1,6 +1,8 @@
 {
+  "block.gtsac.casting_table": "Casting Table",
   "block.gtsac.clarifier": "Clarifier",
   "block.gtsac.large_bronze_firebox": "Large Bronze Firebox",
+  "block.gtsac.faucet": "Faucet",
   "block.gtsac.large_primitive_smelter": "Large Primitive Smelter",
   "block.gtsac.neutralization_tank": "Neutralization Tank",
   "block.gtsac.primitive_brick_fence": "Primitive Brick Fence",
@@ -20,6 +22,9 @@
   "item.gtsac.ceramic_plate_mold": " Ceramic Plate Mold",
   "item.gtsac.ceramic_rod_mold": " Ceramic Rod Mold",
   "item.gtsac.ingot_wood": "Suspiciously Ingot-Shaped piece of Wood™",
+  "item.gtsac.ceramic_ingot_mold": "Ceramic Ingot Mold",
+  "item.gtsac.ceramic_plate_mold": "Ceramic Plate Mold",
+  "item.gtsac.ceramic_rod_mold": "Ceramic Rod Mold",
   "item.gtsac.molded_brick_mixture": "Molded Brick Mixture",
   "item.gtsac.molded_ceramic_clay": "Molded Ceramic Clay",
   "item.gtsac.plate_wood": "Suspiciously Plate-Shaped piece of Wood™",

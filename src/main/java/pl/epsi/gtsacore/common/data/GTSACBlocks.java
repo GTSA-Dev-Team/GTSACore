@@ -1,15 +1,19 @@
-package pl.epsi.gtsacore.common.block;
+package pl.epsi.gtsacore.common.data;
 
+import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullBiFunction;
 import net.minecraft.tags.BlockTags;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.level.block.Block;
+import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
 import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.GTSubatomicCore;
+import pl.epsi.gtsacore.common.data.block.casting.*;
 
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_CREATIVE_TAB;
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
@@ -104,4 +108,39 @@ public class GTSACBlocks {
             "Primitive Brick Slab", "primitive_brick_slab", "primitive_bricks", BlockItem::new);
 
 
+
+    public static final BlockEntry<CastingTableBlock> CASTING_TABLE = GTSAC_REGISTRATE
+            .block("casting_table", CastingTableBlock::new)
+            .initialProperties(() -> Blocks.IRON_BLOCK)
+            .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+            .properties(p -> p.strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion())
+            .blockstate((ctx, prov) -> {
+                prov.simpleBlock(ctx.getEntry(), prov.models().getExistingFile(GTSubatomicCore.id("block/casting_table")));
+            })
+            .lang("Casting Table")
+            .item(BlockItem::new).build()
+            .register();
+    public static final BlockEntityEntry<CastingTableBlockEntity> CASTING_TABLE_BE = GTSAC_REGISTRATE
+            .blockEntity("casting_table", CastingTableBlockEntity::new)
+            .validBlocks(CASTING_TABLE)
+            .renderer(() -> ctx -> new CastingTableBlockEntityRenderer())
+            .register();
+
+    public static final BlockEntry<FaucetBlock> FAUCET = GTSAC_REGISTRATE
+            .block("faucet", FaucetBlock::new)
+            .initialProperties(() -> Blocks.IRON_BLOCK)
+            .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+            .properties(p -> p.strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion())
+            .blockstate((ctx, prov) -> {
+                prov.horizontalBlock(ctx.getEntry(), prov.models().getExistingFile(GTSubatomicCore.id("block/faucet")));
+            })
+            .lang("Faucet")
+            .item(BlockItem::new).build()
+            .register();
+
+    public static final BlockEntityEntry<FaucetBlockEntity> FAUCET_BE = GTSAC_REGISTRATE
+            .blockEntity("faucet", FaucetBlockEntity::new)
+            .validBlocks(FAUCET)
+            .renderer(() -> ctx -> new FaucetBlockEntityRenderer())
+            .register();
 }

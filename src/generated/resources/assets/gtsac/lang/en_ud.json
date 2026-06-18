@@ -1,6 +1,8 @@
 {
+  "block.gtsac.casting_table": "ǝןqɐ⟘ buıʇsɐƆ",
   "block.gtsac.clarifier": "ɹǝıɟıɹɐןƆ",
   "block.gtsac.large_bronze_firebox": "xoqǝɹıℲ ǝzuoɹᗺ ǝbɹɐꞀ",
+  "block.gtsac.faucet": "ʇǝɔnɐℲ",
   "block.gtsac.large_primitive_smelter": "ɹǝʇןǝɯS ǝʌıʇıɯıɹԀ ǝbɹɐꞀ",
   "block.gtsac.neutralization_tank": "ʞuɐ⟘ uoıʇɐzıןɐɹʇnǝN",
   "block.gtsac.primitive_brick_fence": "ǝɔuǝℲ ʞɔıɹᗺ ǝʌıʇıɯıɹԀ",
@@ -20,6 +22,9 @@
   "item.gtsac.ceramic_plate_mold": "pןoW ǝʇɐןԀ ɔıɯɐɹǝƆ ",
   "item.gtsac.ceramic_rod_mold": "pןoW poᴚ ɔıɯɐɹǝƆ ",
   "item.gtsac.ingot_wood": "™pooM ɟo ǝɔǝıd pǝdɐɥS-ʇobuI ʎןsnoıɔıdsnS",
+  "item.gtsac.ceramic_ingot_mold": "pןoW ʇobuI ɔıɯɐɹǝƆ",
+  "item.gtsac.ceramic_plate_mold": "pןoW ǝʇɐןԀ ɔıɯɐɹǝƆ",
+  "item.gtsac.ceramic_rod_mold": "pןoW poᴚ ɔıɯɐɹǝƆ",
   "item.gtsac.molded_brick_mixture": "ǝɹnʇxıW ʞɔıɹᗺ pǝpןoW",
   "item.gtsac.molded_ceramic_clay": "ʎɐןƆ ɔıɯɐɹǝƆ pǝpןoW",
   "item.gtsac.plate_wood": "™pooM ɟo ǝɔǝıd pǝdɐɥS-ǝʇɐןԀ ʎןsnoıɔıdsnS",

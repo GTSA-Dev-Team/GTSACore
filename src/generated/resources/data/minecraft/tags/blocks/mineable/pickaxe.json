@@ -3,6 +3,8 @@
     "gtsac:primitive_bricks",
     "gtsac:primitive_brick_stairs",
     "gtsac:primitive_brick_fence",
-    "gtsac:primitive_brick_slab"
+    "gtsac:primitive_brick_slab",
+    "gtsac:casting_table",
+    "gtsac:faucet"
   ]
 }

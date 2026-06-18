@@ -1,18 +1,12 @@
 package pl.epsi.gtsacore;
 
 import com.gregtechceu.gtceu.api.GTCEuAPI;
-import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
-import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
-
 import com.gregtechceu.gtceu.common.data.GTCreativeModeTabs;
-import com.gregtechceu.gtceu.common.data.GTMachines;
-import com.gregtechceu.gtceu.common.data.GTMaterials;
-import com.gregtechceu.gtceu.data.pack.GTDynamicDataPack;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
@@ -22,13 +16,11 @@ import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
 import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
-
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
-import pl.epsi.gtsacore.common.block.GTSACBlocks;
+import pl.epsi.gtsacore.common.data.GTSACBlocks;
 import pl.epsi.gtsacore.common.data.GTSACMachines;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
-import pl.epsi.gtsacore.common.data.GTSACRecipes;
 import pl.epsi.gtsacore.common.data.item.GTSACItems;
 import pl.epsi.gtsacore.common.data.materials.GTSACMaterials;
 import pl.epsi.gtsacore.common.data.materials.GTSACPeriodicTableMaterials;

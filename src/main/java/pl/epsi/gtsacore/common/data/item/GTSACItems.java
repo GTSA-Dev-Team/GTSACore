@@ -1,7 +1,25 @@
 package pl.epsi.gtsacore.common.data.item;
 
+import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
+import com.mojang.blaze3d.systems.RenderSystem;
 import com.tterrag.registrate.util.entry.ItemEntry;
+import net.minecraft.client.Minecraft;
+import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.phys.AABB;
+import org.joml.Matrix4f;
+import org.joml.Vector3f;
+import pl.epsi.gtsacore.GTSubatomicCore;
+import pl.epsi.gtsacore.api.model.ObjMesh;
+import pl.epsi.gtsacore.api.model.ObjParser;
+import pl.epsi.gtsacore.api.model.ObjVertexFormat;
+import pl.epsi.gtsacore.api.renderer.data.StaticVertexBuffer;
+import pl.epsi.gtsacore.common.data.item.casting.AbstractCastItem;
+import pl.epsi.gtsacore.common.render.ObjRenderer;
+
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
 
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_CREATIVE_TAB;
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
@@ -49,35 +67,24 @@ public class GTSACItems {
             .lang("Ceramic")
             .register();
 
-    public static final ItemEntry<Item> INGOT_WOOD = GTSAC_REGISTRATE
-            .item("ingot_wood", Item::new)
-            .lang("Suspiciously Ingot-Shaped piece of Wood™")
-            .register();
+    public static final ItemEntry<? extends AbstractCastItem> INGOT_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Ingot Mold", "ceramic_ingot_mold",
+            "obj_models/mold/ingot.obj", "ingot",
+            new AABB(-0.09375, 0.125, -0.1875, 0.09375, 0.1875, 0.1875), 0.46875f);
+    public static final ItemEntry<? extends AbstractCastItem> PLATE_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Plate Mold", "ceramic_plate_mold",
+            "obj_models/mold/plate.obj", "plate",
+            new AABB(-0.125, 0.125, -0.1875, 0.125, 0.1875, 0.1875), 0.5f);
+    public static final ItemEntry<? extends AbstractCastItem> ROD_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Rod Mold", "ceramic_rod_mold",
+            "obj_models/mold/rod.obj", "rod",
+            new AABB(-0.04375, 0.125, -0.1875, 0.04375, 0.1875, 0.1875), 0.46875f);
 
-    public static final ItemEntry<Item> PLATE_WOOD = GTSAC_REGISTRATE
-            .item("plate_wood", Item::new)
-            .lang("Suspiciously Plate-Shaped piece of Wood™")
-            .register();
-
-    public static final ItemEntry<Item> ROD_WOOD = GTSAC_REGISTRATE
-            .item("rod_wood", Item::new)
-            .lang("Suspiciously Rod-Shaped piece of Wood™")
-            .register();
-
-    public static final ItemEntry<Item> UNFIRED_CERAMIC_INGOT_MOLD = registerCeramicMold("Ingot", "Unfired");
-    public static final ItemEntry<Item> UNFIRED_CERAMIC_PLATE_MOLD = registerCeramicMold("Plate", "Unfired");
-    public static final ItemEntry<Item> UNFIRED_CERAMIC_ROD_MOLD = registerCeramicMold("Rod", "Unfired");
-
-    public static final ItemEntry<Item> CERAMIC_INGOT_MOLD = registerCeramicMold("Ingot", "");
-    public static final ItemEntry<Item> CERAMIC_PLATE_MOLD = registerCeramicMold("Plate", "");
-    public static final ItemEntry<Item> CERAMIC_ROD_MOLD = registerCeramicMold("Rod", "");
-
-
-    private static ItemEntry<Item> registerCeramicMold(String type, String fired) {
-        return GTSAC_REGISTRATE
-                .item(fired.toLowerCase() + (fired.isEmpty() ? "" : "_") + "ceramic_" + type.toLowerCase() + "_mold", Item::new)
-                .lang(fired + " Ceramic " + type + " Mold")
-                .register();
+    public static ItemEntry<? extends AbstractCastItem> registerMold(GTRegistrate registrate, String lang, String name, String objPath,
+                                                                     String suffix, AABB aabb, float xOffset) {
+        return registrate.item(name, (props) -> new AbstractCastItem(props,
+                        AbstractCastItem.CastRenderInfo.of(GTSubatomicCore.id(objPath),
+                                new Matrix4f().translate(xOffset, 0.9375f, 0.5f),
+                                aabb,
+                                new Vector3f(0, 0, 0)), suffix) {})
+                .lang(lang).register();
     }
 
 }
