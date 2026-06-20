@@ -138,6 +138,12 @@ public class GTSACBlocks {
             .item(BlockItem::new).build()
             .register();
 
+    public static final BlockEntityEntry<CrucibleAssemblyBlockEntity> CRUCIBLE_ASSEMBLY_BE = GTSAC_REGISTRATE
+            .blockEntity("crucible_assembly", CrucibleAssemblyBlockEntity::new)
+            .validBlocks(CRUCIBLE_ASSEMBLY)
+            .renderer(() -> ctx -> new CrucibleAssemblyBlockEntityRenderer())
+            .register();
+
     public static final BlockEntry<FaucetBlock> FAUCET = GTSAC_REGISTRATE
             .block("faucet", FaucetBlock::new)
             .initialProperties(() -> Blocks.IRON_BLOCK)

@@ -5,8 +5,13 @@ import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -16,6 +21,7 @@ import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
+import pl.epsi.gtsacore.common.data.GTSACBlocks;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -23,7 +29,7 @@ import java.util.stream.Stream;
 
 import static pl.epsi.gtsacore.util.SACUtils.rotateShape;
 
-public class CrucibleAssemblyBlock extends Block {
+public class CrucibleAssemblyBlock extends BaseEntityBlock {
 
     private static final VoxelShape NORTH_SHAPE = Stream.of(
             Block.box(2, -2, 2, 14, 4, 3),
@@ -97,4 +103,13 @@ public class CrucibleAssemblyBlock extends Block {
         return RenderShape.MODEL;
     }
 
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+        return GTSACBlocks.CRUCIBLE_ASSEMBLY_BE.get().create(blockPos, blockState);
+    }
+
+    @Override
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+        return level.isClientSide ? null : (lvl, pos, st, be) -> ((CrucibleAssemblyBlockEntity) be).serverTick();
+    }
 }

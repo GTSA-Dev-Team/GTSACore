@@ -10,6 +10,8 @@ import net.minecraftforge.registries.RegistryObject;
 import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.common.data.recipes.CastingRecipe;
 import pl.epsi.gtsacore.common.data.recipes.CastingRecipeSerializer;
+import pl.epsi.gtsacore.common.data.recipes.CrucibleAssemblyRecipe;
+import pl.epsi.gtsacore.common.data.recipes.CrucibleAssemblyRecipeSerializer;
 
 public class GTSACVanillaRecipes {
 
@@ -19,6 +21,9 @@ public class GTSACVanillaRecipes {
     public static final RegistryObject<RecipeSerializer<CastingRecipe>> CASTING_SERIALIZER =
             RECIPE_SERIALIZERS.register("casting", CastingRecipeSerializer::new);
 
+    public static final RegistryObject<RecipeSerializer<CrucibleAssemblyRecipe>> CRUCIBLE_ASM_SERIALIZER =
+            RECIPE_SERIALIZERS.register("crucible_assembly", CrucibleAssemblyRecipeSerializer::new);
+
     public static final DeferredRegister<RecipeType<?>> RECIPE_TYPES =
             DeferredRegister.create(Registries.RECIPE_TYPE, GTSubatomicCore.MOD_ID);
 
@@ -27,6 +32,14 @@ public class GTSACVanillaRecipes {
                 @Override
                 public String toString() {
                     return GTSubatomicCore.MOD_ID + ":casting";
+                }
+            });
+
+    public static final RegistryObject<RecipeType<CrucibleAssemblyRecipe>> CRUCIBLE_ASSEMBLY =
+            RECIPE_TYPES.register("crucible_assembly", () -> new RecipeType<>() {
+                @Override
+                public String toString() {
+                    return GTSubatomicCore.MOD_ID + ":crucible_assembly";
                 }
             });
 
