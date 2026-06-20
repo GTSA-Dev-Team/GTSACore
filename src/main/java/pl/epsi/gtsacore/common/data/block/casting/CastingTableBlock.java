@@ -1,6 +1,9 @@
 package pl.epsi.gtsacore.common.data.block.casting;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -90,19 +93,29 @@ public class CastingTableBlock extends BaseEntityBlock {
                 if (be.getReturnItem() != null && !be.getReturnItem().isEmpty()) {
                     player.addItem(be.getReturnItem());
                     be.takeOutReturnItem();
+                    int used = AbstractCastItem.onUsed(level.random, be.getMoldItem());
+                    level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1f, 0.7f);
+                    if (used == 1) {
+                        be.setMoldItem(ItemStack.EMPTY);
+                        level.playSound(null, pos, SoundEvents.ANVIL_DESTROY, SoundSource.BLOCKS, 1f, 1f);
+                    } else if (used == 2) {
+                        level.playSound(null, pos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 1f, 1f);
+                    }
                     return InteractionResult.SUCCESS;
                 }
 
                 if (be.getCastingState() != CastingState.IDLE) return InteractionResult.SUCCESS;
 
-                if (holding.getItem() instanceof AbstractCastItem cast) {
+                if (holding.getItem() instanceof AbstractCastItem) {
+                    level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1f, 1.25f);
                     tryGiveBack(player, be);
-                    be.setMoldItem(new ItemStack(cast));
+                    be.setMoldItem(holding.copyWithCount(1));
                     holding.shrink(1);
                     return InteractionResult.sidedSuccess(false);
                 }
 
                 if (holding.is(Items.AIR)) {
+                    level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1f, 1.1f);
                     tryGiveBack(player, be);
                 }
             }

@@ -25,13 +25,11 @@ public class GTSACJEIPlugin implements IModPlugin {
 
     @Override
     public void registerCategories(IRecipeCategoryRegistration registration) {
-        System.out.println("CATEGORIESSS!!!!!!!!!");
         registration.addRecipeCategories(new CastingCategory(registration.getJeiHelpers().getGuiHelper()));
     }
 
     @Override
     public void registerRecipes(IRecipeRegistration registration) {
-        System.out.println("RECIPES!!!!!!!!!!!");
         RecipeManager recipeManager =
                 Minecraft.getInstance().level.getRecipeManager();
 

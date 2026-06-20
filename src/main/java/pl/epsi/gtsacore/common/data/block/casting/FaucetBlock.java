@@ -31,6 +31,8 @@ import java.util.EnumMap;
 import java.util.Map;
 import java.util.stream.Stream;
 
+import static pl.epsi.gtsacore.util.SACUtils.rotateShape;
+
 public class FaucetBlock extends BaseEntityBlock {
 
     private static final VoxelShape NORTH_SHAPE = Stream.of(
@@ -99,19 +101,6 @@ public class FaucetBlock extends BaseEntityBlock {
         return GTSACBlocks.FAUCET_BE.get().create(blockPos, blockState);
     }
 
-    private static VoxelShape rotateShape(VoxelShape shape) {
-        VoxelShape[] buffer = new VoxelShape[] {
-                shape,
-                Shapes.empty()
-        };
-
-        buffer[0].forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
-            buffer[1] = Shapes.or(buffer[1], Shapes.box(1 - maxZ, minY, minX, 1 - minZ, maxY, maxX));
-        });
-
-        return buffer[1];
-    }
-
     @Override
     public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
         if (!level.isClientSide) {
@@ -121,7 +110,7 @@ public class FaucetBlock extends BaseEntityBlock {
             if (level.getBlockEntity(hatchPos) instanceof IMachineBlockEntity mbe &&
                     mbe.getMetaMachine() instanceof FluidHatchPartMachine fluidHatch &&
                     level.getBlockEntity(castingTablePos) instanceof CastingTableBlockEntity castingTable) {
-                castingTable.startRecipe(fluidHatch);
+                castingTable.startRecipe(fluidHatch.tank.getFluidInTank(0));
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);

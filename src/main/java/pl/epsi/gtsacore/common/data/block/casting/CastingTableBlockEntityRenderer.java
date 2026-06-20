@@ -53,7 +53,7 @@ public class CastingTableBlockEntityRenderer implements BlockEntityRenderer<Cast
             poseStack.mulPoseMatrix(cast.getRenderInfo().localMat());
 
             ObjRenderer.render(cast.getRenderInfo().VBO(), cast.getRenderInfo().shader(), poseStack,
-                    packedLight, cast.getTextures(), true);
+                    packedLight, AbstractCastItem.getTextures(castingTableBlockEntity.getMoldItem()), true);
             poseStack.popPose();
 
             if (castingTableBlockEntity.getFluidID() != null) {

@@ -70,9 +70,9 @@ public class CastingTableBlockEntity extends BlockEntity {
     }
 
     @SuppressWarnings("all")
-    public void startRecipe(FluidHatchPartMachine fluidHatch) {
+    public void startRecipe(FluidStack fluidStack) {
         if (!this.returnItem.isEmpty() || this.moldItem.isEmpty() || this.castingState != CastingState.IDLE) return;
-        FluidStack fluid = fluidHatch.tank.getFluidInTank(0);
+        FluidStack fluid = fluidStack;//fluidHatch.tank.getFluidInTank(0);
 
         CastingRecipe recipe = level.getRecipeManager()
                 .getAllRecipesFor(GTSACVanillaRecipes.CASTING.get())
@@ -85,7 +85,7 @@ public class CastingTableBlockEntity extends BlockEntity {
 
         this.currentRecipe = recipe;
         this.progress = 0;
-        fluidHatch.tank.getFluidInTank(0).shrink(recipe.getFluidStack().getAmount());
+        fluidStack.shrink(recipe.getFluidStack().getAmount());
 
         ResourceLocation fluidID = ForgeRegistries.FLUIDS.getKey(fluid.getFluid());
         if (fluidID == null) return;
@@ -101,7 +101,9 @@ public class CastingTableBlockEntity extends BlockEntity {
     public void updateState(CastingState state) {
         this.castingState = state;
         FaucetBlockEntity faucet = ((FaucetBlockEntity) this.getLevel().getBlockEntity(this.getBlockPos().above()));
-        faucet.setCastingState(state, fluidID);
+        if (faucet != null) {
+            faucet.setCastingState(state, fluidID);
+        }
         update();
     }
 

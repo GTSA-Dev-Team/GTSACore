@@ -132,7 +132,7 @@ public class GTSACBlocks {
             .tag(BlockTags.MINEABLE_WITH_PICKAXE)
             .properties(p -> p.strength(5.0f, 6.0f).requiresCorrectToolForDrops().noOcclusion())
             .blockstate((ctx, prov) -> {
-                prov.simpleBlock(ctx.getEntry(), prov.models().getExistingFile(GTSubatomicCore.id("block/crucible_assembly")));
+                prov.horizontalBlock(ctx.getEntry(), prov.models().getExistingFile(GTSubatomicCore.id("block/crucible_assembly")));
             })
             .lang("Crucible Assembly")
             .item(BlockItem::new).build()
