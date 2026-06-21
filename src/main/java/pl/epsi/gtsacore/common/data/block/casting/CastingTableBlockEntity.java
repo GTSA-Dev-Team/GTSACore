@@ -1,12 +1,10 @@
 package pl.epsi.gtsacore.common.data.block.casting;
 
-import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
@@ -15,10 +13,7 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-import pl.epsi.gtsacore.GTSubatomicCore;
-import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
 import pl.epsi.gtsacore.common.data.GTSACVanillaRecipes;
-import pl.epsi.gtsacore.common.data.item.casting.AbstractCastItem;
 import pl.epsi.gtsacore.common.data.recipes.CastingRecipe;
 
 public class CastingTableBlockEntity extends BlockEntity {

@@ -1,0 +1,18 @@
+{
+  "type": "gtsac:crucible_assembly",
+  "result": {
+    "FluidName": "gtceu:bronze",
+    "Amount": 576
+  },
+  "inputs": [
+    {
+      "FluidName": "gtceu:copper",
+      "Amount": 432
+    },
+    {
+      "FluidName": "gtceu:tin",
+      "Amount": 144
+    }
+  ],
+  "duration": 20
+}

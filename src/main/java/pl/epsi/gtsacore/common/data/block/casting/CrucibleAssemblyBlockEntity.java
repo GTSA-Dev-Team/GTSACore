@@ -6,6 +6,7 @@ import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -13,19 +14,32 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import pl.epsi.gtsacore.common.data.GTSACVanillaRecipes;
+import pl.epsi.gtsacore.common.data.recipes.CastingRecipe;
+import pl.epsi.gtsacore.common.data.recipes.CrucibleAssemblyRecipe;
 
+import javax.swing.text.html.parser.Entity;
 import java.util.*;
 
 public class CrucibleAssemblyBlockEntity extends BlockEntity {
 
     private static final int CAPACITY = 1008;
+    private static final int RECIPE_CHECK_WAIT_TICKS = 20;
 
     private final Deque<FluidStack> fluids = new ArrayDeque<>();
 
     @Getter
     private ResourceLocation topFluidID;
     @Getter
+    private FluidStack topFluidStack;
+    @Getter
     private float percentFilled = 0;
+
+    private CrucibleAssemblyRecipe currentRecipe, lastRecipe;
+
+    private int progress;
+    private int recipeCheckTimer;
 
     public CrucibleAssemblyBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -99,14 +113,62 @@ public class CrucibleAssemblyBlockEntity extends BlockEntity {
         return amount - remaining;
     }
 
-    public void serverTick() {
+    public @Nullable CrucibleAssemblyRecipe findMatch() {
+        return level.getRecipeManager()
+                .getAllRecipesFor(GTSACVanillaRecipes.CRUCIBLE_ASSEMBLY.get())
+                .stream()
+                .filter(r -> r.matches(this))
+                .findFirst()
+                .orElse(null);
+    }
 
+    public void serverTick() {
+        if (currentRecipe == null) {
+            if (lastRecipe != null && lastRecipe.matches(this)) {
+                currentRecipe = lastRecipe;
+                lastRecipe = null;
+                progress = 0;
+            } else {
+                recipeCheckTimer++;
+
+                if (recipeCheckTimer >= RECIPE_CHECK_WAIT_TICKS) {
+                    recipeCheckTimer = 0;
+
+                    currentRecipe = findMatch();
+
+                    if (currentRecipe != null) {
+                        progress = 0;
+                    }
+                }
+            }
+        }
+
+        if (currentRecipe != null) {
+            progress++;
+
+            if (progress >= currentRecipe.getDuration()) {
+                for (FluidStack input : currentRecipe.getInputs()) {
+                    removeFluid(input.getFluid(), input.getAmount());
+                }
+                addFluid(currentRecipe.getCraftingResult());
+
+                lastRecipe = currentRecipe;
+                currentRecipe = null;
+
+                progress = 0;
+            }
+        }
     }
 
     public void update() {
-        this.topFluidID = BuiltInRegistries.FLUID.getKey(fluids.peek().getFluid());;
+        if (!fluids.isEmpty()) {
+            this.topFluidID = BuiltInRegistries.FLUID.getKey(fluids.peek().getFluid());
+        } else {
+            this.topFluidID = null;
+        }
         this.percentFilled = (float) getTotalAmount() / CAPACITY;
         this.setChanged();
+        this.topFluidStack = fluids.peek();
         level.sendBlockUpdated(
                 worldPosition,
                 getBlockState(),
@@ -120,7 +182,9 @@ public class CrucibleAssemblyBlockEntity extends BlockEntity {
         super.saveAdditional(tag);
 
         tag.putFloat("percentFilled", percentFilled);
-        tag.putString("topFluidID", topFluidID.toString());
+        if (topFluidID != null) {
+            tag.putString("topFluidID", topFluidID.toString());
+        }
     }
 
     @Override

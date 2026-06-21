@@ -1,5 +1,6 @@
 package pl.epsi.gtsacore.util;
 
+import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialStack;
@@ -57,13 +58,11 @@ public class SACUtils {
     }
 
     public static @Nullable FluidStack getFluidForItem(ItemStack item) {
-        var info = ChemicalHelper.getMaterialInfo(item);
-        if (info == null) return null;
-
-        MaterialStack materialStack = info.getMaterial();
+        MaterialStack materialStack = ChemicalHelper.getMaterialStack(item);
+        if (materialStack.isEmpty()) return null;
 
         Material material = materialStack.material();
-        long amount = materialStack.amount();
+        long amount = (int) (144 * materialStack.amount() / GTValues.M);
 
         return material.getFluid((int) amount);
     }
