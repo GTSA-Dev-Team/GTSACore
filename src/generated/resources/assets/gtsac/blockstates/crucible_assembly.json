@@ -1,0 +1,19 @@
+{
+  "variants": {
+    "facing=east": {
+      "model": "gtsac:block/crucible_assembly",
+      "y": 90
+    },
+    "facing=north": {
+      "model": "gtsac:block/crucible_assembly"
+    },
+    "facing=south": {
+      "model": "gtsac:block/crucible_assembly",
+      "y": 180
+    },
+    "facing=west": {
+      "model": "gtsac:block/crucible_assembly",
+      "y": 270
+    }
+  }
+}

@@ -24,6 +24,7 @@ public class GTSACRecipes {
                 .outputItems(new ItemStack[]{ new ItemStack(Items.STICK) })
                 .EUt(8)
                 .duration(20 * 60).save(provider);
+
     }
 
 }

@@ -7,6 +7,7 @@ import net.minecraft.client.renderer.ItemBlockRenderTypes;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.blockentity.BlockEntityRenderer;
 import net.minecraft.client.renderer.texture.TextureAtlasSprite;
+import net.minecraft.core.Direction;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.client.RenderTypeHelper;
 import net.minecraftforge.client.extensions.common.IClientFluidTypeExtensions;
@@ -17,7 +18,7 @@ public class FaucetBlockEntityRenderer implements BlockEntityRenderer<FaucetBloc
 
     @Override
     public void render(FaucetBlockEntity faucetBlockEntity, float v, PoseStack poseStack, MultiBufferSource buffer, int packedLight, int overlay) {
-        if (faucetBlockEntity.getFluidID() != null) {
+        if (faucetBlockEntity.getFluidID() != null && faucetBlockEntity.getCastingState() == CastingState.FILLING) {
             Fluid fluid = ForgeRegistries.FLUIDS.getValue(faucetBlockEntity.getFluidID());
             var fluidRenderType = ItemBlockRenderTypes.getRenderLayer(fluid.defaultFluidState());
             var consumer = buffer.getBuffer(RenderTypeHelper.getEntityRenderType(fluidRenderType, false));
@@ -36,9 +37,12 @@ public class FaucetBlockEntityRenderer implements BlockEntityRenderer<FaucetBloc
             int color = fluidClientInfo.getTintColor();
 
             poseStack.pushPose();
-            poseStack.mulPoseMatrix(new Matrix4f()
-                    .translate(0.5f, 0.4150f, 0.5f)
-                    .rotateY(((float) Math.toRadians(faucetBlockEntity.getBlockState().getValue(FaucetBlock.FACING).ordinal() - 2) * 90)));
+            poseStack.translate(0.5f, 0.415f, 0.5f);
+            Direction d = faucetBlockEntity.getBlockState().getValue(FaucetBlock.FACING);
+            float angle = d.toYRot();
+            if (d == Direction.SOUTH || d == Direction.NORTH) angle += 180;
+            poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(angle));
+
             var mat = poseStack.last().pose();
             consumer.vertex(mat, -0.125f, 0, -0.5f).color(color)
                     .uv(minU, minV).overlayCoords(overlay).uv2(packedLight).normal(0, 1, 0).endVertex();
@@ -48,29 +52,13 @@ public class FaucetBlockEntityRenderer implements BlockEntityRenderer<FaucetBloc
                     .uv(maxU, maxV).overlayCoords(overlay).uv2(packedLight).normal(0, 1, 0).endVertex();
             consumer.vertex(mat, 0.125f, 0, -0.5f).color(color)
                     .uv(maxU, minV).overlayCoords(overlay).uv2(packedLight).normal(0, 1, 0).endVertex();
-
-            minU = u0 + du * (-0.125f + 0.5f);
-            maxU = u0 + du * (0.125f + 0.5f);
-
-            minV = v0 + dv * (-0.1025f + 0.5f);
-            maxV = v0 + dv * 0;
-
-            consumer.vertex(mat, -0.125f, 0, -0.0625f).color(color)
-                    .uv(minU, minV).overlayCoords(overlay).uv2(packedLight).normal(0, 1, 0).endVertex();
-            consumer.vertex(mat, -0.125f, -0.1025f, -0.0625f).color(color)
-                    .uv(minU, maxV).overlayCoords(overlay).uv2(packedLight).normal(0, 1, 0).endVertex();
-            consumer.vertex(mat, 0.125f, -0.1025f, -0.0625f).color(color)
-                    .uv(maxU, maxV).overlayCoords(overlay).uv2(packedLight).normal(0, 1, 0).endVertex();
-            consumer.vertex(mat, 0.125f, 0, -0.0625f).color(color)
-                    .uv(maxU, minV).overlayCoords(overlay).uv2(packedLight).normal(0, 1, 0).endVertex();
             poseStack.popPose();
 
             poseStack.pushPose();
-            poseStack.mulPoseMatrix(new Matrix4f()
-                    .translate(0.5f, 0.0f, 0.5f)
-                    .rotateY(((float) Math.toRadians(faucetBlockEntity.getBlockState().getValue(FaucetBlock.FACING).ordinal() - 2) * 90)));
+            poseStack.translate(0.5f, 0.0f, 0.5f);
+            poseStack.mulPose(com.mojang.math.Axis.YP.rotationDegrees(angle));
             mat = poseStack.last().pose();
-            renderPrism(consumer, mat, sprite, color, overlay, packedLight, 0.125f, 0.415f, 0.125f);
+            renderPrism(consumer, mat, sprite, color, overlay, packedLight, 0.25f, 0.415f, 0.125f);
             poseStack.popPose();
         }
     }

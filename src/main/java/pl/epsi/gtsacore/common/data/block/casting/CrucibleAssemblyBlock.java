@@ -1,31 +1,21 @@
 package pl.epsi.gtsacore.common.data.block.casting;
 
-import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
-import net.minecraft.world.level.Level;
-import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
-import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
 import net.minecraft.world.level.block.state.properties.DirectionProperty;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
-import pl.epsi.gtsacore.common.data.GTSACBlocks;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -33,13 +23,24 @@ import java.util.stream.Stream;
 
 import static pl.epsi.gtsacore.util.SACUtils.rotateShape;
 
-public class FaucetBlock extends BaseEntityBlock {
+public class CrucibleAssemblyBlock extends Block {
 
     private static final VoxelShape NORTH_SHAPE = Stream.of(
-            Block.box(5, 4, 0, 11, 5, 7),
-            Block.box(5, 5, 0, 6, 7, 7),
-            Block.box(10, 5, 0, 11, 7, 7)
-    ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
+            Block.box(2, -2, 2, 14, 4, 3),
+            Block.box(2, -2, 3, 3, 8, 13),
+            Block.box(3, -2, 3, 13, 0, 13),
+            Block.box(2, -2, 13, 13, 8, 14),
+            Block.box(13, -2, 3, 14, 8, 14),
+            Block.box(2, 4, 2, 5, 8, 3),
+            Block.box(5, 4, 0, 6, 7, 3),
+            Block.box(6, 4, 0, 10, 5, 3),
+            Block.box(10, 4, 0, 11, 7, 3),
+            Block.box(11, 4, 2, 14, 8, 3),
+            Shapes.join(Block.box(23, -15, 7, 25, 14, 9), Block.box(21, -16, 5, 27, -15, 11), BooleanOp.OR),
+            Shapes.join(Block.box(-9, -15, 7, -7, 14, 9), Block.box(-11, -16, 5, -5, -15, 11), BooleanOp.OR),
+            Block.box(-7, 12, 7, 23, 14, 9),
+            Shapes.join(Shapes.join(Block.box(1, 2, 7, 2, 11, 9), Block.box(1, 11, 6, 2, 15, 10), BooleanOp.OR), Shapes.join(Block.box(14, 2, 7, 15, 11, 9), Block.box(14, 11, 6, 15, 15, 10), BooleanOp.OR), BooleanOp.OR)
+        ).reduce((v1, v2) -> Shapes.join(v1, v2, BooleanOp.OR)).get();
 
     private static final Map<Direction, VoxelShape> SHAPES =
             Util.make(new EnumMap<>(Direction.class), map -> {
@@ -59,7 +60,7 @@ public class FaucetBlock extends BaseEntityBlock {
 
     public static final DirectionProperty FACING = BlockStateProperties.HORIZONTAL_FACING;
 
-    public FaucetBlock(Properties properties) {
+    public CrucibleAssemblyBlock(Properties properties) {
         super(properties);
         this.registerDefaultState(this.getStateDefinition().any().setValue(FACING, Direction.NORTH));
     }
@@ -73,7 +74,7 @@ public class FaucetBlock extends BaseEntityBlock {
     @Override
     public @Nullable BlockState getStateForPlacement(BlockPlaceContext context) {
         return this.defaultBlockState()
-                .setValue(FACING, context.getHorizontalDirection());
+                .setValue(FACING, context.getHorizontalDirection().getOpposite());
     }
 
     @Override
@@ -96,23 +97,4 @@ public class FaucetBlock extends BaseEntityBlock {
         return RenderShape.MODEL;
     }
 
-    @Override
-    public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
-        return GTSACBlocks.FAUCET_BE.get().create(blockPos, blockState);
-    }
-
-    @Override
-    public InteractionResult use(BlockState state, Level level, BlockPos pos, Player player, InteractionHand hand, BlockHitResult hit) {
-        if (!level.isClientSide) {
-            BlockPos hatchPos = pos.relative(state.getValue(FACING), 1);
-            BlockPos castingTablePos = pos.below();
-
-            if (level.getBlockEntity(hatchPos) instanceof IMachineBlockEntity mbe &&
-                    mbe.getMetaMachine() instanceof FluidHatchPartMachine fluidHatch &&
-                    level.getBlockEntity(castingTablePos) instanceof CastingTableBlockEntity castingTable) {
-                castingTable.startRecipe(fluidHatch.tank.getFluidInTank(0));
-            }
-        }
-        return InteractionResult.sidedSuccess(level.isClientSide);
-    }
 }

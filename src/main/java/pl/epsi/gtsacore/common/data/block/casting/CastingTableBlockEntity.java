@@ -15,7 +15,11 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
+import pl.epsi.gtsacore.GTSubatomicCore;
+import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
+import pl.epsi.gtsacore.common.data.GTSACVanillaRecipes;
 import pl.epsi.gtsacore.common.data.item.casting.AbstractCastItem;
+import pl.epsi.gtsacore.common.data.recipes.CastingRecipe;
 
 public class CastingTableBlockEntity extends BlockEntity {
 
@@ -27,6 +31,14 @@ public class CastingTableBlockEntity extends BlockEntity {
     private ResourceLocation fluidID = null;
     @Getter
     private CastingState castingState = CastingState.IDLE;
+    @Getter
+    private long recipeStartTime;
+    @Getter
+    private int fillingTime, solidifyingTime;
+
+    private CastingRecipe currentRecipe = null;
+    @Getter
+    private int progress = 0;
 
     public CastingTableBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -57,24 +69,65 @@ public class CastingTableBlockEntity extends BlockEntity {
         );
     }
 
-    public void startRecipe(FluidHatchPartMachine fluidHatch) {
-        if (!this.returnItem.isEmpty() || this.moldItem.isEmpty()) return;
-        FluidStack fluid = fluidHatch.tank.getFluidInTank(0);
+    @SuppressWarnings("all")
+    public void startRecipe(FluidStack fluidStack) {
+        if (!this.returnItem.isEmpty() || this.moldItem.isEmpty() || this.castingState != CastingState.IDLE) return;
+        FluidStack fluid = fluidStack;//fluidHatch.tank.getFluidInTank(0);
+
+        CastingRecipe recipe = level.getRecipeManager()
+                .getAllRecipesFor(GTSACVanillaRecipes.CASTING.get())
+                .stream()
+                .filter(r -> r.matches(fluid, this.moldItem))
+                .findFirst()
+                .orElse(null);
+
+        if (recipe == null) return;
+
+        this.currentRecipe = recipe;
+        this.progress = 0;
+        fluidStack.shrink(recipe.getFluidStack().getAmount());
+
         ResourceLocation fluidID = ForgeRegistries.FLUIDS.getKey(fluid.getFluid());
-
-        this.castingState = CastingState.FILLING;
-        FaucetBlockEntity faucet = ((FaucetBlockEntity) this.getLevel().getBlockEntity(this.getBlockPos().above()));
-        faucet.setCastingState(CastingState.FILLING, fluidID);
-
-        this.setFluid(fluidID);
         if (fluidID == null) return;
 
-        ResourceLocation itemName = ResourceLocation.fromNamespaceAndPath(fluidID.getNamespace(),
-                fluidID.getPath() + "_" + ((AbstractCastItem) moldItem.getItem()).getItemSuffix());
-        Item item = ForgeRegistries.ITEMS.getValue(itemName);
-        if (item == null) return;
+        this.setFluid(fluidID);
+        this.recipeStartTime = level.getGameTime();
+        this.fillingTime = recipe.getPourTicks();
+        this.solidifyingTime = recipe.getSolidifyTicks();
+        updateState(CastingState.FILLING);
+        update();
+    }
 
-        setReturnItem(new ItemStack(item));
+    public void updateState(CastingState state) {
+        this.castingState = state;
+        FaucetBlockEntity faucet = ((FaucetBlockEntity) this.getLevel().getBlockEntity(this.getBlockPos().above()));
+        if (faucet != null) {
+            faucet.setCastingState(state, fluidID);
+        }
+        update();
+    }
+
+    public void serverTick() {
+        if (currentRecipe == null) return;
+        progress++;
+        update();
+
+        if (progress > currentRecipe.getPourTicks() && castingState == CastingState.FILLING) {
+            updateState(CastingState.SOLIDIFYING);
+            progress = 0;
+        }
+
+        if (progress > currentRecipe.getSolidifyTicks() && castingState == CastingState.SOLIDIFYING) {
+            updateState(CastingState.FINISHED);
+            this.setReturnItem(currentRecipe.getResult());
+            currentRecipe = null;
+        }
+    }
+
+    public void takeOutReturnItem() {
+        this.returnItem = ItemStack.EMPTY;
+        this.setFluid(null);
+        updateState(CastingState.IDLE);
     }
 
     @Override
@@ -85,7 +138,7 @@ public class CastingTableBlockEntity extends BlockEntity {
             tag.put("moldItem", moldItem.save(new CompoundTag()));
         }
 
-        if (!returnItem.isEmpty()) {
+        if (returnItem != null && !returnItem.isEmpty()) {
             tag.put("returnItem", returnItem.save(new CompoundTag()));
         }
 
@@ -94,6 +147,9 @@ public class CastingTableBlockEntity extends BlockEntity {
         }
 
         tag.putInt("castingState", castingState.ordinal());
+        tag.putInt("progress", progress);
+        tag.putInt("fillingTicks", fillingTime);
+        tag.putInt("solidifyingTick", solidifyingTime);
     }
 
     @Override
@@ -118,11 +174,25 @@ public class CastingTableBlockEntity extends BlockEntity {
         if (tag.contains("castingState")) {
             castingState = CastingState.values()[tag.getInt("castingState")];
         }
+
+        if (tag.contains("progress")) {
+            progress = tag.getInt("progress");
+        }
+
+        if (tag.contains("fillingTicks")) {
+            fillingTime = tag.getInt("fillingTicks");
+        }
+
+        if (tag.contains("solidifyingTick")) {
+            solidifyingTime = tag.getInt("solidifyingTick");
+        }
     }
 
     @Override
     public @NotNull CompoundTag getUpdateTag() {
-        return saveWithoutMetadata();
+        CompoundTag tag = super.getUpdateTag();
+        saveAdditional(tag);
+        return tag;
     }
 
     @Override

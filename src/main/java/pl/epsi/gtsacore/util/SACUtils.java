@@ -1,6 +1,8 @@
 package pl.epsi.gtsacore.util;
 
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.phys.shapes.Shapes;
+import net.minecraft.world.phys.shapes.VoxelShape;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -27,6 +29,19 @@ public class SACUtils {
         br.close();
         in.close();
         return sBuffer.toString();
+    }
+
+    public static VoxelShape rotateShape(VoxelShape shape) {
+        VoxelShape[] buffer = new VoxelShape[] {
+                shape,
+                Shapes.empty()
+        };
+
+        buffer[0].forAllBoxes((minX, minY, minZ, maxX, maxY, maxZ) -> {
+            buffer[1] = Shapes.or(buffer[1], Shapes.box(1 - maxZ, minY, minX, 1 - minZ, maxY, maxX));
+        });
+
+        return buffer[1];
     }
 
 }

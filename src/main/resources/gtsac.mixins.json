@@ -6,7 +6,9 @@
   "mixins": [
     "DummyMixin"
   ],
-  "client": [],
+  "client": [
+    "MixinBlockEntityRenderDispatcher"
+  ],
   "injectors": {
     "defaultRequire": 1
   }

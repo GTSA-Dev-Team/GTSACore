@@ -10,6 +10,7 @@ import com.gregtechceu.gtceu.common.data.GTCreativeModeTabs;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
+import net.minecraftforge.client.event.RenderLevelStageEvent;
 import net.minecraftforge.common.MinecraftForge;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
@@ -18,9 +19,12 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import org.lwjgl.opengl.GL45;
 import pl.epsi.gtsacore.common.data.GTSACBlocks;
 import pl.epsi.gtsacore.common.data.GTSACMachines;
+import pl.epsi.gtsacore.common.data.GTSACVanillaRecipes;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
+import pl.epsi.gtsacore.common.data.block.casting.CastingTableBlockEntityRenderer;
 import pl.epsi.gtsacore.common.data.item.GTSACItems;
 import pl.epsi.gtsacore.common.data.materials.GTSACMaterialFlags;
 import pl.epsi.gtsacore.common.data.materials.GTSACMaterials;
@@ -57,6 +61,7 @@ public class GTSubatomicCore {
         modEventBus.addListener(this::modifyMaterials);
 
         GTSAC_REGISTRATE.registerRegistrate();
+        GTSACVanillaRecipes.init(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
     }

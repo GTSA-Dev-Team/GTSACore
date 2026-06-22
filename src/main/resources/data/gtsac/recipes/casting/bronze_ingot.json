@@ -1,0 +1,12 @@
+{
+  "type": "gtsac:casting",
+  "fluid": "gtceu:bronze",
+  "amount": 144,
+  "result": {
+    "item": "gtceu:bronze_ingot",
+    "count": 1
+  },
+  "mold": "gtsac:ceramic_ingot_mold",
+  "pour_ticks": 40,
+  "solidify_ticks": 80
+}

@@ -1,6 +1,9 @@
 package pl.epsi.gtsacore.common.data.block.casting;
 
 import net.minecraft.core.BlockPos;
+import net.minecraft.sounds.SoundEvent;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
@@ -13,6 +16,8 @@ import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.phys.BlockHitResult;
 import net.minecraft.world.phys.shapes.BooleanOp;
@@ -69,6 +74,11 @@ public class CastingTableBlock extends BaseEntityBlock {
         return RenderShape.MODEL;
     }
 
+    @Override
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+        return level.isClientSide ? null : (lvl, pos, st, be) -> ((CastingTableBlockEntity) be).serverTick();
+    }
+
     public void tryGiveBack(Player player, CastingTableBlockEntity be) {
         if (be.getMoldItem().is(Items.AIR)) return;
         player.addItem(be.getMoldItem());
@@ -80,15 +90,32 @@ public class CastingTableBlock extends BaseEntityBlock {
         if (!level.isClientSide) {
             if (level.getBlockEntity(pos) instanceof CastingTableBlockEntity be) {
                 ItemStack holding = player.getItemInHand(hand);
+                if (be.getReturnItem() != null && !be.getReturnItem().isEmpty()) {
+                    player.addItem(be.getReturnItem());
+                    be.takeOutReturnItem();
+                    int used = AbstractCastItem.onUsed(level.random, be.getMoldItem());
+                    level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1f, 0.7f);
+                    if (used == 1) {
+                        be.setMoldItem(ItemStack.EMPTY);
+                        level.playSound(null, pos, SoundEvents.ANVIL_DESTROY, SoundSource.BLOCKS, 1f, 1f);
+                    } else if (used == 2) {
+                        level.playSound(null, pos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 1f, 1f);
+                    }
+                    return InteractionResult.SUCCESS;
+                }
 
-                if (holding.getItem() instanceof AbstractCastItem cast) {
+                if (be.getCastingState() != CastingState.IDLE) return InteractionResult.SUCCESS;
+
+                if (holding.getItem() instanceof AbstractCastItem) {
+                    level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1f, 1.25f);
                     tryGiveBack(player, be);
-                    be.setMoldItem(new ItemStack(cast));
+                    be.setMoldItem(holding.copyWithCount(1));
                     holding.shrink(1);
                     return InteractionResult.sidedSuccess(false);
                 }
 
                 if (holding.is(Items.AIR)) {
+                    level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1f, 1.1f);
                     tryGiveBack(player, be);
                 }
             }
@@ -103,13 +130,21 @@ public class CastingTableBlock extends BaseEntityBlock {
             BlockEntity be = level.getBlockEntity(pos);
 
             if (be instanceof CastingTableBlockEntity table) {
+                if (level.getBlockEntity(pos.above()) instanceof FaucetBlockEntity fe) {
+                    fe.setCastingState(CastingState.IDLE, null);
+                }
 
                 ItemStack item = table.getMoldItem();
 
                 if (!item.isEmpty()) {
                     Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), item);
                 }
+                ItemStack result = table.getReturnItem();
+                if (!result.isEmpty()) {
+                    Containers.dropItemStack(level, pos.getX(), pos.getY(), pos.getZ(), result);
+                }
                 table.setMoldItem(ItemStack.EMPTY);
+                table.setReturnItem(ItemStack.EMPTY);
             }
 
             super.onRemove(state, level, pos, newState, movedByPiston);
