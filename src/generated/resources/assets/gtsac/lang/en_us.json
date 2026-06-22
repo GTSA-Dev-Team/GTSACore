@@ -27,5 +27,8 @@
   "item.gtsac.molded_ceramic_clay": "Molded Ceramic Clay",
   "item.gtsac.primitive_brick": "Primitive Brick",
   "item.gtsac.zeta_fluxon": "Zeta Fluxon",
-  "itemGroup.gtsac.creative_tab": "GregTech: Subatomic Age - Core"
+  "itemGroup.gtsac.creative_tab": "GregTech: Subatomic Age - Core",
+  "material.gtsac.clavium": "Clavium",
+  "material.gtsac.malzzium": "Malzzium",
+  "tagprefix.large_spool": "Large %s Spool"
 }

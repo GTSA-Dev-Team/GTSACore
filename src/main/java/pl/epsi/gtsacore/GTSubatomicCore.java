@@ -26,8 +26,10 @@ import pl.epsi.gtsacore.common.data.GTSACVanillaRecipes;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
 import pl.epsi.gtsacore.common.data.block.casting.CastingTableBlockEntityRenderer;
 import pl.epsi.gtsacore.common.data.item.GTSACItems;
+import pl.epsi.gtsacore.common.data.materials.GTSACMaterialFlags;
 import pl.epsi.gtsacore.common.data.materials.GTSACMaterials;
 import pl.epsi.gtsacore.common.data.materials.GTSACPeriodicTableMaterials;
+import pl.epsi.gtsacore.datagen.GTSACDatagen;
 
 @Mod(GTSubatomicCore.MOD_ID)
 @SuppressWarnings("removal")
@@ -82,6 +84,8 @@ public class GTSubatomicCore {
     public static void init() {
         GTSACBlocks.init();
         GTSACItems.init();
+        GTSACMaterialFlags.init();
+        GTSACDatagen.init();
     }
 
     private void registerRecipeTypes(GTCEuAPI.RegisterEvent<ResourceLocation, GTRecipeType> event) {
@@ -94,6 +98,7 @@ public class GTSubatomicCore {
 
     private void registerMaterials(MaterialEvent event) {
         GTSACPeriodicTableMaterials.register();
+        GTSACMaterials.register();
     }
 
     private void modifyMaterials(PostMaterialEvent event) {
