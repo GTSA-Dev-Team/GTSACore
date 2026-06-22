@@ -67,7 +67,7 @@ public class CastingTableBlockEntity extends BlockEntity {
     @SuppressWarnings("all")
     public void startRecipe(FluidStack fluidStack) {
         if (!this.returnItem.isEmpty() || this.moldItem.isEmpty() || this.castingState != CastingState.IDLE) return;
-        FluidStack fluid = fluidStack;//fluidHatch.tank.getFluidInTank(0);
+        FluidStack fluid = fluidStack;
 
         CastingRecipe recipe = level.getRecipeManager()
                 .getAllRecipesFor(GTSACVanillaRecipes.CASTING.get())
@@ -80,10 +80,11 @@ public class CastingTableBlockEntity extends BlockEntity {
 
         this.currentRecipe = recipe;
         this.progress = 0;
-        fluidStack.shrink(recipe.getFluidStack().getAmount());
 
         ResourceLocation fluidID = ForgeRegistries.FLUIDS.getKey(fluid.getFluid());
         if (fluidID == null) return;
+
+        fluidStack.shrink(recipe.getFluidStack().getAmount());
 
         this.setFluid(fluidID);
         this.recipeStartTime = level.getGameTime();

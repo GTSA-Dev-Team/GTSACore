@@ -24,6 +24,8 @@ import java.io.InputStreamReader;
 
 public class SACUtils {
 
+    public static final ResourceLocation EMPTY_IDENTIFIER = ResourceLocation.fromNamespaceAndPath("minecraft", "empty");
+
     public static InputStream asInputStream(ResourceLocation rl) {
         return SACUtils.class.getResourceAsStream("/assets/" + rl.getNamespace() + "/" + rl.getPath());
     }

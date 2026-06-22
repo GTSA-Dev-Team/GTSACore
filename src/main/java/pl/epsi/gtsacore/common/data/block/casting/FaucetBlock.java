@@ -117,7 +117,6 @@ public class FaucetBlock extends BaseEntityBlock {
                 FluidStack stack = crucible.getTopFluidStack();
                 if (stack != null) {
                     castingTable.startRecipe(stack);
-                    crucible.update();
                 }
             }
         }
