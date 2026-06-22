@@ -36,7 +36,6 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import pl.epsi.gtsacore.GTSubatomicCore;
-import pl.epsi.gtsacore.common.block.GTSACBlocks;
 import pl.epsi.gtsacore.common.machine.multiblock.*;
 import pl.epsi.gtsacore.common.machine.multiblock.ClarifierMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.LargePrimitiveSmelterMachine;

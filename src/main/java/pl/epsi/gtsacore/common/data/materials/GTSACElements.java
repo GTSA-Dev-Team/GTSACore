@@ -6,9 +6,11 @@ import com.gregtechceu.gtceu.api.registry.GTRegistries;
 public class GTSACElements {
 
     public static Element MALZZIUM;
+    public static Element CLAVIUM;
 
     public static void init() {
         MALZZIUM = create("malzzium", 122, 167, "Mz");
+        CLAVIUM = create("clavium", 133, 178, "§7Kl");
     }
 
     private static Element create(String name, long protons, long neutrons, String symbol) {
