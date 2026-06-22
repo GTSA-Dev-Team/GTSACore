@@ -27,6 +27,11 @@ public class FaucetBlockEntity extends BlockEntity {
         this.castingState = cs;
         this.fluidID = fluidID;
         this.update();
+        if (cs != CastingState.FILLING) {
+            if (getLevel().getBlockEntity(getBlockPos().relative(getBlockState().getValue(FaucetBlock.FACING))) instanceof CrucibleAssemblyBlockEntity crucible) {
+                crucible.update();
+            }
+        }
     }
 
     public void update() {

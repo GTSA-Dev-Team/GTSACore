@@ -3,10 +3,18 @@ package pl.epsi.gtsacore.common.data.block.casting;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
+import net.minecraft.world.entity.Entity;
+import net.minecraft.world.entity.item.ItemEntity;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.context.BlockPlaceContext;
 import net.minecraft.world.level.BlockGetter;
+import net.minecraft.world.level.Level;
+import net.minecraft.world.level.block.BaseEntityBlock;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.RenderShape;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import net.minecraft.world.level.block.entity.BlockEntityTicker;
+import net.minecraft.world.level.block.entity.BlockEntityType;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -15,7 +23,10 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
+import pl.epsi.gtsacore.common.data.GTSACBlocks;
+import pl.epsi.gtsacore.util.SACUtils;
 
 import java.util.EnumMap;
 import java.util.Map;
@@ -23,7 +34,7 @@ import java.util.stream.Stream;
 
 import static pl.epsi.gtsacore.util.SACUtils.rotateShape;
 
-public class CrucibleAssemblyBlock extends Block {
+public class CrucibleAssemblyBlock extends BaseEntityBlock {
 
     private static final VoxelShape NORTH_SHAPE = Stream.of(
             Block.box(2, -2, 2, 14, 4, 3),
@@ -97,4 +108,42 @@ public class CrucibleAssemblyBlock extends Block {
         return RenderShape.MODEL;
     }
 
+    @Override
+    public @Nullable BlockEntity newBlockEntity(BlockPos blockPos, BlockState blockState) {
+        return GTSACBlocks.CRUCIBLE_ASSEMBLY_BE.get().create(blockPos, blockState);
+    }
+
+    @Override
+    public @Nullable <T extends BlockEntity> BlockEntityTicker<T> getTicker(Level level, BlockState state, BlockEntityType<T> blockEntityType) {
+        return level.isClientSide ? null : (lvl, pos, st, be) -> ((CrucibleAssemblyBlockEntity) be).serverTick();
+    }
+
+    @Override
+    public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
+        if (level.isClientSide()) return;
+        if (!(entity instanceof ItemEntity item)) return;
+        if (!(level.getBlockEntity(pos) instanceof CrucibleAssemblyBlockEntity be)) return;
+
+        FluidStack fluid = SACUtils.getFluidForItem(item.getItem());
+
+        if (fluid == null) return;
+
+        ItemStack stack = item.getItem();
+
+        int inserted = 0;
+
+        for (int i = 0; i < stack.getCount(); i++) {
+            if (!be.addFluid(fluid.copy())) {
+                break;
+            }
+
+            inserted++;
+        }
+
+        stack.shrink(inserted);
+
+        if (stack.isEmpty()) {
+            item.discard();
+        }
+    }
 }

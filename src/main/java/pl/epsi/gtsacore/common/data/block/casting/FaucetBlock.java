@@ -24,6 +24,7 @@ import net.minecraft.world.phys.shapes.BooleanOp;
 import net.minecraft.world.phys.shapes.CollisionContext;
 import net.minecraft.world.phys.shapes.Shapes;
 import net.minecraft.world.phys.shapes.VoxelShape;
+import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.Nullable;
 import pl.epsi.gtsacore.common.data.GTSACBlocks;
 
@@ -111,6 +112,12 @@ public class FaucetBlock extends BaseEntityBlock {
                     mbe.getMetaMachine() instanceof FluidHatchPartMachine fluidHatch &&
                     level.getBlockEntity(castingTablePos) instanceof CastingTableBlockEntity castingTable) {
                 castingTable.startRecipe(fluidHatch.tank.getFluidInTank(0));
+            } else if (level.getBlockEntity(hatchPos) instanceof CrucibleAssemblyBlockEntity crucible &&
+                    level.getBlockEntity(castingTablePos) instanceof CastingTableBlockEntity castingTable) {
+                FluidStack stack = crucible.getTopFluidStack();
+                if (stack != null) {
+                    castingTable.startRecipe(stack);
+                }
             }
         }
         return InteractionResult.sidedSuccess(level.isClientSide);

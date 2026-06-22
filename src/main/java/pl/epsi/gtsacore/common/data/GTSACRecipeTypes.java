@@ -8,6 +8,7 @@ import com.gregtechceu.gtceu.common.data.GTSoundEntries;
 
 import com.lowdragmc.lowdraglib.gui.texture.ProgressTexture;
 import mezz.jei.api.constants.RecipeTypes;
+import net.minecraft.world.item.ItemStack;
 
 public class GTSACRecipeTypes {
 
@@ -30,7 +31,17 @@ public class GTSACRecipeTypes {
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
             .setSound(GTSoundEntries.FURNACE);
 
+    public static final GTRecipeType CRUCIBLE_ASSEMBLY_RECIPES = GTRecipeTypes
+            .register("crucible_assembly", "dummy")
+            .setMaxIOSize(0, 0, 4, 1)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
+            .setIconSupplier(() -> new ItemStack(GTSACBlocks.CRUCIBLE_ASSEMBLY.get()));
 
+    public static final GTRecipeType CASTING_RECIPES = GTRecipeTypes
+            .register("casting", "dummy")
+            .setMaxIOSize(1, 1, 1, 0)
+            .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
+            .setIconSupplier(() -> new ItemStack(GTSACBlocks.CASTING_TABLE.get()));
 
     public static void init() {}
 }
