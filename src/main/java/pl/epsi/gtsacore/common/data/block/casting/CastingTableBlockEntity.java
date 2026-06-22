@@ -1,11 +1,18 @@
 package pl.epsi.gtsacore.common.data.block.casting;
 
+import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
+import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
+import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
+import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.content.Content;
+import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
@@ -13,8 +20,10 @@ import net.minecraft.world.level.block.state.BlockState;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
-import pl.epsi.gtsacore.common.data.GTSACVanillaRecipes;
-import pl.epsi.gtsacore.common.data.recipes.CastingRecipe;
+import org.jetbrains.annotations.Nullable;
+import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
+
+import java.util.*;
 
 public class CastingTableBlockEntity extends BlockEntity {
 
@@ -31,7 +40,7 @@ public class CastingTableBlockEntity extends BlockEntity {
     @Getter
     private int fillingTime, solidifyingTime;
 
-    private CastingRecipe currentRecipe = null;
+    private GTRecipe currentRecipe = null;
     @Getter
     private int progress = 0;
 
@@ -64,32 +73,55 @@ public class CastingTableBlockEntity extends BlockEntity {
         );
     }
 
+    public @Nullable GTRecipe findMatch(FluidStack fluid) {
+        if (moldItem.isEmpty() || fluid.isEmpty()) return null;
+
+        Map<RecipeCapability<?>, List<Object>> map = new HashMap<>();
+        map.put(ItemRecipeCapability.CAP, List.of(moldItem));
+        map.put(FluidRecipeCapability.CAP, List.of(fluid));
+
+        return GTSACRecipeTypes.CASTING_RECIPES.db().find(map, recipe -> {
+            for (Content content : recipe.getInputContents(FluidRecipeCapability.CAP)) {
+                FluidIngredient required = FluidRecipeCapability.CAP.of(content.getContent());
+                FluidStack[] stacks = required.getStacks();
+                if (stacks.length == 0) continue;
+                if (fluid.getAmount() < required.getAmount()) return false;
+            }
+
+            for (Content content : recipe.getInputContents(ItemRecipeCapability.CAP)) {
+                Ingredient required = ItemRecipeCapability.CAP.of(content.getContent());
+                ItemStack[] stacks = required.getItems();
+                if (stacks.length == 0) continue;
+                if (Arrays.stream(stacks).anyMatch((s) -> !s.is(moldItem.getItem()))) return false;
+            }
+            return true;
+        });
+    }
+
     @SuppressWarnings("all")
     public void startRecipe(FluidStack fluidStack) {
         if (!this.returnItem.isEmpty() || this.moldItem.isEmpty() || this.castingState != CastingState.IDLE) return;
         FluidStack fluid = fluidStack;
 
-        CastingRecipe recipe = level.getRecipeManager()
-                .getAllRecipesFor(GTSACVanillaRecipes.CASTING.get())
-                .stream()
-                .filter(r -> r.matches(fluid, this.moldItem))
-                .findFirst()
-                .orElse(null);
-
-        if (recipe == null) return;
-
-        this.currentRecipe = recipe;
+        this.currentRecipe = findMatch(fluidStack);
+        if (this.currentRecipe == null) return;
         this.progress = 0;
 
         ResourceLocation fluidID = ForgeRegistries.FLUIDS.getKey(fluid.getFluid());
         if (fluidID == null) return;
 
-        fluidStack.shrink(recipe.getFluidStack().getAmount());
+        for (Content content : currentRecipe.getInputContents(FluidRecipeCapability.CAP)) {
+            FluidIngredient required = FluidRecipeCapability.CAP.of(content.getContent());
+            FluidStack[] stacks = required.getStacks();
+            if (stacks.length > 0) {
+                fluidStack.shrink(stacks[0].getAmount());
+            }
+        }
 
         this.setFluid(fluidID);
         this.recipeStartTime = level.getGameTime();
-        this.fillingTime = recipe.getPourTicks();
-        this.solidifyingTime = recipe.getSolidifyTicks();
+        this.fillingTime = currentRecipe.data.getInt("pour_ticks");
+        this.solidifyingTime = currentRecipe.data.getInt("solidify_ticks");
         updateState(CastingState.FILLING);
         update();
     }
@@ -108,14 +140,20 @@ public class CastingTableBlockEntity extends BlockEntity {
         progress++;
         update();
 
-        if (progress > currentRecipe.getPourTicks() && castingState == CastingState.FILLING) {
+        if (progress > this.fillingTime && castingState == CastingState.FILLING) {
             updateState(CastingState.SOLIDIFYING);
             progress = 0;
         }
 
-        if (progress > currentRecipe.getSolidifyTicks() && castingState == CastingState.SOLIDIFYING) {
+        if (progress > this.solidifyingTime && castingState == CastingState.SOLIDIFYING) {
             updateState(CastingState.FINISHED);
-            this.setReturnItem(currentRecipe.getResult());
+            for (Content content : currentRecipe.getOutputContents(ItemRecipeCapability.CAP)) {
+                Ingredient output = ItemRecipeCapability.CAP.of(content.getContent());
+                ItemStack[] stacks = output.getItems();
+                if (stacks.length > 0) {
+                    this.setReturnItem(stacks[0].copy());
+                }
+            }
             currentRecipe = null;
         }
     }

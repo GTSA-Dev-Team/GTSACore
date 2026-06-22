@@ -1,30 +1,37 @@
 package pl.epsi.gtsacore.common.data.block.casting;
 
+import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
+import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.content.Content;
+import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
+import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.AbstractMapIngredient;
+import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.fluid.FluidTagMapIngredient;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
+import net.minecraft.nbt.ListTag;
+import net.minecraft.nbt.Tag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraftforge.fluids.FluidStack;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.epsi.gtsacore.common.data.GTSACVanillaRecipes;
-import pl.epsi.gtsacore.common.data.recipes.CastingRecipe;
-import pl.epsi.gtsacore.common.data.recipes.CrucibleAssemblyRecipe;
+import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
 
-import javax.swing.text.html.parser.Entity;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class CrucibleAssemblyBlockEntity extends BlockEntity {
 
-    private static final int CAPACITY = 1008;
+    public static final int CAPACITY = 1008;
     private static final int RECIPE_CHECK_WAIT_TICKS = 20;
 
     private final Deque<FluidStack> fluids = new ArrayDeque<>();
@@ -36,10 +43,15 @@ public class CrucibleAssemblyBlockEntity extends BlockEntity {
     @Getter
     private float percentFilled = 0;
 
-    private CrucibleAssemblyRecipe currentRecipe, lastRecipe;
+    private GTRecipe currentRecipe, lastRecipe;
 
+    @Getter
     private int progress;
+    @Getter
+    private int maxProgress;
     private int recipeCheckTimer;
+
+    public boolean hasCampfire;
 
     public CrucibleAssemblyBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -113,21 +125,40 @@ public class CrucibleAssemblyBlockEntity extends BlockEntity {
         return amount - remaining;
     }
 
-    public @Nullable CrucibleAssemblyRecipe findMatch() {
-        return level.getRecipeManager()
-                .getAllRecipesFor(GTSACVanillaRecipes.CRUCIBLE_ASSEMBLY.get())
-                .stream()
-                .filter(r -> r.matches(this))
-                .findFirst()
-                .orElse(null);
+    public @Nullable GTRecipe findMatch() {
+        if (fluids.isEmpty()) return null;
+
+        List<List<AbstractMapIngredient>> ingredients = fluids.stream()
+                .map(FluidTagMapIngredient::from)
+                .filter(list -> !list.isEmpty())
+                .collect(Collectors.toList());
+
+        if (ingredients.isEmpty()) return null;
+
+        return GTSACRecipeTypes.CRUCIBLE_ASSEMBLY_RECIPES.db().find(ingredients, recipe -> {
+            for (Content content : recipe.getInputContents(FluidRecipeCapability.CAP)) {
+                FluidIngredient required = FluidRecipeCapability.CAP.of(content.getContent());
+                FluidStack[] stacks = required.getStacks();
+                if (stacks.length == 0) continue;
+                if (getAmount(stacks[0].getFluid()) < required.getAmount()) return false;
+            }
+            return true;
+        });
     }
 
     public void serverTick() {
+        boolean hasCampfire = getLevel().getBlockEntity(getBlockPos().below()) instanceof CampfireBlockEntity;
+        this.hasCampfire = hasCampfire;
+
+        if (!hasCampfire) {
+            progress = 0;
+            return;
+        }
+
         if (currentRecipe == null) {
-            if (lastRecipe != null && lastRecipe.matches(this)) {
-                currentRecipe = lastRecipe;
+            if (lastRecipe != null) {
+                currentRecipe = findMatch();
                 lastRecipe = null;
-                progress = 0;
             } else {
                 recipeCheckTimer++;
 
@@ -144,17 +175,29 @@ public class CrucibleAssemblyBlockEntity extends BlockEntity {
         }
 
         if (currentRecipe != null) {
+            maxProgress = currentRecipe.duration;
             progress++;
 
-            if (progress >= currentRecipe.getDuration()) {
-                for (FluidStack input : currentRecipe.getInputs()) {
-                    removeFluid(input.getFluid(), input.getAmount());
+            if (progress >= currentRecipe.duration) {
+                for (Content content : currentRecipe.getInputContents(FluidRecipeCapability.CAP)) {
+                    FluidIngredient required = FluidRecipeCapability.CAP.of(content.getContent());
+                    FluidStack[] stacks = required.getStacks();
+                    if (stacks.length > 0) {
+                        removeFluid(stacks[0].getFluid(), required.getAmount());
+                    }
                 }
-                addFluid(currentRecipe.getCraftingResult());
+
+                for (Content content : currentRecipe.getOutputContents(FluidRecipeCapability.CAP)) {
+                    FluidIngredient output = FluidRecipeCapability.CAP.of(content.getContent());
+                    FluidStack[] stacks = output.getStacks();
+                    if (stacks.length > 0) {
+                        addFluid(stacks[0].copy());
+                    }
+                }
 
                 lastRecipe = currentRecipe;
                 currentRecipe = null;
-
+                maxProgress = 0;
                 progress = 0;
             }
         }
@@ -181,35 +224,58 @@ public class CrucibleAssemblyBlockEntity extends BlockEntity {
     protected void saveAdditional(CompoundTag tag) {
         super.saveAdditional(tag);
 
-        tag.putFloat("percentFilled", percentFilled);
-        if (topFluidID != null) {
-            tag.putString("topFluidID", topFluidID.toString());
+        ListTag fluidsTag = new ListTag();
+        for (FluidStack stack : fluids) {
+            fluidsTag.add(stack.writeToNBT(new CompoundTag()));
         }
+        tag.put("fluids", fluidsTag);
     }
 
     @Override
     public void load(CompoundTag tag) {
         super.load(tag);
 
-        if (tag.contains("percentFilled")) {
-            this.percentFilled = tag.getFloat("percentFilled");
+        fluids.clear();
+        if (tag.contains("fluids", Tag.TAG_LIST)) {
+            ListTag fluidsTag = tag.getList("fluids", Tag.TAG_COMPOUND);
+            for (int i = 0; i < fluidsTag.size(); i++) {
+                FluidStack stack = FluidStack.loadFluidStackFromNBT(fluidsTag.getCompound(i));
+                if (!stack.isEmpty()) {
+                    fluids.addLast(stack);
+                }
+            }
         }
 
-        if (tag.contains("topFluidID")) {
-            this.topFluidID = ResourceLocation.parse(tag.getString("topFluidID"));
+        if (!fluids.isEmpty()) {
+            this.topFluidID = BuiltInRegistries.FLUID.getKey(fluids.peek().getFluid());
+            this.topFluidStack = fluids.peek();
+        } else {
+            this.topFluidID = null;
+            this.topFluidStack = null;
         }
+        this.percentFilled = (float) getTotalAmount() / CAPACITY;
     }
 
     @Override
     public @NotNull CompoundTag getUpdateTag() {
         CompoundTag tag = super.getUpdateTag();
         saveAdditional(tag);
+        tag.putFloat("percentFilled", percentFilled);
+        if (topFluidID != null) {
+            tag.putString("topFluidID", topFluidID.toString());
+        }
         return tag;
     }
 
     @Override
     public void handleUpdateTag(CompoundTag tag) {
         load(tag);
+        if (tag.contains("percentFilled")) {
+            this.percentFilled = tag.getFloat("percentFilled");
+        }
+        if (tag.contains("topFluidID")) {
+            this.topFluidID = ResourceLocation.parse(tag.getString("topFluidID"));
+        }
     }
 
     @Override
