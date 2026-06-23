@@ -1,17 +1,12 @@
 package pl.epsi.gtsacore.api.lang;
 
-import net.minecraft.data.PackOutput;
-import net.minecraftforge.common.data.LanguageProvider;
+import com.tterrag.registrate.providers.RegistrateLangProvider;
 
-public class GTSACLang extends LanguageProvider {
+public class GTSACLang {
 
-    public GTSACLang(PackOutput output, String modId, String locale) {
-        super(output, modId, locale);
-    }
-
-    @Override
-    protected void addTranslations() {
-        add("config.jade.plugin_gtsac.crucible_provider", "[GTSAC] Crucible");
+    public static void init(RegistrateLangProvider provider) {
+        provider.add("config.jade.plugin_gtsac.crucible_provider", "[GTSAC] Crucible");
+        provider.add("config.jade.plugin_gtsac.casting_table_provider", "[GTSAC] Casting Table");
     }
 
 }

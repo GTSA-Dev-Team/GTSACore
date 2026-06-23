@@ -19,6 +19,7 @@
   "block.gtsac.steam_output_hatch": "Steam Output Hatch",
   "block.gtsac.steel_augmented_pbf": "Steel-Augmented Bricked (Up) Blast Furnace",
   "config.jade.plugin_gtsac.crucible_provider": "[GTSAC] Crucible",
+  "config.jade.plugin_gtsac.casting_table_provider": "[GTSAC] Casting Table",
   "item.gtsac.brick_mixture": "Brick Mixture",
   "item.gtsac.ceramic": "Ceramic",
   "item.gtsac.ceramic_clay_ball": "Ceramic Clay Ball",

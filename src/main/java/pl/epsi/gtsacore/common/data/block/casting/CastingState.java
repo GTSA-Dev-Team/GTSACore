@@ -5,7 +5,6 @@ public enum CastingState {
     IDLE,
     FILLING,
     SOLIDIFYING,
-    FINISHED,
-    HAMMERING
+    FINISHED
 
 }

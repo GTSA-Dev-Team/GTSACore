@@ -28,10 +28,13 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
+import pl.epsi.gtsacore.common.data.item.casting.IronBloomItem;
 
 import java.util.*;
 
 public class CastingTableBlockEntity extends BlockEntity {
+
+    public static final int HAMMER_HIT_COUNT = 3;
 
     @Getter
     private ItemStack moldItem = ItemStack.EMPTY;
@@ -168,9 +171,10 @@ public class CastingTableBlockEntity extends BlockEntity {
     }
 
     public void usedHardHammer() {
+        if (!(moldItem.getItem() instanceof IronBloomItem)) return;
         hammeringProgress++;
 
-        if (hammeringProgress > 2) {
+        if (hammeringProgress >= HAMMER_HIT_COUNT) {
             hammeringProgress = 0;
             moldItem = ItemStack.EMPTY;
             var bp = getBlockPos();
