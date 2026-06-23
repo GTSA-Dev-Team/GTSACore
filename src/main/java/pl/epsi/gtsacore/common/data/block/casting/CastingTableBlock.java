@@ -1,5 +1,8 @@
 package pl.epsi.gtsacore.common.data.block.casting;
 
+import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
+import com.gregtechceu.gtceu.api.item.tool.GTToolType;
+import com.gregtechceu.gtceu.api.item.tool.ToolHelper;
 import net.minecraft.core.BlockPos;
 import net.minecraft.sounds.SoundEvent;
 import net.minecraft.sounds.SoundEvents;
@@ -27,6 +30,8 @@ import net.minecraft.world.phys.shapes.VoxelShape;
 import org.jetbrains.annotations.Nullable;
 import pl.epsi.gtsacore.common.data.GTSACBlocks;
 import pl.epsi.gtsacore.common.data.item.casting.AbstractCastItem;
+import pl.epsi.gtsacore.common.data.item.casting.ICastingTableable;
+import pl.epsi.gtsacore.common.data.item.casting.IronBloomItem;
 
 import java.util.stream.Stream;
 
@@ -106,7 +111,9 @@ public class CastingTableBlock extends BaseEntityBlock {
 
                 if (be.getCastingState() != CastingState.IDLE) return InteractionResult.SUCCESS;
 
-                if (holding.getItem() instanceof AbstractCastItem) {
+                if (holding.getItem() instanceof ICastingTableable) {
+                    if (holding.getItem() instanceof IronBloomItem && level.getBlockEntity(pos.above()) instanceof FaucetBlockEntity)
+                        return InteractionResult.FAIL;
                     level.playSound(null, pos, SoundEvents.ITEM_FRAME_ADD_ITEM, SoundSource.BLOCKS, 1f, 1.25f);
                     tryGiveBack(player, be);
                     be.setMoldItem(holding.copyWithCount(1));
@@ -117,6 +124,10 @@ public class CastingTableBlock extends BaseEntityBlock {
                 if (holding.is(Items.AIR)) {
                     level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1f, 1.1f);
                     tryGiveBack(player, be);
+                }
+
+                if (ToolHelper.is(holding, GTToolType.HARD_HAMMER)) {
+                    be.usedHardHammer();
                 }
             }
         }

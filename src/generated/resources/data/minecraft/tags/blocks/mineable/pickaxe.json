@@ -6,6 +6,7 @@
     "gtsac:primitive_brick_slab",
     "gtsac:casting_table",
     "gtsac:crucible_assembly",
-    "gtsac:faucet"
+    "gtsac:faucet",
+    "gtsac:iron_bloom"
   ]
 }

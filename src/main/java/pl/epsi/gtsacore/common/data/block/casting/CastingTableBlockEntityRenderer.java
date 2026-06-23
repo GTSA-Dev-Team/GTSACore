@@ -17,6 +17,7 @@ import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.api.renderer.data.CastingTableDynMeshBuffer;
 import pl.epsi.gtsacore.api.renderer.shader.SACShaderProgram;
 import pl.epsi.gtsacore.common.data.item.casting.AbstractCastItem;
+import pl.epsi.gtsacore.common.data.item.casting.ICastingTableable;
 import pl.epsi.gtsacore.common.render.DynamicRenderer;
 import pl.epsi.gtsacore.common.render.ObjRenderer;
 
@@ -30,7 +31,7 @@ public class CastingTableBlockEntityRenderer implements BlockEntityRenderer<Cast
     public void render(CastingTableBlockEntity castingTableBlockEntity, float v, @NotNull PoseStack poseStack, @NotNull MultiBufferSource buffer, int packedLight, int overlay) {
         if (castingTableBlockEntity.getMoldItem().isEmpty()) return;
         Item item = castingTableBlockEntity.getMoldItem().getItem();
-        if (item instanceof AbstractCastItem cast) {
+        if (item instanceof ICastingTableable tableable) {
             GL45.glEnable(GL45.GL_DEPTH_TEST);
 
             var be = castingTableBlockEntity.getLevel().getBlockEntity(castingTableBlockEntity.getBlockPos().above());
@@ -50,10 +51,13 @@ public class CastingTableBlockEntityRenderer implements BlockEntityRenderer<Cast
 
             poseStack.translate(-0.5f, 0.0f, -0.5f);
 
-            poseStack.mulPoseMatrix(cast.getRenderInfo().localMat());
+            poseStack.mulPoseMatrix(tableable.getRenderInfo().localMat());
+            if (castingTableBlockEntity.getHammeringProgress() != 0) {
+                poseStack.scale(1, (float) (16 - 3 * castingTableBlockEntity.getHammeringProgress()) / 16, 1);
+            }
 
-            ObjRenderer.render(cast.getRenderInfo().VBO(), cast.getRenderInfo().shader(), poseStack,
-                    packedLight, AbstractCastItem.getTextures(castingTableBlockEntity.getMoldItem()), true);
+            ObjRenderer.render(tableable.getRenderInfo().VBO(), tableable.getRenderInfo().shader(), poseStack,
+                    packedLight, tableable.getTextures(castingTableBlockEntity.getMoldItem()), true);
             poseStack.popPose();
 
             if (castingTableBlockEntity.getFluidID() != null) {
@@ -62,7 +66,7 @@ public class CastingTableBlockEntityRenderer implements BlockEntityRenderer<Cast
                 var sprite = RenderUtil.FluidTextureType.FLOWING.map(fluidClientInfo);
                 renderer.useTexture(sprite.atlasLocation());
 
-                AABB aabb = cast.getRenderInfo().cavityBounds();
+                AABB aabb = tableable.getRenderInfo().cavityBounds();
                 long runningTicks = castingTableBlockEntity.getProgress();
                 CastingState castingState = castingTableBlockEntity.getCastingState();
                 float u0 = sprite.getU0(), v0 = sprite.getV0(), u1 = sprite.getU1(), v1 = sprite.getV1();

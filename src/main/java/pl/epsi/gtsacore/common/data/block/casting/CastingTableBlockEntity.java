@@ -1,16 +1,22 @@
 package pl.epsi.gtsacore.common.data.block.casting;
 
+import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
+import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
+import com.gregtechceu.gtceu.common.data.GTItems;
+import com.gregtechceu.gtceu.common.data.GTMaterials;
 import lombok.Getter;
 import net.minecraft.core.BlockPos;
+import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
 import net.minecraft.world.level.block.Block;
@@ -43,12 +49,15 @@ public class CastingTableBlockEntity extends BlockEntity {
     private GTRecipe currentRecipe = null;
     @Getter
     private int progress = 0;
+    @Getter
+    private int hammeringProgress = 0;
 
     public CastingTableBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
     }
 
     public void setMoldItem(ItemStack moldItem) {
+        hammeringProgress = 0;
         this.moldItem = moldItem;
         update();
     }
@@ -158,6 +167,20 @@ public class CastingTableBlockEntity extends BlockEntity {
         }
     }
 
+    public void usedHardHammer() {
+        hammeringProgress++;
+
+        if (hammeringProgress > 2) {
+            hammeringProgress = 0;
+            moldItem = ItemStack.EMPTY;
+            var bp = getBlockPos();
+            Containers.dropItemStack(level, bp.getX(), bp.getY() + 1, bp.getZ(),
+                    ChemicalHelper.getIngot(GTMaterials.WroughtIron, GTValues.M * 2));
+        }
+
+        update();
+    }
+
     public void takeOutReturnItem() {
         this.returnItem = ItemStack.EMPTY;
         this.setFluid(null);
@@ -182,6 +205,7 @@ public class CastingTableBlockEntity extends BlockEntity {
 
         tag.putInt("castingState", castingState.ordinal());
         tag.putInt("progress", progress);
+        tag.putInt("hammeringProgress", hammeringProgress);
         tag.putInt("fillingTicks", fillingTime);
         tag.putInt("solidifyingTick", solidifyingTime);
     }
@@ -219,6 +243,10 @@ public class CastingTableBlockEntity extends BlockEntity {
 
         if (tag.contains("solidifyingTick")) {
             solidifyingTime = tag.getInt("solidifyingTick");
+        }
+
+        if (tag.contains("hammeringProgress")) {
+            hammeringProgress = tag.getInt("hammeringProgress");
         }
     }
 

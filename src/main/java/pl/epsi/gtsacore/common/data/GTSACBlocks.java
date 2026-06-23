@@ -14,6 +14,7 @@ import net.minecraftforge.common.Tags;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.common.data.block.casting.*;
+import pl.epsi.gtsacore.common.data.item.casting.IronBloomItem;
 
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_CREATIVE_TAB;
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
@@ -161,4 +162,14 @@ public class GTSACBlocks {
             .validBlocks(FAUCET)
             .renderer(() -> ctx -> new FaucetBlockEntityRenderer())
             .register();
+
+    public static final BlockEntry<Block> IRON_BLOOM = GTSAC_REGISTRATE
+            .block("iron_bloom", Block::new)
+            .initialProperties(() -> Blocks.IRON_BLOCK)
+            .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+            .properties(p -> p.strength(5.0f, 6.0f).requiresCorrectToolForDrops())
+            .lang("Iron Bloom")
+            .item(IronBloomItem::new).build()
+            .register();
+
 }
