@@ -1,4 +1,4 @@
-package pl.epsi.gtsacore.data.models;
+package pl.epsi.gtsacore.common.data.models;
 
 import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.api.registry.registrate.MachineBuilder;
