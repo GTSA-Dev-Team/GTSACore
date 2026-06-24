@@ -1,4 +1,7 @@
-package pl.epsi.gtsacore.api.renderer.data;
+package pl.epsi.gtsacore.api.renderer.data.dynamic;
+
+import pl.epsi.gtsacore.api.renderer.data.SACVertexFormat;
+import pl.epsi.gtsacore.api.renderer.data.SACVertexFormatElement;
 
 public class CastingTableDynMeshBuffer extends DynamicMeshBuffer {
 

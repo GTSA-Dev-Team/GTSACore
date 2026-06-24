@@ -6,7 +6,7 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL45;
-import pl.epsi.gtsacore.api.renderer.data.DynamicVertexBuilder;
+import pl.epsi.gtsacore.api.renderer.data.dynamic.DynamicVertexBuilder;
 import pl.epsi.gtsacore.api.renderer.data.SACVertexFormat;
 import pl.epsi.gtsacore.api.renderer.shader.SACShaderProgram;
 

@@ -10,7 +10,7 @@ public final class ObjParser {
 
     private record Key(int v, int vt, int vn) {}
 
-    public static ObjMesh load(ResourceLocation rl) throws IOException {
+    public static ObjModel load(ResourceLocation rl) throws IOException {
 
         List<float[]> positions = new ArrayList<>();
         List<float[]> uvs = new ArrayList<>();
@@ -62,7 +62,7 @@ public final class ObjParser {
 
         int[] indexArray = indices.stream().mapToInt(i -> i).toArray();
 
-        return new ObjMesh(
+        return new ObjModel(
                 vertices.toArray(new ObjVertexFormat[0]),
                 indexArray
         );

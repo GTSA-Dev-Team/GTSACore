@@ -1,7 +1,9 @@
-package pl.epsi.gtsacore.api.renderer.data;
+package pl.epsi.gtsacore.api.renderer.data.dynamic;
 
 import net.minecraft.client.renderer.LightTexture;
 import org.lwjgl.system.MemoryUtil;
+import pl.epsi.gtsacore.api.renderer.data.SACVertexFormat;
+import pl.epsi.gtsacore.api.renderer.data.SACVertexFormatElement;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;

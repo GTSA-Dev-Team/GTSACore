@@ -7,7 +7,7 @@ import org.joml.Matrix4f;
 import org.joml.Vector3f;
 import pl.epsi.gtsacore.api.model.ObjParser;
 import pl.epsi.gtsacore.api.model.ObjVertexFormat;
-import pl.epsi.gtsacore.api.renderer.data.StaticVertexBuffer;
+import pl.epsi.gtsacore.api.renderer.data.st.StaticVertexBuffer;
 import pl.epsi.gtsacore.api.renderer.shader.SACShaderProgram;
 import pl.epsi.gtsacore.common.render.ObjRenderer;
 

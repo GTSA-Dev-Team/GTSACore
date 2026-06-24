@@ -8,7 +8,7 @@ import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import pl.epsi.gtsacore.GTSubatomicCore;
-import pl.epsi.gtsacore.api.renderer.data.StaticVertexBuffer;
+import pl.epsi.gtsacore.api.renderer.data.st.StaticVertexBuffer;
 import pl.epsi.gtsacore.api.renderer.shader.SACShaderProgram;
 
 import java.util.HashMap;

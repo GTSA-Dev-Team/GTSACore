@@ -1,10 +1,9 @@
-package pl.epsi.gtsacore.api.renderer.data;
+package pl.epsi.gtsacore.api.renderer.data.st;
 
 import com.mojang.blaze3d.systems.RenderSystem;
 import lombok.Getter;
 import org.lwjgl.opengl.GL20;
 import org.lwjgl.opengl.GL45;
-import org.lwjgl.system.MemoryStack;
 import org.lwjgl.system.MemoryUtil;
 import pl.epsi.gtsacore.api.renderer.Vertex;
 

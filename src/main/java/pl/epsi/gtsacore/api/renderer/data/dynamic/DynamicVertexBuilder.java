@@ -1,8 +1,8 @@
-package pl.epsi.gtsacore.api.renderer.data;
+package pl.epsi.gtsacore.api.renderer.data.dynamic;
 
 import org.joml.Matrix4f;
-import org.joml.Vector3f;
 import org.joml.Vector4f;
+import pl.epsi.gtsacore.api.renderer.data.SACVertexFormat;
 
 import java.nio.ByteBuffer;
 import java.nio.IntBuffer;

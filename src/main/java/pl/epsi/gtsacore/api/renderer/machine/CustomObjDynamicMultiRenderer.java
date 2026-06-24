@@ -8,18 +8,15 @@ import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 import net.minecraft.client.Minecraft;
-import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.MultiBufferSource;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
 import org.lwjgl.opengl.GL45;
-import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.api.machine.feature.multiblock.ICustomObjRendererMulti;
-import pl.epsi.gtsacore.api.model.ObjMesh;
+import pl.epsi.gtsacore.api.model.ObjModel;
 import pl.epsi.gtsacore.api.model.ObjParser;
 import pl.epsi.gtsacore.api.model.ObjVertexFormat;
-import pl.epsi.gtsacore.api.renderer.data.StaticVertexBuffer;
-import pl.epsi.gtsacore.api.renderer.shader.SACShaderProgram;
+import pl.epsi.gtsacore.api.renderer.data.st.StaticVertexBuffer;
 import pl.epsi.gtsacore.common.render.ObjRenderer;
 
 import java.io.IOException;
@@ -50,7 +47,7 @@ public class CustomObjDynamicMultiRenderer extends DynamicRender<ICustomObjRende
         this.textureIdent = textureIdent;
         this.alwaysRender = alwaysRender;
         try {
-            ObjMesh mesh = ObjParser.load(objIdent);
+            ObjModel mesh = ObjParser.load(objIdent);
             this.buf = new StaticVertexBuffer<>(mesh.vertices(), mesh.indices());
         } catch (IOException e) {
             throw new RuntimeException(e);
