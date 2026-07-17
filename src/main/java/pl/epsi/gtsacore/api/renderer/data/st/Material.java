@@ -19,5 +19,5 @@ public class Material {
         this.metallic = metallic;
         this.tint = tint;
     }
-    
+
 }
