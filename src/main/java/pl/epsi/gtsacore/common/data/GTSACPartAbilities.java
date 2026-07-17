@@ -6,5 +6,6 @@ public class GTSACPartAbilities {
 
     public static final PartAbility STEAM_IMPORT_FLUIDS = new PartAbility("steam_import_fluids");
     public static final PartAbility STEAM_EXPORT_FLUIDS = new PartAbility("steam_export_fluids");
+    public static final PartAbility FUEL_HATCH = new PartAbility("fuel_hatch");
 
 }

@@ -10,6 +10,7 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
+import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
@@ -34,11 +35,13 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraftforge.common.Tags;
 import pl.epsi.gtsacore.GTSubatomicCore;
+import pl.epsi.gtsacore.common.machine.WorkableFueledMultiblockMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.*;
 import pl.epsi.gtsacore.common.machine.multiblock.ClarifierMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.LargePrimitiveSmelterMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.NeutralizationTankMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.SteelAugmentedPBFMachine;
+import pl.epsi.gtsacore.common.machine.part.FuelHatchPartMachine;
 import pl.epsi.gtsacore.common.machine.part.PrimitiveFuelHatchPartMachine;
 import pl.epsi.gtsacore.data.models.GTSACMachineModels;
 
@@ -263,46 +266,26 @@ public class GTSACMachines {
                     GTCEu.id("block/machines/electric_furnace")))
             .register();
 
-    public static final MultiblockMachineDefinition LARGE_BRONZE_FIREBOX = GTSAC_REGISTRATE
-            .multiblock("large_bronze_firebox", LargeBronzeFireboxMachine::new)
-            .langValue("Large Bronze Firebox (WIP)")
+    public static final MultiblockMachineDefinition BRONZE_FOUNDRY = GTSAC_REGISTRATE
+            .multiblock("bronze_foundry", WorkableFueledMultiblockMachine::new)
+            .langValue("Bronze Foundry (WIP)")
             .rotationState(RotationState.ALL)
-            .recipeType(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES)
-            .appearanceBlock(GTBlocks.FIREBOX_BRONZE)
-            .pattern(definition -> FactoryBlockPattern.start()
-                    .aisle("BBBBB", "BFFFB", "BBBBB")
-                    .aisle("BBBBB", "FBBBF", "B   B")
-                    .aisle("BBBBB", "FBBBF", "B   B")
-                    .aisle("BBBBB", "FBBBF", "B   B")
-                    .aisle("BBBBB", "BF@FB", "BBBBB")
-                    .where(" ", Predicates.any())
-                    .where("@", Predicates.controller(Predicates.blocks(definition.get())))
-                    .where("F", Predicates.blocks(GTBlocks.FIREBOX_BRONZE.get()))
-                    .where("B", Predicates.blocks(GTBlocks.CASING_BRONZE_BRICKS.get()).setMinGlobalLimited(50)
-                            .or(Predicates.machines(GTSACMachines.PRIMITIVE_FUEL_HATCH).setExactLimit(1)))
-                    .build())
-            .model(createWorkableCasingMachineModel(
-                    GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
-                    GTCEu.id("block/multiblock/primitive_blast_furnace")))
-            .register();
-
-    public static final MultiblockMachineDefinition LARGE_CRUCIBLE = GTSAC_REGISTRATE
-            .multiblock("large_crucible", LargeBronzeFireboxMachine::new)
-            .langValue("Large Crucible (WIP)")
-            .rotationState(RotationState.ALL)
-            .recipeType(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES)
+            .recipeTypes(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES, GTSACRecipeTypes.TEST_FUEL_RECIPES)
             .appearanceBlock(GTBlocks.CASING_PRIMITIVE_BRICKS)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("BBBBB", "BFFFB", "BBBBB")
-                    .aisle("BBBBB", "F   F", "BBBBB")
-                    .aisle("BBBBB", "F   F", "BBBBB")
-                    .aisle("BBBBB", "F   F", "BBBBB")
+                    .aisle("BBBBB", "FPPPF", "B   B")
+                    .aisle("BBBBB", "FPPPF", "B   B")
+                    .aisle("BBBBB", "FPPPF", "B   B")
                     .aisle("BBBBB", "BF@FB", "BBBBB")
                     .where(" ", Predicates.any())
                     .where("@", Predicates.controller(Predicates.blocks(definition.get())))
                     .where("F", Predicates.blocks(GTBlocks.FIREBOX_BRONZE.get()))
-                    .where("B", Predicates.blocks(GTBlocks.CASING_BRONZE_BRICKS.get()).setMinGlobalLimited(50)
-                            .or(Predicates.machines(GTSACMachines.PRIMITIVE_FUEL_HATCH).setExactLimit(1)))
+                    .where("P", Predicates.blocks(GTBlocks.FIREBOX_BRONZE.get()))
+                    .where("B", Predicates.blocks(GTBlocks.CASING_BRONZE_BRICKS.get()).setMinGlobalLimited(15)
+                                    .or(Predicates.autoAbilities(GTSACRecipeTypes.TEST_FUEL_RECIPES))
+                                    .or(Predicates.abilities(GTSACPartAbilities.FUEL_HATCH))
+                            )
                     .build())
             .model(createWorkableCasingMachineModel(
                     GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
@@ -348,5 +331,15 @@ public class GTSACMachines {
             .allowCoverOnFront(true)
             .register();
 
+    public static final MachineDefinition FUEL_HATCH = GTSAC_REGISTRATE
+            .machine("fuel_hatch", (holder) -> new FuelHatchPartMachine(holder, GTValues.ULV, IO.IN))
+            .langValue("Fuel Hatch")
+            .rotationState(RotationState.ALL)
+            .tier(GTValues.ULV)
+            .modelProperty(GTMachineModelProperties.IS_FORMED, false)
+            .colorOverlayTieredHullModel(GTCEu.id("block/overlay/machine/overlay_pipe_in_emissive"), null,
+                    GTCEu.id("block/overlay/machine/" + OVERLAY_ITEM_HATCH_INPUT))
+            .abilities(GTSACPartAbilities.FUEL_HATCH)
+            .register();
 
 }

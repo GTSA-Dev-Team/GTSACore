@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "loader": "gtceu:machine",
-  "machine": "gtsac:large_bronze_firebox",
+  "machine": "gtsac:bronze_foundry",
   "texture_overrides": {
     "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks"
   },

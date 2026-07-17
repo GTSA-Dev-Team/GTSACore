@@ -109,6 +109,8 @@ public class GTSACBlocks {
 
 
 
+
+
     public static final BlockEntry<CastingTableBlock> CASTING_TABLE = GTSAC_REGISTRATE
             .block("casting_table", CastingTableBlock::new)
             .initialProperties(() -> Blocks.IRON_BLOCK)

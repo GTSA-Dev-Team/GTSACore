@@ -11,6 +11,7 @@ import pl.epsi.gtsacore.api.data.GTSACMaterialIconType;
 import pl.epsi.gtsacore.api.data.GTSACTagPrefix;
 import pl.epsi.gtsacore.api.recipes.GTSACMaterialRecipeHandlers;
 import pl.epsi.gtsacore.api.renderer.machine.CustomObjDynamicMultiRenderer;
+import pl.epsi.gtsacore.common.data.GTSACRecipeCapabilities;
 import pl.epsi.gtsacore.common.data.GTSACRecipes;
 import pl.epsi.gtsacore.common.data.materials.GTSACElements;
 import pl.epsi.gtsacore.common.data.materials.GTSACPeriodicTableMaterials;
@@ -57,5 +58,9 @@ public class GTSubatomicCoreAddon implements IGTAddon {
         GTSACTagPrefix.initTagPrefixes();
     }
 
-
+    @Override
+    public void registerRecipeCapabilities() {
+        IGTAddon.super.registerRecipeCapabilities();
+        GTSACRecipeCapabilities.init();
+    }
 }

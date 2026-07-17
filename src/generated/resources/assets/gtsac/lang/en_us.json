@@ -1,10 +1,10 @@
 {
+  "block.gtsac.bronze_foundry": "Bronze Foundry (WIP)",
   "block.gtsac.casting_table": "Casting Table",
   "block.gtsac.clarifier": "Clarifier",
   "block.gtsac.crucible_assembly": "Crucible Assembly",
   "block.gtsac.faucet": "Faucet",
-  "block.gtsac.large_bronze_firebox": "Large Bronze Firebox (WIP)",
-  "block.gtsac.large_crucible": "Large Crucible (WIP)",
+  "block.gtsac.fuel_hatch": "Fuel Hatch",
   "block.gtsac.large_primitive_smelter": "Large Primitive Smelter",
   "block.gtsac.neutralization_tank": "Neutralization Tank",
   "block.gtsac.primitive_brick_fence": "Primitive Brick Fence",

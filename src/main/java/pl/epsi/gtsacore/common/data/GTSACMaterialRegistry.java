@@ -1,5 +1,6 @@
 package pl.epsi.gtsacore.common.data;
 
+import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.material.Fluid;
