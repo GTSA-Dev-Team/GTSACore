@@ -45,7 +45,13 @@ import pl.epsi.gtsacore.common.machine.part.FuelHatchPartMachine;
 import pl.epsi.gtsacore.common.machine.part.PrimitiveFuelHatchPartMachine;
 import pl.epsi.gtsacore.data.models.GTSACMachineModels;
 
+import static com.gregtechceu.gtceu.api.GTValues.ZPM;
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
+import static com.gregtechceu.gtceu.api.pattern.Predicates.blocks;
+import static com.gregtechceu.gtceu.common.data.GTBlocks.CASING_POLYTETRAFLUOROETHYLENE_PIPE;
+import static com.gregtechceu.gtceu.common.data.GTBlocks.CASING_PTFE_INERT;
+import static com.gregtechceu.gtceu.common.data.GTRecipeModifiers.BATCH_MODE;
+import static com.gregtechceu.gtceu.common.data.GTRecipeModifiers.OC_PERFECT_SUBTICK;
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
 
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.createWorkableCasingMachineModel;
@@ -92,7 +98,7 @@ public class GTSACMachines {
             .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)
             .recipeModifiers(
                     GTRecipeModifiers.ELECTRIC_OVERCLOCK.apply(OverclockingLogic.NON_PERFECT_OVERCLOCK_SUBTICK),
-                    GTRecipeModifiers.BATCH_MODE)
+                    BATCH_MODE)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("AAACCCCCAAA", "AAABBBBBAAA", "AAABBBBBAAA", "AAABBBBBAAA")
                     .aisle("AACBBBBBCAA", "AABAAAAABAA", "AABAADAABAA", "AABAADAABAA")
@@ -106,17 +112,17 @@ public class GTSACMachines {
                     .aisle("AACBBBBBCAA", "AABAAAAABAA", "AABAADAABAA", "AABAADAABAA")
                     .aisle("AAACCCCCAAA", "AAABBBBBAAA", "AAABBFBBAAA", "AAABBBBBAAA")
                     .where("A", Predicates.any())
-                    .where("C", Predicates.blocks(GTBlocks.FIREBOX_STEEL.get()))
-                    .where("F", Predicates.controller(Predicates.blocks(definition.get())))
-                    .where("B", Predicates.blocks(GTBlocks.CASING_STEEL_SOLID.get())
+                    .where("C", blocks(GTBlocks.FIREBOX_STEEL.get()))
+                    .where("F", Predicates.controller(blocks(definition.get())))
+                    .where("B", blocks(GTBlocks.CASING_STEEL_SOLID.get())
                             .or(Predicates.abilities(PartAbility.IMPORT_FLUIDS))
                             .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
                             .or(Predicates.abilities(PartAbility.EXPORT_ITEMS))
                             .or(Predicates.abilities(PartAbility.EXPORT_FLUIDS))
                             .or(Predicates.abilities(PartAbility.INPUT_ENERGY).setMaxGlobalLimited(2))
                             .or(Predicates.abilities(PartAbility.MAINTENANCE).setExactLimit(1)))
-                    .where("D", Predicates.blocks(GTBlocks.CASING_STEEL_PIPE.get(), Blocks.BARRIER))
-                    .where("E", Predicates.blocks(GTBlocks.CASING_STEEL_GEARBOX.get()))
+                    .where("D", blocks(GTBlocks.CASING_STEEL_PIPE.get(), Blocks.BARRIER))
+                    .where("E", blocks(GTBlocks.CASING_STEEL_GEARBOX.get()))
                     .build())
             .hasBER(true)
             .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
@@ -141,7 +147,7 @@ public class GTSACMachines {
             .appearanceBlock(GTBlocks.CASING_STEEL_SOLID)
             .recipeModifiers(
                     GTRecipeModifiers.ELECTRIC_OVERCLOCK.apply(OverclockingLogic.NON_PERFECT_OVERCLOCK_SUBTICK),
-                    GTRecipeModifiers.BATCH_MODE)
+                    BATCH_MODE)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("AAAAABAAABAAAAA", "AAAAABAAABAAAAA", "AAAAABAAABAAAAA", "AAAAACCCCCAAAAA",
                             "AAAAADDDDDAAAAA", "AAAAADEEEDAAAAA", "AAAAADEEEDAAAAA", "AAAAADEEEDAAAAA",
@@ -190,20 +196,20 @@ public class GTSACMachines {
                             "AAAAADDDDDAAAAA", "AAAAAAABAAAAAAA")
                     .where("A", Predicates.any())
                     .where("B",
-                            Predicates.blocks(ChemicalHelper.getBlock(TagPrefix.frameGt,
+                            blocks(ChemicalHelper.getBlock(TagPrefix.frameGt,
                                     GTCEuAPI.materialManager.getMaterial("gtceu:steel"))))
-                    .where("C", Predicates.blocks(GTBlocks.FIREBOX_STEEL.get()))
-                    .where("D", Predicates.blocks(GTBlocks.CASING_STEEL_SOLID.get())
+                    .where("C", blocks(GTBlocks.FIREBOX_STEEL.get()))
+                    .where("D", blocks(GTBlocks.CASING_STEEL_SOLID.get())
                             .or(Predicates.abilities(PartAbility.IMPORT_FLUIDS))
                             .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
                             .or(Predicates.abilities(PartAbility.EXPORT_ITEMS))
                             .or(Predicates.abilities(PartAbility.EXPORT_FLUIDS))
                             .or(Predicates.abilities(PartAbility.INPUT_ENERGY).setMaxGlobalLimited(2))
                             .or(Predicates.abilities(PartAbility.MAINTENANCE).setExactLimit(1)))
-                    .where("E", Predicates.blocks(GTBlocks.CASING_TEMPERED_GLASS.get()))
-                    .where("F", Predicates.blocks(GTBlocks.CASING_STEEL_PIPE.get()))
-                    .where("G", Predicates.blocks(GTBlocks.CASING_STEEL_GEARBOX.get()))
-                    .where("I", Predicates.controller(Predicates.blocks(definition.get())))
+                    .where("E", blocks(GTBlocks.CASING_TEMPERED_GLASS.get()))
+                    .where("F", blocks(GTBlocks.CASING_STEEL_PIPE.get()))
+                    .where("G", blocks(GTBlocks.CASING_STEEL_GEARBOX.get()))
+                    .where("I", Predicates.controller(blocks(definition.get())))
                     .build())
             .modelProperty(GTMachineModelProperties.RECIPE_LOGIC_STATUS, RecipeLogic.Status.IDLE)
             .model(createWorkableCasingMachineModel(
@@ -218,15 +224,15 @@ public class GTSACMachines {
             .rotationState(RotationState.ALL)
             .recipeType(GTRecipeTypes.PRIMITIVE_BLAST_FURNACE_RECIPES)
             .appearanceBlock(GTBlocks.CASING_PRIMITIVE_BRICKS)
-            .recipeModifiers(true, SteelAugmentedPBFMachine::recipeModifier, GTRecipeModifiers.BATCH_MODE)
+            .recipeModifiers(true, SteelAugmentedPBFMachine::recipeModifier, BATCH_MODE)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("FBF", "BBB", "BBB", " B ", " B ")
                     .aisle("FBF", "B B", "B B", "B B", "B B")
                     .aisle("FBF", "B@B", "BBB", " B ", " B ")
                     .where(" ", Predicates.any())
-                    .where("F", Predicates.blocks(GTBlocks.FIREBOX_STEEL.get()))
-                    .where("@", Predicates.controller(Predicates.blocks(definition.get())))
-                    .where("B", Predicates.blocks(GTBlocks.CASING_PRIMITIVE_BRICKS.get()).setMinGlobalLimited(20)
+                    .where("F", blocks(GTBlocks.FIREBOX_STEEL.get()))
+                    .where("@", Predicates.controller(blocks(definition.get())))
+                    .where("B", blocks(GTBlocks.CASING_PRIMITIVE_BRICKS.get()).setMinGlobalLimited(20)
                             .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
                             .or(Predicates.abilities(PartAbility.EXPORT_ITEMS)))
                     .build())
@@ -247,16 +253,16 @@ public class GTSACMachines {
             .rotationState(RotationState.ALL)
             .recipeTypes(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES)
             .appearanceBlock(() -> Blocks.NETHER_BRICKS)
-            .recipeModifiers(true, LargePrimitiveSmelterMachine::recipeModifier, GTRecipeModifiers.BATCH_MODE)
+            .recipeModifiers(true, LargePrimitiveSmelterMachine::recipeModifier, BATCH_MODE)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("BBB", "BFB", "SSS")
                     .aisle("BBB", "F F", "B B")
                     .aisle("BBB", "B@B", "SSS")
                     .where(" ", Predicates.any())
-                    .where("@", Predicates.controller(Predicates.blocks(definition.get())))
-                    .where("F", Predicates.blocks(GTSACBlocks.PRIMITIVE_BRICK_FENCE.get()))
-                    .where("S", Predicates.blocks(GTSACBlocks.PRIMITIVE_BRICK_STAIRS.get()))
-                    .where("B", Predicates.blocks(GTSACBlocks.PRIMITIVE_BRICKS.get()).setMinGlobalLimited(12)
+                    .where("@", Predicates.controller(blocks(definition.get())))
+                    .where("F", blocks(GTSACBlocks.PRIMITIVE_BRICK_FENCE.get()))
+                    .where("S", blocks(GTSACBlocks.PRIMITIVE_BRICK_STAIRS.get()))
+                    .where("B", blocks(GTSACBlocks.PRIMITIVE_BRICKS.get()).setMinGlobalLimited(12)
                             .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
                             .or(Predicates.abilities(PartAbility.EXPORT_ITEMS))
                             .or(Predicates.machines(GTSACMachines.PRIMITIVE_FUEL_HATCH).setExactLimit(1)))
@@ -270,7 +276,7 @@ public class GTSACMachines {
             .multiblock("bronze_foundry", WorkableFueledMultiblockMachine::new)
             .langValue("Bronze Foundry (WIP)")
             .rotationState(RotationState.ALL)
-            .recipeTypes(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES, GTSACRecipeTypes.TEST_FUEL_RECIPES)
+            .recipeTypes(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES)
             .appearanceBlock(GTBlocks.CASING_PRIMITIVE_BRICKS)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("BBBBB", "BFFFB", "BBBBB")
@@ -279,17 +285,46 @@ public class GTSACMachines {
                     .aisle("BBBBB", "FPPPF", "B   B")
                     .aisle("BBBBB", "BF@FB", "BBBBB")
                     .where(" ", Predicates.any())
-                    .where("@", Predicates.controller(Predicates.blocks(definition.get())))
-                    .where("F", Predicates.blocks(GTBlocks.FIREBOX_BRONZE.get()))
-                    .where("P", Predicates.blocks(GTBlocks.FIREBOX_BRONZE.get()))
-                    .where("B", Predicates.blocks(GTBlocks.CASING_BRONZE_BRICKS.get()).setMinGlobalLimited(15)
-                                    .or(Predicates.autoAbilities(GTSACRecipeTypes.TEST_FUEL_RECIPES))
+                    .where("@", Predicates.controller(blocks(definition.get())))
+                    .where("F", blocks(GTBlocks.FIREBOX_BRONZE.get()))
+                    .where("P", blocks(GTBlocks.FIREBOX_BRONZE.get()))
+                    .where("B", blocks(GTBlocks.CASING_BRONZE_BRICKS.get()).setMinGlobalLimited(15)
                                     .or(Predicates.abilities(GTSACPartAbilities.FUEL_HATCH))
+                                    .or(Predicates.abilities(PartAbility.EXPORT_ITEMS))
+                                    .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
                             )
                     .build())
             .model(createWorkableCasingMachineModel(
                     GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
                     GTCEu.id("block/multiblock/primitive_blast_furnace")))
+            .register();
+
+    public static final MultiblockMachineDefinition TEST_FUEL_MULTI = GTSAC_REGISTRATE
+            .multiblock("test_fuel_multi", WorkableElectricMultiblockMachine::new)
+            .langValue("Skibidi rizz")
+            .rotationState(RotationState.ALL)
+            .recipeType(GTSACRecipeTypes.TEST_FUEL_RECIPES)
+            .recipeModifiers(OC_PERFECT_SUBTICK, BATCH_MODE)
+            .appearanceBlock(CASING_PTFE_INERT)
+            .pattern(definition -> {
+                var casing = blocks(CASING_PTFE_INERT.get()).setMinGlobalLimited(10);
+                var abilities = Predicates.autoAbilities(definition.getRecipeTypes())
+                        .or(Predicates.autoAbilities(true, false, false))
+                        .or(Predicates.abilities(GTSACPartAbilities.FUEL_HATCH));
+                return FactoryBlockPattern.start()
+                        .aisle("XXX", "XCX", "XXX")
+                        .aisle("XCX", "CPC", "XCX")
+                        .aisle("XXX", "XSX", "XXX")
+                        .where('S', Predicates.controller(blocks(definition.getBlock())))
+                        .where('X', casing.or(abilities))
+                        .where('P', blocks(CASING_POLYTETRAFLUOROETHYLENE_PIPE.get()))
+                        .where('C', Predicates.heatingCoils().setExactLimit(1)
+                                .or(abilities)
+                                .or(casing))
+                        .build();
+            })
+            .workableCasingModel(GTCEu.id("block/casings/solid/machine_casing_inert_ptfe"),
+                    GTCEu.id("block/multiblock/large_chemical_reactor"))
             .register();
 
     public static final MachineDefinition PRIMITIVE_FUEL_HATCH = GTSAC_REGISTRATE
@@ -331,15 +366,18 @@ public class GTSACMachines {
             .allowCoverOnFront(true)
             .register();
 
+
+
     public static final MachineDefinition FUEL_HATCH = GTSAC_REGISTRATE
-            .machine("fuel_hatch", (holder) -> new FuelHatchPartMachine(holder, GTValues.ULV, IO.IN))
+            .machine("fuel_hatch", (holder) -> new FuelHatchPartMachine(holder, ZPM, IO.IN))
             .langValue("Fuel Hatch")
             .rotationState(RotationState.ALL)
-            .tier(GTValues.ULV)
+            .tier(ZPM)
             .modelProperty(GTMachineModelProperties.IS_FORMED, false)
             .colorOverlayTieredHullModel(GTCEu.id("block/overlay/machine/overlay_pipe_in_emissive"), null,
-                    GTCEu.id("block/overlay/machine/" + OVERLAY_ITEM_HATCH_INPUT))
+                    GTCEu.id("block/overlay/machine/" + OVERLAY_ITEM_HATCH))
             .abilities(GTSACPartAbilities.FUEL_HATCH)
             .register();
+
 
 }

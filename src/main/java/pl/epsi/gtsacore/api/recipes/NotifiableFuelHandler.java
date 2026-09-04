@@ -1,31 +1,27 @@
-package pl.epsi.gtsacore.api.ingredient.fuel;
+package pl.epsi.gtsacore.api.recipes;
 
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.trait.ICapabilityTrait;
-import com.gregtechceu.gtceu.api.machine.trait.MachineTrait;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableRecipeHandlerTrait;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.api.capability.FuelRecipeCapability;
+import pl.epsi.gtsacore.api.ingredient.FuelIngredient;
 
 import java.util.List;
 
 public class NotifiableFuelHandler extends NotifiableRecipeHandlerTrait<FuelIngredient> implements ICapabilityTrait {
-
     @Getter
     public final IO handlerIO;
     @Getter
     public final IO capabilityIO;
 
-
-    // TODO: RETURN TO THIS LATER AND ADD MAX FUEL
-    @Getter
-    private int maxFuel;
     @Getter
     private int fuel;
+    private static final int MAX_FUEl = 32000;
 
     public NotifiableFuelHandler(MetaMachine machine, IO io) {
         this(machine, io, io);
@@ -39,25 +35,21 @@ public class NotifiableFuelHandler extends NotifiableRecipeHandlerTrait<FuelIngr
 
     public boolean addFuel(int fuelToAdd, boolean simulate){
         if(fuelToAdd < 0) return false;
-        if((long) fuelToAdd + (long) this.fuel > Integer.MAX_VALUE) return false;
+        if((long) fuelToAdd + (long) this.fuel > MAX_FUEl) return false;
         if(simulate) return true;
         fuel += fuelToAdd;
         this.notifyListeners();
         return true;
     }
 
-    public boolean removeFuel(int fuelToRemove, boolean simulate){
-        if(fuelToRemove < 0) return false;
-        if(fuelToRemove > this.fuel) return false;
+
+    public boolean drainFuel(int fuelToDrain, boolean simulate){
+        if(fuelToDrain < 0) return false;
+        if(fuelToDrain > this.fuel) return false;
         if(simulate) return true;
-        fuel -= fuelToRemove;
+        fuel -= fuelToDrain;
         this.notifyListeners();
         return true;
-    }
-
-    @Override
-    public IO getHandlerIO() {
-        return null;
     }
 
     @Override
@@ -73,6 +65,11 @@ public class NotifiableFuelHandler extends NotifiableRecipeHandlerTrait<FuelIngr
             }
         }
         return left.isEmpty() ? null : left;
+    }
+
+    @Override
+    public int getSize() {
+        return super.getSize();
     }
 
     @Override

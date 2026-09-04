@@ -1,4 +1,4 @@
-package pl.epsi.gtsacore.api.ingredient.fuel;
+package pl.epsi.gtsacore.api.ingredient;
 
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.AbstractMapIngredient;
 
@@ -6,7 +6,6 @@ import java.util.Collections;
 import java.util.List;
 
 public class MapFuelIngredient extends AbstractMapIngredient {
-
     public final FuelIngredient ingredient;
 
     public MapFuelIngredient(FuelIngredient ingredient) {

@@ -3,24 +3,21 @@ package pl.epsi.gtsacore.api.capability;
 import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
-import com.gregtechceu.gtceu.api.recipe.content.IContentSerializer;
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.AbstractMapIngredient;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.jetbrains.annotations.Nullable;
-import org.jetbrains.annotations.Unmodifiable;
-import pl.epsi.gtsacore.api.ingredient.fuel.FuelIngredient;
-import pl.epsi.gtsacore.api.ingredient.fuel.MapFuelIngredient;
+import pl.epsi.gtsacore.api.ingredient.FuelIngredient;
+import pl.epsi.gtsacore.api.ingredient.MapFuelIngredient;
 
 import java.util.Collection;
 import java.util.Collections;
 import java.util.List;
 
 public class FuelRecipeCapability extends RecipeCapability<FuelIngredient> {
-
-    public static final FuelRecipeCapability CAP = new FuelRecipeCapability();
+    public final static FuelRecipeCapability CAP = new FuelRecipeCapability();
 
     protected FuelRecipeCapability() {
         super("fuel", 0x777777, false, 5, FuelIngredient.Serializer.INSTANCE);
@@ -39,7 +36,7 @@ public class FuelRecipeCapability extends RecipeCapability<FuelIngredient> {
     }
 
     @Override
-    public List<Object> compressIngredients(@Unmodifiable Collection<Object> ingredients) {
+    public List<Object> compressIngredients(Collection<Object> ingredients) {
         int fuelTotal = 0;
         for(Object ingredient : ingredients){
             if (ingredient instanceof FuelIngredient fuelIngredient){
@@ -52,14 +49,15 @@ public class FuelRecipeCapability extends RecipeCapability<FuelIngredient> {
         return Collections.emptyList();
     }
 
-    /*@Override
-    public void addXEIInfo(WidgetGroup group, int xOffset, GTRecipe recipe, List<Content> contents, boolean perTick, boolean isInput, MutableInt yOffset) {
+    @Override
+    public void addXEIInfo(WidgetGroup group, int xOffset, GTRecipe recipe, List<Content> contents, boolean perTick,
+                           boolean isInput, MutableInt yOffset) {
         for (var content : contents) {
-            var bonkIngredient = FuelRecipeCapability.CAP.of(content);
+            var fuelIngredient = FuelRecipeCapability.CAP.of(content);
             if(isInput){
-                group.addWidget(new LabelWidget(3-xOffset, yOffset.addAndGet(10), "Fuel usage: " + bonkIngredient.getFuel() + "u/t"));
+                group.addWidget(new LabelWidget(3-xOffset, yOffset.addAndGet(10), "Fuel needed: " + fuelIngredient.getFuel()));
             }
             // Bonk output not supported for now
         }
-    }*/
+    }
 }

@@ -1,13 +1,12 @@
 package pl.epsi.gtsacore.common.data;
 
+import com.gregtechceu.gtceu.GTCEu;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import net.minecraft.data.recipes.FinishedRecipe;
-import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Items;
-import net.minecraftforge.client.event.RegisterColorHandlersEvent;
 import pl.epsi.gtsacore.api.capability.FuelRecipeCapability;
-import pl.epsi.gtsacore.api.ingredient.fuel.FuelIngredient;
+import pl.epsi.gtsacore.api.ingredient.FuelIngredient;
 
 import java.util.function.Consumer;
 
@@ -26,11 +25,15 @@ public class GTSACRecipes {
                 .outputItems(new ItemStack[]{ new ItemStack(Items.STICK) })
                 .EUt(8)
                 .duration(20 * 60).save(provider);
-        TEST_FUEL_RECIPES.recipeBuilder("testicle")
+
+        TEST_FUEL_RECIPES.recipeBuilder(
+                        GTCEu.id("test"))
                 .inputItems(Items.STONE)
-                .input(FuelRecipeCapability.CAP, new FuelIngredient(1))
+                .input(FuelRecipeCapability.CAP, new FuelIngredient(2))
                 .outputItems(Items.COBBLESTONE)
-                .duration(4*20).save(provider);
+                .duration(100)
+                .EUt(8)
+                .save(provider);
 
     }
 

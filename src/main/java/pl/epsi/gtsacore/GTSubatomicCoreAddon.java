@@ -3,18 +3,19 @@ package pl.epsi.gtsacore;
 import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.addon.GTAddon;
 import com.gregtechceu.gtceu.api.addon.IGTAddon;
+import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.MapIngredientTypeManager;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderManager;
-import com.gregtechceu.gtceu.data.pack.GTDynamicDataPack;
 import net.minecraft.data.recipes.FinishedRecipe;
 import pl.epsi.gtsacore.api.data.GTSACMaterialIconType;
 import pl.epsi.gtsacore.api.data.GTSACTagPrefix;
+import pl.epsi.gtsacore.api.ingredient.FuelIngredient;
+import pl.epsi.gtsacore.api.ingredient.MapFuelIngredient;
 import pl.epsi.gtsacore.api.recipes.GTSACMaterialRecipeHandlers;
 import pl.epsi.gtsacore.api.renderer.machine.CustomObjDynamicMultiRenderer;
 import pl.epsi.gtsacore.common.data.GTSACRecipeCapabilities;
 import pl.epsi.gtsacore.common.data.GTSACRecipes;
 import pl.epsi.gtsacore.common.data.materials.GTSACElements;
-import pl.epsi.gtsacore.common.data.materials.GTSACPeriodicTableMaterials;
 
 import java.util.function.Consumer;
 
@@ -29,6 +30,7 @@ public class GTSubatomicCoreAddon implements IGTAddon {
     @Override
     public void initializeAddon() {
         DynamicRenderManager.register(GTSubatomicCore.id("obj_renderer"), CustomObjDynamicMultiRenderer.TYPE);
+        MapIngredientTypeManager.registerMapIngredient(FuelIngredient.class, MapFuelIngredient::convertToMapIngredient);
     }
 
     @Override
@@ -60,7 +62,7 @@ public class GTSubatomicCoreAddon implements IGTAddon {
 
     @Override
     public void registerRecipeCapabilities() {
-        IGTAddon.super.registerRecipeCapabilities();
         GTSACRecipeCapabilities.init();
+
     }
 }

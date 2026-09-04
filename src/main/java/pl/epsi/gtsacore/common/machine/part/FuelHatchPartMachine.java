@@ -10,15 +10,17 @@ import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.phys.BlockHitResult;
-import pl.epsi.gtsacore.api.ingredient.fuel.NotifiableFuelHandler;
+import pl.epsi.gtsacore.api.recipes.NotifiableFuelHandler;
 
 public class FuelHatchPartMachine extends TieredIOPartMachine {
 
     @Persisted
     public NotifiableFuelHandler fuelHandler;
 
+
     public FuelHatchPartMachine(IMachineBlockEntity holder, int tier, IO io) {
         super(holder, tier, io);
+        // On creation the NotifiableBonkHandler attaches itself to the machine
         this.fuelHandler = new NotifiableFuelHandler(this, io);
     }
 
@@ -26,7 +28,7 @@ public class FuelHatchPartMachine extends TieredIOPartMachine {
     protected InteractionResult onHardHammerClick(Player playerIn, InteractionHand hand, Direction gridSide, BlockHitResult hitResult) {
         if(isRemote()) return InteractionResult.SUCCESS;
         if(fuelHandler.addFuel(1, false)){
-            playerIn.sendSystemMessage(Component.literal("Bonk! Total fuel stored: " + fuelHandler.getFuel()));
+            playerIn.sendSystemMessage(Component.literal("Fuel! Total fuel stored: " + fuelHandler.getFuel()));
             return InteractionResult.CONSUME;
         }
         return super.onHardHammerClick(playerIn, hand, gridSide, hitResult);

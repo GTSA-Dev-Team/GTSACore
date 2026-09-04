@@ -1,22 +1,21 @@
-package pl.epsi.gtsacore.api.ingredient.fuel;
+package pl.epsi.gtsacore.api.ingredient;
 
 import com.gregtechceu.gtceu.api.recipe.content.IContentSerializer;
 import com.mojang.serialization.Codec;
 import com.mojang.serialization.codecs.RecordCodecBuilder;
 import lombok.Getter;
 
-@Getter
 public class FuelIngredient {
-
     public static final FuelIngredient EMPTY = new FuelIngredient(0);
 
     public static final Codec<FuelIngredient> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             Codec.INT.fieldOf("fuel").forGetter(FuelIngredient::getFuel)
     ).apply(instance, FuelIngredient::new));
 
+    @Getter
     private int fuel;
 
-    public FuelIngredient(int fuel) {
+    public FuelIngredient(int fuel){
         this.fuel = fuel;
     }
 
