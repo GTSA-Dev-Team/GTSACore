@@ -12,6 +12,7 @@ import pl.epsi.gtsacore.api.data.GTSACTagPrefix;
 import pl.epsi.gtsacore.api.recipes.GTSACMaterialRecipeHandlers;
 import pl.epsi.gtsacore.api.renderer.machine.CustomObjDynamicMultiRenderer;
 import pl.epsi.gtsacore.common.data.GTSACRecipes;
+import pl.epsi.gtsacore.common.data.GTSACWorldGen;
 import pl.epsi.gtsacore.common.data.materials.GTSACElements;
 import pl.epsi.gtsacore.common.data.materials.GTSACPeriodicTableMaterials;
 
@@ -57,5 +58,8 @@ public class GTSubatomicCoreAddon implements IGTAddon {
         GTSACTagPrefix.initTagPrefixes();
     }
 
-
+    @Override
+    public void registerOreVeins() {
+        GTSACWorldGen.init();
+    }
 }

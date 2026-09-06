@@ -3,8 +3,10 @@ package pl.epsi.gtsacore;
 import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
+import com.gregtechceu.gtceu.api.data.worldgen.GTOreDefinition;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
+import com.gregtechceu.gtceu.api.registry.GTRegistry;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.common.data.GTCreativeModeTabs;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -21,6 +23,7 @@ import org.apache.logging.log4j.Logger;
 import pl.epsi.gtsacore.common.data.GTSACBlocks;
 import pl.epsi.gtsacore.common.data.GTSACMachines;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
+import pl.epsi.gtsacore.common.data.GTSACWorldGen;
 import pl.epsi.gtsacore.common.data.item.GTSACItems;
 import pl.epsi.gtsacore.common.data.materials.GTSACMaterialFlags;
 import pl.epsi.gtsacore.common.data.materials.GTSACMaterials;
@@ -92,6 +95,10 @@ public class GTSubatomicCore {
 
     private void registerMachines(GTCEuAPI.RegisterEvent<ResourceLocation, MachineDefinition> event) {
         GTSACMachines.init();
+    }
+
+    private void registerOres(GTCEuAPI.RegisterEvent<ResourceLocation, GTRegistry<?, ?>> reg) {
+
     }
 
     private void registerMaterials(MaterialEvent event) {
