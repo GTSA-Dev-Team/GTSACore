@@ -1,9 +1,6 @@
 package pl.epsi.gtsacore.common.machine.multiblock;
 
-import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
-import com.gregtechceu.gtceu.api.capability.recipe.IO;
-import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
-import com.gregtechceu.gtceu.api.capability.recipe.RecipeCapability;
+import com.gregtechceu.gtceu.api.capability.recipe.*;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
@@ -15,9 +12,13 @@ import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.ActionResult;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
 import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.api.recipe.content.Content;
 import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
+import com.gregtechceu.gtceu.api.recipe.lookup.RecipeDB;
+import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.AbstractMapIngredient;
+import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.MapIngredientTypeManager;
 import com.gregtechceu.gtceu.api.transfer.fluid.CustomFluidTank;
 import com.gregtechceu.gtceu.api.transfer.fluid.IFluidHandlerModifiable;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
@@ -25,6 +26,7 @@ import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
+import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
 import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
@@ -49,6 +51,7 @@ import pl.epsi.gtsacore.common.machine.WorkablePrimitiveMultiblockMachine;
 
 import javax.annotation.Nullable;
 import java.util.*;
+import java.util.function.Predicate;
 
 public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine implements IHeatSubmissive {
     private static final int maxHeat = 14230;
@@ -133,6 +136,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
         private int capacity;
         @Persisted
         @DescSynced
+        @Getter
         private ArrayList<FluidStack> fluids = new ArrayList<>();
 
         public FoundryFluidTank(MetaMachine machine, int capacity) {
@@ -300,7 +304,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
         }
     }
 
-    public static class BronzeFoundryLogic extends RecipeLogic {
+    private class BronzeFoundryLogic extends RecipeLogic {
 
         public @NotNull BronzeFoundryMachine getMachine() {
             return (BronzeFoundryMachine) super.getMachine();
@@ -310,11 +314,57 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
             super(machine);
         }
 
+        public List<List<AbstractMapIngredient>> getList() {
+            List<List<AbstractMapIngredient>> list = new ObjectArrayList<>(8);
+            var cap = FluidRecipeCapability.CAP;
+            var compressed = cap.compressIngredients(Arrays.asList(BronzeFoundryMachine.this.foundryTank.fluids.toArray()));
+            for (var ingredient : compressed) {
+                list.add(MapIngredientTypeManager.getFrom(ingredient, cap));
+            }
+
+            if (list.isEmpty()) return null;
+
+            return list;
+        }
+
+        public RecipeDB.RecipeIterator getIter(GTRecipeType type, Predicate<GTRecipe> predicate) {
+            var list = getList();
+            if (list == null) return null;
+            return new RecipeDB.RecipeIterator(type.db(), list, predicate);
+        }
+
+        public @NotNull Iterator<GTRecipe> searchRecipe(IRecipeCapabilityHolder holder, Predicate<GTRecipe> canHandle) {
+            var recipeType = this.getMachine().getRecipeType();
+            if (!holder.hasCapabilityProxies()) return Collections.emptyIterator();
+            var iterator = getIter(recipeType, canHandle);
+            if (iterator == null) {
+                return Collections.emptyIterator();
+            }
+            boolean any = false;
+            while (iterator.hasNext()) {
+                GTRecipe recipe = iterator.next();
+                if (recipe == null) continue;
+                any = true;
+                break;
+            }
+
+            if (any) {
+                iterator.reset();
+                return iterator;
+            }
+
+            for (GTRecipeType.ICustomRecipeLogic logic : recipeType.getCustomRecipeLogicRunners()) {
+                GTRecipe recipe = logic.createCustomRecipe(holder);
+                if (recipe != null && canHandle.test(recipe)) return Collections.singleton(recipe).iterator();
+            }
+            return Collections.emptyIterator();
+        }
+
         @Override
         public @NotNull Iterator<GTRecipe> searchRecipe() {
             System.out.println("called func");
 
-            return this.getMachine().getRecipeType().searchRecipe(this.getMachine(), r -> {
+            return searchRecipe(this.getMachine(), r -> {
                 System.out.println(r.recipeType.toString());
                 for (Content content : r.getInputContents(FluidRecipeCapability.CAP)) {
                     FluidStack fluidStack = FluidRecipeCapability.CAP.of(content.getContent()).getStacks()[0];
