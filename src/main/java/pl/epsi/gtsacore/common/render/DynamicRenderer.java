@@ -10,6 +10,8 @@ import pl.epsi.gtsacore.api.renderer.data.DynamicVertexBuilder;
 import pl.epsi.gtsacore.api.renderer.data.SACVertexFormat;
 import pl.epsi.gtsacore.api.renderer.shader.SACShaderProgram;
 
+import java.util.function.Consumer;
+
 public class DynamicRenderer {
 
     private int VBO, VAO, IBO;
@@ -67,14 +69,14 @@ public class DynamicRenderer {
         GL45.glBindBuffer(GL45.GL_ARRAY_BUFFER, 0);
     }
 
-    public void draw(boolean restoreState) {
-        if (restoreState) {
-            state.saveVAO();
-            state.saveTextures(0);
-        }
-
+    public void setup() {
+        save();
         this.bind();
         shader.use();
+    }
+
+    public void draw() {
+        setup();
 
         shader.uniformMat4f("projMatrix", RenderSystem.getProjectionMatrix());
         GL45.glBindTextureUnit(0, texID);
@@ -82,10 +84,24 @@ public class DynamicRenderer {
 
         GL45.glDrawElements(GL45.GL_TRIANGLES, indexCount, GL45.GL_UNSIGNED_INT, 0);
 
-        if (restoreState) {
-            state.restoreVAO();
-            state.restoreTextures();
-        }
+        restore();
+    }
+
+    public void draw(int drawMode, Consumer<SACShaderProgram> uniformSetup) {
+        setup();
+
+        uniformSetup.accept(shader);
+        GL45.glDrawElements(drawMode, indexCount, GL45.GL_UNSIGNED_INT, 0);
+
+        restore();
+    }
+
+    public void save() {
+        state.saveVAO();
+    }
+
+    public void restore() {
+        state.restoreVAO();
     }
 
     public void upload(DynamicVertexBuilder builder, boolean restoreState) {

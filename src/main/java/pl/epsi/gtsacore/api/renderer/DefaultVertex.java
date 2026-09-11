@@ -7,6 +7,8 @@ import java.nio.ByteBuffer;
 
 public class DefaultVertex implements Vertex {
 
+    public static final DefaultVertex TEMPLATE = new DefaultVertex(0, 0, 0, 0, 0, 0, 0);
+
     private final SACVertexFormat format;
     private final float x, y, z, r, g, b, a;
 

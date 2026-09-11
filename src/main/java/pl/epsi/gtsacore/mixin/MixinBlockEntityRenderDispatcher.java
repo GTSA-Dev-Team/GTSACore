@@ -21,7 +21,7 @@ public class MixinBlockEntityRenderDispatcher {
                                                                          PoseStack poseStack, MultiBufferSource bufferSource, CallbackInfo ci) {
         if (!CastingTableBlockEntityRenderer.renderer.isReset()) {
             GL45.glEnable(GL45.GL_DEPTH_TEST);
-            CastingTableBlockEntityRenderer.renderer.draw(true);
+            CastingTableBlockEntityRenderer.renderer.draw();
             CastingTableBlockEntityRenderer.renderer.reset();
             GL45.glDisable(GL45.GL_DEPTH_TEST);
         }
