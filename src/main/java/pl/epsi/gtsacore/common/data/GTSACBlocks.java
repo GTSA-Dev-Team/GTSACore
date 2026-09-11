@@ -1,9 +1,19 @@
 package pl.epsi.gtsacore.common.data;
 
+import com.gregtechceu.gtceu.common.data.GTBlocks;
+import com.gregtechceu.gtceu.common.data.models.GTModels;
+import com.gregtechceu.gtceu.common.registry.GTRegistration;
+import com.gregtechceu.gtceu.data.recipe.CustomTags;
+import com.tterrag.registrate.builders.BlockBuilder;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
 import com.tterrag.registrate.util.entry.BlockEntry;
 import com.tterrag.registrate.util.nullness.NonNullBiFunction;
+import com.tterrag.registrate.util.nullness.NonNullFunction;
+import com.tterrag.registrate.util.nullness.NonNullSupplier;
+import net.minecraft.client.renderer.RenderType;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.tags.BlockTags;
+import net.minecraft.tags.TagKey;
 import net.minecraft.world.item.BlockItem;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.level.block.Block;
@@ -15,6 +25,8 @@ import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.common.data.block.casting.*;
 
+import java.util.function.Supplier;
+
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_CREATIVE_TAB;
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
 
@@ -23,6 +35,27 @@ public class GTSACBlocks {
 
     static {
         GTSAC_REGISTRATE.creativeModeTab(() -> GTSAC_CREATIVE_TAB);
+    }
+
+    public static BlockEntry<Block> createCasingBlock(String name, ResourceLocation texture) {
+        return createCasingBlock(name, Block::new, texture, () -> Blocks.IRON_BLOCK,
+                () -> RenderType::cutoutMipped);
+    }
+
+    public static BlockEntry<Block> createCasingBlock(String name,
+                                                      NonNullFunction<BlockBehaviour.Properties, Block> blockSupplier,
+                                                      ResourceLocation texture,
+                                                      NonNullSupplier<? extends Block> properties,
+                                                      Supplier<Supplier<RenderType>> type) {
+        return GTSAC_REGISTRATE.block(name, blockSupplier)
+                .initialProperties(properties)
+                .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false))
+                .addLayer(type)
+                .exBlockstate(GTModels.cubeAllModel(texture))
+                .tag(CustomTags.MINEABLE_WITH_CONFIG_VALID_PICKAXE_WRENCH)
+                .item(BlockItem::new)
+                .build()
+                .register();
     }
 
     private static @NotNull BlockEntry<Block> registerSimpleBlock(String name, String id, String texture,
@@ -106,6 +139,8 @@ public class GTSACBlocks {
 
     public static final BlockEntry<SlabBlock> PRIMITIVE_BRICK_SLAB = registerSlabBlock(
             "Primitive Brick Slab", "primitive_brick_slab", "primitive_bricks", BlockItem::new);
+
+    public static final BlockEntry<Block> BRONZE_PLATED_BRICKS = createCasingBlock("bronze_plated_bricks", GTSubatomicCore.id("block/casings/solid/bronze_plated_bricks"));
 
 
 

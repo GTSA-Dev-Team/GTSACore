@@ -53,11 +53,13 @@ public class FuelRecipeCapability extends RecipeCapability<FuelIngredient> {
     public void addXEIInfo(WidgetGroup group, int xOffset, GTRecipe recipe, List<Content> contents, boolean perTick,
                            boolean isInput, MutableInt yOffset) {
         for (var content : contents) {
-            var fuelIngredient = FuelRecipeCapability.CAP.of(content);
+            var fuelIngredient = FuelRecipeCapability.CAP.of(content.getContent());
             if(isInput){
                 group.addWidget(new LabelWidget(3-xOffset, yOffset.addAndGet(10), "Fuel needed: " + fuelIngredient.getFuel()));
             }
             // Bonk output not supported for now
         }
     }
+
+
 }

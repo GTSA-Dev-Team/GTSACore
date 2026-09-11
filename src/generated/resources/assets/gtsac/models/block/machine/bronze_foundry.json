@@ -3,16 +3,15 @@
   "loader": "gtceu:machine",
   "machine": "gtsac:bronze_foundry",
   "texture_overrides": {
-    "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks"
+    "all": "gtsac:block/casings/solid/bronze_plated_bricks"
   },
   "variants": {
     "is_formed=false,recipe_logic_status=idle": {
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front",
-          "overlay_front_emissive": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_emissive"
+          "all": "gtsac:block/casings/solid/bronze_plated_bricks",
+          "overlay_front": "gtsac:block/machines/foundry/overlay_front"
         }
       }
     },
@@ -20,9 +19,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front",
-          "overlay_front_emissive": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_emissive"
+          "all": "gtsac:block/casings/solid/bronze_plated_bricks",
+          "overlay_front": "gtsac:block/machines/foundry/overlay_front"
         }
       }
     },
@@ -30,9 +28,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_active_emissive"
+          "all": "gtsac:block/casings/solid/bronze_plated_bricks",
+          "overlay_front": "gtsac:block/machines/foundry/overlay_front_active"
         }
       }
     },
@@ -40,9 +37,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_active_emissive"
+          "all": "gtsac:block/casings/solid/bronze_plated_bricks",
+          "overlay_front": "gtsac:block/machines/foundry/overlay_front_active"
         }
       }
     },
@@ -50,9 +46,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front",
-          "overlay_front_emissive": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_emissive"
+          "all": "gtsac:block/casings/solid/bronze_plated_bricks",
+          "overlay_front": "gtsac:block/machines/foundry/overlay_front"
         }
       }
     },
@@ -60,9 +55,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front",
-          "overlay_front_emissive": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_emissive"
+          "all": "gtsac:block/casings/solid/bronze_plated_bricks",
+          "overlay_front": "gtsac:block/machines/foundry/overlay_front"
         }
       }
     },
@@ -70,9 +64,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_active_emissive"
+          "all": "gtsac:block/casings/solid/bronze_plated_bricks",
+          "overlay_front": "gtsac:block/machines/foundry/overlay_front_active"
         }
       }
     },
@@ -80,9 +73,8 @@
       "model": {
         "parent": "gtceu:block/machine/template/cube_all/sided",
         "textures": {
-          "all": "gtceu:block/casings/solid/machine_casing_bronze_plated_bricks",
-          "overlay_front": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_active",
-          "overlay_front_emissive": "gtceu:block/multiblock/primitive_blast_furnace/overlay_front_active_emissive"
+          "all": "gtsac:block/casings/solid/bronze_plated_bricks",
+          "overlay_front": "gtsac:block/machines/foundry/overlay_front_active"
         }
       }
     }

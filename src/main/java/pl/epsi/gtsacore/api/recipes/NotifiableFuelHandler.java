@@ -6,6 +6,10 @@ import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.trait.ICapabilityTrait;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableRecipeHandlerTrait;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.lowdragmc.lowdraglib.syncdata.IContentChangeAware;
+import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
+import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
+import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.api.capability.FuelRecipeCapability;
@@ -13,15 +17,19 @@ import pl.epsi.gtsacore.api.ingredient.FuelIngredient;
 
 import java.util.List;
 
-public class NotifiableFuelHandler extends NotifiableRecipeHandlerTrait<FuelIngredient> implements ICapabilityTrait {
+public class NotifiableFuelHandler extends NotifiableRecipeHandlerTrait<FuelIngredient> implements ICapabilityTrait, IContentChangeAware {
+    public static final ManagedFieldHolder MANAGED_FIELD_HOLDER;
+    protected @NotNull Runnable onContentsChanged;
     @Getter
     public final IO handlerIO;
     @Getter
     public final IO capabilityIO;
 
     @Getter
+    @Persisted
+    @DescSynced
     private int fuel;
-    private static final int MAX_FUEl = 32000;
+    public static final int MAX_FUEl = 32000;
 
     public NotifiableFuelHandler(MetaMachine machine, IO io) {
         this(machine, io, io);
@@ -42,6 +50,15 @@ public class NotifiableFuelHandler extends NotifiableRecipeHandlerTrait<FuelIngr
         return true;
     }
 
+    public boolean setFuel(int fuelToSet, boolean simulate) {
+        if (fuelToSet < 0) return false;
+        if ((long) fuelToSet > MAX_FUEl) return false;
+        if (simulate) return true;
+        fuel = fuelToSet;
+        this.notifyListeners();
+        return true;
+    }
+
 
     public boolean drainFuel(int fuelToDrain, boolean simulate){
         if(fuelToDrain < 0) return false;
@@ -50,6 +67,10 @@ public class NotifiableFuelHandler extends NotifiableRecipeHandlerTrait<FuelIngr
         fuel -= fuelToDrain;
         this.notifyListeners();
         return true;
+    }
+
+    public ManagedFieldHolder getFieldHolder() {
+        return MANAGED_FIELD_HOLDER;
     }
 
     @Override
@@ -66,7 +87,6 @@ public class NotifiableFuelHandler extends NotifiableRecipeHandlerTrait<FuelIngr
         }
         return left.isEmpty() ? null : left;
     }
-
     @Override
     public int getSize() {
         return super.getSize();
@@ -85,5 +105,23 @@ public class NotifiableFuelHandler extends NotifiableRecipeHandlerTrait<FuelIngr
     @Override
     public RecipeCapability<FuelIngredient> getCapability() {
         return FuelRecipeCapability.CAP;
+    }
+
+    static {
+        MANAGED_FIELD_HOLDER = new ManagedFieldHolder(NotifiableFuelHandler.class, NotifiableRecipeHandlerTrait.MANAGED_FIELD_HOLDER);
+    }
+
+    @Override
+    public void setOnContentsChanged(Runnable runnable) {
+        this.onContentsChanged = onContentsChanged;
+    }
+
+    @Override
+    public @NotNull Runnable getOnContentsChanged() {
+        return this.onContentsChanged;
+    }
+
+    public void onContentsChanged(int slot) {
+        this.onContentsChanged.run();
     }
 }

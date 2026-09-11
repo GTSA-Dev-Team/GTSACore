@@ -26,25 +26,12 @@ import net.minecraft.network.chat.Component;
 import net.minecraft.world.level.block.Blocks;
 import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.api.renderer.machine.CustomObjDynamicMultiRenderer;
-import com.gregtechceu.gtceu.common.machine.multiblock.steam.SteamParallelMultiblockMachine;
-import com.tterrag.registrate.util.entry.BlockEntry;
-import mezz.jei.api.constants.RecipeTypes;
-import net.minecraft.client.Minecraft;
-import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.level.block.Block;
-import net.minecraft.world.level.block.Blocks;
-import net.minecraftforge.common.Tags;
-import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.common.machine.WorkableFueledMultiblockMachine;
 import pl.epsi.gtsacore.common.machine.multiblock.*;
-import pl.epsi.gtsacore.common.machine.multiblock.ClarifierMachine;
-import pl.epsi.gtsacore.common.machine.multiblock.LargePrimitiveSmelterMachine;
-import pl.epsi.gtsacore.common.machine.multiblock.NeutralizationTankMachine;
-import pl.epsi.gtsacore.common.machine.multiblock.SteelAugmentedPBFMachine;
 import pl.epsi.gtsacore.common.machine.part.FuelHatchPartMachine;
-import pl.epsi.gtsacore.common.machine.part.PrimitiveFuelHatchPartMachine;
 import pl.epsi.gtsacore.data.models.GTSACMachineModels;
 
+import static com.gregtechceu.gtceu.api.GTValues.ULV;
 import static com.gregtechceu.gtceu.api.GTValues.ZPM;
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
 import static com.gregtechceu.gtceu.api.pattern.Predicates.blocks;
@@ -265,7 +252,7 @@ public class GTSACMachines {
                     .where("B", blocks(GTSACBlocks.PRIMITIVE_BRICKS.get()).setMinGlobalLimited(12)
                             .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
                             .or(Predicates.abilities(PartAbility.EXPORT_ITEMS))
-                            .or(Predicates.machines(GTSACMachines.PRIMITIVE_FUEL_HATCH).setExactLimit(1)))
+                            .or(Predicates.machines(GTSACMachines.FUEL_HATCH).setExactLimit(1)))
                     .build())
             .model(createWorkableCasingMachineModel(
                     GTSubatomicCore.id("block/primitive_bricks"),
@@ -273,26 +260,50 @@ public class GTSACMachines {
             .register();
 
     public static final MultiblockMachineDefinition BRONZE_FOUNDRY = GTSAC_REGISTRATE
-            .multiblock("bronze_foundry", WorkableFueledMultiblockMachine::new)
+            .multiblock("bronze_foundry", BronzeFoundryMachine::new)
             .langValue("Bronze Foundry (WIP)")
             .rotationState(RotationState.ALL)
-            .recipeTypes(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES)
+            .recipeTypes(GTSACRecipeTypes.FOUNDRY_MELTING_RECIPES, GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES)
+            .appearanceBlock(GTSACBlocks.BRONZE_PLATED_BRICKS)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("     ", "BHHHB", " BBB ", " BBB ", "  F  ")
+                    .aisle(" BBB ", "H   H", "B   B", "B   B", " BBB ")
+                    .aisle(" BEB ", "H   H", "B   B", "B   B", "FBBBF")
+                    .aisle(" BBB ", "H   H", "B   B", "B   B", " BBB ")
+                    .aisle("     ", "BHHHB", " B@B ", " BBB ", "  F  ")
+                    .where(" ", Predicates.any())
+                    .where("@", Predicates.controller(blocks(definition.get())))
+                    .where("E", blocks(GTBlocks.BRONZE_HULL.get()))
+                    .where("F", blocks(GTBlocks.BRONZE_HULL.get()).setMinGlobalLimited(3, 5)
+                                    .or(Predicates.abilities(PartAbility.IMPORT_ITEMS)))
+                    .where("H", blocks(GTSACBlocks.BRONZE_PLATED_BRICKS.get())
+                                    .or(Predicates.abilities(PartAbility.EXPORT_FLUIDS)))
+                    .where("B", blocks(GTSACBlocks.BRONZE_PLATED_BRICKS.get()).setMinGlobalLimited(40))
+                    .build())
+            .model(createWorkableCasingMachineModel(
+                    GTSubatomicCore.id("block/casings/solid/bronze_plated_bricks"),
+                    GTSubatomicCore.id("block/machines/foundry")))
+            .register();
+
+    public static final MultiblockMachineDefinition LARGE_BRONZE_FIREBOX = GTSAC_REGISTRATE
+            .multiblock("large_bronze_firebox", LargeBronzeFireboxMachine::new)
+            .langValue("Large Bronze Firebox (WIP)")
+            .rotationState(RotationState.ALL)
+            .recipeTypes(GTSACRecipeTypes.HEATING_RECIPES)
             .appearanceBlock(GTBlocks.CASING_PRIMITIVE_BRICKS)
             .pattern(definition -> FactoryBlockPattern.start()
-                    .aisle("BBBBB", "BFFFB", "BBBBB")
-                    .aisle("BBBBB", "FPPPF", "B   B")
-                    .aisle("BBBBB", "FPPPF", "B   B")
-                    .aisle("BBBBB", "FPPPF", "B   B")
-                    .aisle("BBBBB", "BF@FB", "BBBBB")
+                    .aisle("BBBBB", "BFFFB", "BBBBB", "     ")
+                    .aisle("BBBBB", "FFFFF", "B   B", "     ")
+                    .aisle("BBBBB", "FFFFF", "B   B", "     ")
+                    .aisle("BBBBB", "FFFFF", "B   B", "     ")
+                    .aisle("BBBBB", "BF@FB", "BBBBB", "     ")
                     .where(" ", Predicates.any())
                     .where("@", Predicates.controller(blocks(definition.get())))
                     .where("F", blocks(GTBlocks.FIREBOX_BRONZE.get()))
-                    .where("P", blocks(GTBlocks.FIREBOX_BRONZE.get()))
                     .where("B", blocks(GTBlocks.CASING_BRONZE_BRICKS.get()).setMinGlobalLimited(15)
-                                    .or(Predicates.abilities(GTSACPartAbilities.FUEL_HATCH))
-                                    .or(Predicates.abilities(PartAbility.EXPORT_ITEMS))
-                                    .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
-                            )
+                            .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
+                            .or(Predicates.abilities(GTSACPartAbilities.FUEL_HATCH).setExactLimit(1))
+                    )
                     .build())
             .model(createWorkableCasingMachineModel(
                     GTCEu.id("block/casings/solid/machine_casing_bronze_plated_bricks"),
@@ -327,7 +338,7 @@ public class GTSACMachines {
                     GTCEu.id("block/multiblock/large_chemical_reactor"))
             .register();
 
-    public static final MachineDefinition PRIMITIVE_FUEL_HATCH = GTSAC_REGISTRATE
+    /*public static final MachineDefinition PRIMITIVE_FUEL_HATCH = GTSAC_REGISTRATE
             .machine("primitive_fuel_hatch", PrimitiveFuelHatchPartMachine::new)
             .langValue("§7Primitive Fuel Hatch")
             .tooltips(Component.literal("Low-Tech Fuel Input for Multiblocks"))
@@ -335,7 +346,7 @@ public class GTSACMachines {
             .modelProperty(IS_FORMED, false)
             .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_fuel_hatch", GTSubatomicCore.id("block/casings/primitive_bricks")))
             .tier(GTValues.ULV)
-            .register();
+            .register();*/
 
     public static final MachineDefinition PRIMITIVE_ITEM_IMPORT_HATCH = GTSAC_REGISTRATE
             .machine("primitive_input_bus", (holder) ->
@@ -369,13 +380,12 @@ public class GTSACMachines {
 
 
     public static final MachineDefinition FUEL_HATCH = GTSAC_REGISTRATE
-            .machine("fuel_hatch", (holder) -> new FuelHatchPartMachine(holder, ZPM, IO.IN))
+            .machine("fuel_hatch", (holder) -> new FuelHatchPartMachine(holder, ULV, IO.IN))
             .langValue("Fuel Hatch")
             .rotationState(RotationState.ALL)
             .tier(ZPM)
             .modelProperty(GTMachineModelProperties.IS_FORMED, false)
-            .colorOverlayTieredHullModel(GTCEu.id("block/overlay/machine/overlay_pipe_in_emissive"), null,
-                    GTCEu.id("block/overlay/machine/" + OVERLAY_ITEM_HATCH))
+            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_fuel_hatch", GTSubatomicCore.id("block/casings/primitive_bricks")))
             .abilities(GTSACPartAbilities.FUEL_HATCH)
             .register();
 

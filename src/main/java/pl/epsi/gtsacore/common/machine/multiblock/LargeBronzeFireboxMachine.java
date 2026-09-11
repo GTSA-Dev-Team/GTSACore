@@ -1,161 +1,137 @@
 package pl.epsi.gtsacore.common.machine.multiblock;
 
-import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
-import com.gregtechceu.gtceu.api.gui.GuiTextures;
-import com.gregtechceu.gtceu.api.gui.UITemplate;
-import com.gregtechceu.gtceu.api.machine.ConditionalSubscriptionHandler;
+import com.google.common.collect.ImmutableSet;
+import com.google.common.collect.Sets;
+import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
+import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
+import com.gregtechceu.gtceu.api.capability.ICleanroomReceiver;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
-import com.gregtechceu.gtceu.api.machine.TickableSubscription;
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
-import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
-import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
-import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
-import com.lowdragmc.lowdraglib.gui.widget.ComponentPanelWidget;
-import com.lowdragmc.lowdraglib.gui.widget.DraggableScrollableWidgetGroup;
-import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
-import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
+import com.gregtechceu.gtceu.api.machine.MetaMachine;
+import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
+import com.gregtechceu.gtceu.api.pattern.BlockPattern;
+import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
+import com.gregtechceu.gtceu.api.pattern.Predicates;
+import com.gregtechceu.gtceu.api.pattern.TraceabilityPredicate;
+import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 import lombok.Getter;
+import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
-import net.minecraft.world.entity.player.Player;
-import net.minecraft.world.item.ItemStack;
-import net.minecraft.world.item.Items;
-import net.minecraft.world.item.crafting.RecipeType;
-import pl.epsi.gtsacore.common.machine.part.PrimitiveFuelHatchPartMachine;
+import net.minecraft.world.level.block.entity.BlockEntity;
+import org.checkerframework.checker.nullness.qual.Nullable;
+import org.jetbrains.annotations.NotNull;
+import pl.epsi.gtsacore.api.capability.GTSACCapability;
+import pl.epsi.gtsacore.api.capability.GTSACCapabilityHelper;
+import pl.epsi.gtsacore.common.data.GTSACPartAbilities;
+import pl.epsi.gtsacore.common.machine.IHeatDominant;
+import pl.epsi.gtsacore.common.machine.IHeatSubmissive;
+import pl.epsi.gtsacore.common.machine.WorkableFueledMultiblockMachine;
 
+import java.util.Collection;
 import java.util.List;
+import java.util.Set;
+import java.util.function.Supplier;
 
-public class LargeBronzeFireboxMachine extends WorkableMultiblockMachine implements IDisplayUIMachine {
-    private final ConditionalSubscriptionHandler fuelHatchSubscription;
-    private TickableSubscription tickSubscription;
+import static com.gregtechceu.gtceu.api.pattern.Predicates.blocks;
 
-    private static final int maxFuel = 70000;
-    private static final int maxHeat = 1423;
-
-    @Persisted
-    @Getter
-    private int fuelTimer = 0;
-
-    @Persisted
-    @Getter
-    private int heatTImer = 0;
-
-    @Persisted
-    @Getter
-    private int fuel = 0;
+public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine implements IHeatDominant {
+    private static final int maxHeat = 14230;
 
     @Getter
     private int heat = 0;
+    private Collection<IHeatSubmissive> heatTargets;
 
 
-
-     public LargeBronzeFireboxMachine(IMachineBlockEntity holder, Object... args) {
+    public LargeBronzeFireboxMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, args);
-         this.fuelHatchSubscription = new ConditionalSubscriptionHandler(this, this::fuelHatchTick, () -> true);
     }
 
-    public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(LargePrimitiveSmelterMachine.class,
-            WorkableElectricMultiblockMachine.MANAGED_FIELD_HOLDER);
-
-    private void fuelHatchTick() {
-        if (fuelTimer == 0) {
-
-            int stored = 0;
-            ItemStack contents = ItemStack.EMPTY;
-            int itemValue = 0;
-
-            if (isFormed()) {
-                var array = getParts().stream()
-                        .filter(PrimitiveFuelHatchPartMachine.class::isInstance)
-                        .map(PrimitiveFuelHatchPartMachine.class::cast)
-                        .toArray(PrimitiveFuelHatchPartMachine[]::new);
-
-                if (array.length == 1) {
-                    var fuelHatch = array[0];
-
-                    var fuelItemHandler = (NotifiableItemStackHandler) fuelHatch.getRecipeHandlers().get(0)
-                            .getCapability(ItemRecipeCapability.CAP).get(0);
-                    if (!fuelItemHandler.isEmpty()) {
-                        contents = (ItemStack) fuelItemHandler.getContents().get(0);
-                        stored = ((ItemStack) fuelItemHandler.getContents().get(0)).getCount();
-                        itemValue = contents.is(Items.COAL) ? 1600 : contents.getBurnTime(RecipeType.SMELTING);
-                    }
-
-                    if (fuel + itemValue <= maxFuel && stored >= 1) {
-                        fuel += itemValue;
-                        contents.setCount(stored - 1);
-                    }
-
-                }
-            }
-        }
-
-        fuelTimer = (fuelTimer + 1) % 60;
-    }
-
-    private void heatTick() {
-        if (heatTImer == 0) {
-            if (fuel == 0) {
-                updateActiveBlocks(false);
-                heat -= (int) Math.ceil((double) heat / 100);
-
-                return;
-            }
-
-            updateActiveBlocks(true);
-            if (heat <= maxHeat) {
-                int diff = maxHeat - heat;
-                heat += (int) Math.ceil((double) diff / 100);
-                heat = Math.min(heat, maxHeat);
-
-                fuel -= (int) Math.ceil((double) heat / 100);
-                fuel = Math.max(fuel, 0);
-            }
-        }
-
-        heatTImer = (heatTImer + 1) % 5;
-    }
+    public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(LargeBronzeFireboxMachine.class,
+            WorkableFueledMultiblockMachine.MANAGED_FIELD_HOLDER);
 
     @Override
     public void onStructureFormed() {
         super.onStructureFormed();
-        fuelHatchSubscription.updateSubscription();
-        if (!isRemote()) {
-            tickSubscription = this.subscribeServerTick(this::heatTick);
+
+        if (this.heatTargets != null) {
+            this.heatTargets.forEach((target) -> target.setHeatSource(null));
+            this.heatTargets = null;
         }
+
+        Set<IHeatSubmissive> receivers = this.getMultiblockState().getMatchContext().getOrCreate("heatSubmissive", Sets::newHashSet);
+
+        this.heatTargets = ImmutableSet.copyOf(receivers);
+        this.heatTargets.forEach((target) -> target.setHeatSource(this));
     }
 
     @Override
     public void onStructureInvalid() {
-        super.onStructureInvalid();
-        fuelHatchSubscription.updateSubscription();
-        fuelTimer = 0;
-        if (!isRemote()) {
-            tickSubscription.unsubscribe();
-            tickSubscription = null;
+        super.onStructureFormed();
+        if (this.heatTargets != null) {
+            this.heatTargets.forEach((target) -> target.setHeatSource(null));
+            this.heatTargets = null;
         }
     }
 
     @Override
-    public ModularUI createUI(Player entityPlayer) {
-        var screen = new DraggableScrollableWidgetGroup(7, 4, 182, 121).setBackground(getScreenTexture());
-        screen.addWidget(new LabelWidget(4, 5, self().getBlockState().getBlock().getDescriptionId()));
-        screen.addWidget(new ComponentPanelWidget(4, 17, this::addDisplayText)
-                .setMaxWidthLimit(150)
-                .clickHandler(this::handleDisplayClick));
-        return new ModularUI(196, 216, this, entityPlayer)
-                .background(GuiTextures.BACKGROUND_STEAM.get(false))
-                .widget(screen)
-                .widget(UITemplate.bindPlayerInventory(entityPlayer.getInventory(),
-                        GuiTextures.SLOT_STEAM.get(true), 7, 134,
-                        true));
+    public void addDisplayText(List<Component> textList) {
+        super.addDisplayText(textList);
+        textList.add(Component.literal("Heat: " + (heat/10 + 295) + "K/" + (maxHeat/10 + 295) + "K"));
     }
 
     @Override
-    public void addDisplayText(List<Component> textList) {
-        IDisplayUIMachine.super.addDisplayText(textList);
-        textList.add(Component.literal("Fuel: " + fuel + "/" + maxFuel));
-        textList.add(Component.literal("Heat: " + (heat + 295) + "K/" + (maxHeat + 295) + "K"));
+    public boolean onWorking() {
+        heat = (int) Math.ceil (heat + (double) (maxHeat - heat) / 100L);
+        heat = Math.min(heat, maxHeat);
+        return super.onWorking();
+    }
+
+    @Override
+    public int getHeatLevel() {
+        return heat;
+    }
+
+    protected @NotNull TraceabilityPredicate innerPredicate() {
+        return new TraceabilityPredicate(blockWorldState -> {
+            Set<IHeatSubmissive> targets = blockWorldState.getMatchContext().getOrCreate("heatSubmissive", Sets::newHashSet);
+            BlockEntity blockEntity = blockWorldState.getTileEntity();
+
+            if (blockEntity != null && blockEntity instanceof MetaMachineBlockEntity mbe) {
+                //IHeatSubmissive receiver = GTSACCapabilityHelper.getHeatSubmissive(blockWorldState.getWorld(), blockWorldState.getPos(),null);
+
+                if (mbe.getMetaMachine() instanceof IHeatSubmissive reciever) {
+                    targets.add(reciever);
+                    System.out.println(blockEntity.getBlockPos() + "asdadasdffafasf");
+                }
+            }
+
+            return true;
+        }, null) {
+            public boolean isAny() {
+                return true;
+            }
+
+            public boolean addCache() {
+                return true;
+            }
+        };
+    }
+
+    @Override
+    public BlockPattern getPattern() {
+        return  FactoryBlockPattern.start()
+                .aisle("BBBBB", "BFFFB", "BBBBB", "     ")
+                .aisle("BBBBB", "FFFFF", "B   B", "     ")
+                .aisle("BBBBB", "FFFFF", "B   B", "     ")
+                .aisle("BBBBB", "FFFFF", "B   B", "     ")
+                .aisle("BBBBB", "BF@FB", "BBBBB", "     ")
+                .where(" ", this.innerPredicate())
+                .where("@", Predicates.controller(Predicates.blocks(this.getDefinition().get())))
+                .where("F", blocks(GTBlocks.FIREBOX_BRONZE.get()))
+                .where("B", blocks(GTBlocks.CASING_BRONZE_BRICKS.get()).setMinGlobalLimited(15)
+                        .or(Predicates.abilities(PartAbility.IMPORT_ITEMS))
+                        .or(Predicates.abilities(GTSACPartAbilities.FUEL_HATCH).setExactLimit(1))
+                )
+                .build();
     }
 }
