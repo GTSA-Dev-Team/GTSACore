@@ -124,7 +124,7 @@ public class FuelHatchPartMachine extends TieredIOPartMachine {
 
                 int itemValue = ForgeHooks.getBurnTime(new ItemStack(fuelStack.getItem()), RecipeType.SMELTING);
 
-                if (fuelStack.getCount() > 0 && this.fuelHandler.addFuel(itemValue, true)) {
+                if (fuelStack.getCount() > 0 && this.fuelHandler.addFuel(itemValue, true) && itemValue > 0) {
                     fuelStack.setCount(fuelStack.getCount() - 1);
                     this.fuelHandler.addFuel(itemValue, false);
                 }

@@ -261,7 +261,7 @@ public class GTSACMachines {
 
     public static final MultiblockMachineDefinition BRONZE_FOUNDRY = GTSAC_REGISTRATE
             .multiblock("bronze_foundry", BronzeFoundryMachine::new)
-            .langValue("Bronze Foundry (WIP)")
+            .langValue("Bronze Foundry")
             .rotationState(RotationState.ALL)
             .recipeTypes(GTSACRecipeTypes.FOUNDRY_MELTING_RECIPES, GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES)
             .appearanceBlock(GTSACBlocks.BRONZE_PLATED_BRICKS)
@@ -287,7 +287,7 @@ public class GTSACMachines {
 
     public static final MultiblockMachineDefinition LARGE_BRONZE_FIREBOX = GTSAC_REGISTRATE
             .multiblock("large_bronze_firebox", LargeBronzeFireboxMachine::new)
-            .langValue("Large Bronze Firebox (WIP)")
+            .langValue("Large Bronze Firebox")
             .rotationState(RotationState.ALL)
             .recipeTypes(GTSACRecipeTypes.HEATING_RECIPES)
             .appearanceBlock(GTBlocks.CASING_PRIMITIVE_BRICKS)

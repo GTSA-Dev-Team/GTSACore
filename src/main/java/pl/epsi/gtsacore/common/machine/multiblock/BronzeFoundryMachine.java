@@ -73,9 +73,6 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
     public BronzeFoundryMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, args);
         this.foundryTank = new FoundryFluidTank(this, totalCapacity);
-
-        //this.foundryTank.fillInternal(GTMaterials.Copper.getFluid(3), IFluidHandler.FluidAction.EXECUTE);
-        //this.foundryTank.fillInternal(GTMaterials.Tin.getFluid(2352), IFluidHandler.FluidAction.EXECUTE);
     }
 
 
@@ -88,18 +85,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
         return new BronzeFoundryLogic(this);
     }
 
-    @Override
-    protected InteractionResult onHardHammerClick(Player playerIn, InteractionHand hand, Direction gridSide, BlockHitResult hitResult) {
-        if (playerIn.level().isClientSide()) return InteractionResult.FAIL;
-        alloy();
-        return super.onHardHammerClick(playerIn, hand, gridSide, hitResult);
-    }
 
-    @Override
-    protected InteractionResult onScrewdriverClick(Player playerIn, InteractionHand hand, Direction gridSide, BlockHitResult hitResult) {
-        pour();
-        return super.onScrewdriverClick(playerIn, hand, gridSide, hitResult);
-    }
 
     @Override
     public BronzeFoundryLogic getRecipeLogic() {
@@ -127,7 +113,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
 
     @Override
     public void addDisplayText(List<Component> textList) {
-        String capacitytext = "Tank space: " + this.foundryTank.getStored() + "mb / " + totalCapacity + "b";
+        String capacitytext = "Tank space: " + this.foundryTank.getStored() + "mB / " + totalCapacity/1000 + "B";
         List<FluidStack> contained = this.foundryTank.getFluidStacksInDescendingOrder();
 
         super.addDisplayText(textList);
