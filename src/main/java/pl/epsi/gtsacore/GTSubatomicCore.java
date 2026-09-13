@@ -5,6 +5,9 @@ import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
+import com.gregtechceu.gtceu.api.recipe.RecipeCondition;
+import com.gregtechceu.gtceu.api.recipe.condition.RecipeConditionType;
+import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.common.data.GTCreativeModeTabs;
 import com.tterrag.registrate.util.entry.RegistryEntry;
@@ -22,6 +25,7 @@ import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
 import org.lwjgl.opengl.GL45;
 import pl.epsi.gtsacore.api.capability.GTSACCapability;
+import pl.epsi.gtsacore.api.condition.HeatCondition;
 import pl.epsi.gtsacore.common.data.GTSACBlocks;
 import pl.epsi.gtsacore.common.data.GTSACMachines;
 import pl.epsi.gtsacore.common.data.GTSACVanillaRecipes;
@@ -41,6 +45,8 @@ public class GTSubatomicCore {
     public static final Logger LOGGER = LogManager.getLogger();
     public static final GTRegistrate GTSAC_REGISTRATE = GTRegistrate.create(GTSubatomicCore.MOD_ID);
 
+    public static RecipeConditionType<HeatCondition> HEAT_CONDITION;
+
     public static RegistryEntry<CreativeModeTab> GTSAC_CREATIVE_TAB = GTSAC_REGISTRATE
             .defaultCreativeTab(GTSubatomicCore.MOD_ID,
                     builder -> builder
@@ -58,6 +64,7 @@ public class GTSubatomicCore {
 
         modEventBus.addGenericListener(GTRecipeType.class, this::registerRecipeTypes);
         modEventBus.addGenericListener(MachineDefinition.class, this::registerMachines);
+        modEventBus.addGenericListener(RecipeConditionType.class, this::registerConditions);
 
         modEventBus.addListener(this::registerMaterials);
         modEventBus.addListener(this::modifyMaterials);
@@ -66,6 +73,11 @@ public class GTSubatomicCore {
         GTSACVanillaRecipes.init(modEventBus);
 
         MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    public void registerConditions(GTCEuAPI.RegisterEvent<String, RecipeConditionType<?>> event) {
+        HEAT_CONDITION = GTRegistries.RECIPE_CONDITIONS.register("heat_condition",
+                new RecipeConditionType<>(HeatCondition::new, HeatCondition.CODEC));
     }
 
     @SubscribeEvent
@@ -111,7 +123,6 @@ public class GTSubatomicCore {
     @SubscribeEvent
     public void registerCapabilities(RegisterCapabilitiesEvent event) {
         GTSACCapability.register(event);
-        System.out.println("lolz");
     }
 
 

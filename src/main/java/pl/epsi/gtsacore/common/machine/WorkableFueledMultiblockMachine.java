@@ -29,6 +29,7 @@ import java.util.List;
 
 public class WorkableFueledMultiblockMachine extends WorkablePrimitiveMultiblockMachine {
     private FuelIngredient FUEL_STACK = new FuelIngredient(20);
+    private final boolean endRecipeWhenFuelInsufficient;
 
     @Getter
     @Persisted
@@ -39,8 +40,9 @@ public class WorkableFueledMultiblockMachine extends WorkablePrimitiveMultiblock
     public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             WorkableFueledMultiblockMachine.class, WorkablePrimitiveMultiblockMachine.MANAGED_FIELD_HOLDER);
 
-    public WorkableFueledMultiblockMachine(IMachineBlockEntity holder, Object... args) {
+    public WorkableFueledMultiblockMachine(IMachineBlockEntity holder, boolean endRecipeWhenFuelInsufficient, Object... args) {
         super(holder, args);
+        this.endRecipeWhenFuelInsufficient = endRecipeWhenFuelInsufficient;
     }
 
     protected GTRecipe getFuelRecipe() {
@@ -77,7 +79,11 @@ public class WorkableFueledMultiblockMachine extends WorkablePrimitiveMultiblock
             FUEL_STACK = new FuelIngredient(recipe.data.getInt("fuel_per_tick") * 20);
         }
         if (this.runningTimer % 20 == 0 && !RecipeHelper.handleRecipeIO(this, this.getFuelRecipe(), IO.IN, this.recipeLogic.getChanceCaches()).isSuccess()) {
-            this.recipeLogic.setProgress(0);
+            if (endRecipeWhenFuelInsufficient) {
+                this.recipeLogic.interruptRecipe();
+            } else {
+                this.recipeLogic.setProgress(0);
+            }
         } else {
             ++this.runningTimer;
             if (this.runningTimer > 20000) {

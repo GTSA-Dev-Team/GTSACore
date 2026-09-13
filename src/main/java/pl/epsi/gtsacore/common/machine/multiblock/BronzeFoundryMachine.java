@@ -1,8 +1,10 @@
 package pl.epsi.gtsacore.common.machine.multiblock;
 
+import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
 import com.gregtechceu.gtceu.api.capability.recipe.*;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
+import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
@@ -23,6 +25,10 @@ import com.gregtechceu.gtceu.api.transfer.fluid.CustomFluidTank;
 import com.gregtechceu.gtceu.api.transfer.fluid.IFluidHandlerModifiable;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
+import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
+import com.lowdragmc.lowdraglib.gui.widget.ButtonWidget;
+import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
+import com.lowdragmc.lowdraglib.syncdata.ISubscription;
 import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
@@ -54,8 +60,6 @@ import java.util.*;
 import java.util.function.Predicate;
 
 public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine implements IHeatSubmissive {
-    private static final int maxHeat = 14230;
-
     @Nullable
     private IHeatDominant heatSource;
 
@@ -66,15 +70,9 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
 
 
     private int totalCapacity = 27000;
-
-    @Getter
-    private int heat = 0;
-
     public BronzeFoundryMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, args);
-
-        List<CustomFluidTank> storages = List.of(new CustomFluidTank(totalCapacity));
-        this.foundryTank = new FoundryFluidTank(this, 8*144);
+        this.foundryTank = new FoundryFluidTank(this, totalCapacity);
 
         //this.foundryTank.fillInternal(GTMaterials.Copper.getFluid(3), IFluidHandler.FluidAction.EXECUTE);
         //this.foundryTank.fillInternal(GTMaterials.Tin.getFluid(2352), IFluidHandler.FluidAction.EXECUTE);
@@ -93,38 +91,93 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
     @Override
     protected InteractionResult onHardHammerClick(Player playerIn, InteractionHand hand, Direction gridSide, BlockHitResult hitResult) {
         if (playerIn.level().isClientSide()) return InteractionResult.FAIL;
-        pour();
-        System.out.println(this.foundryTank.drain(GTMaterials.Tin.getFluid(200), IFluidHandler.FluidAction.SIMULATE).getAmount());
+        alloy();
         return super.onHardHammerClick(playerIn, hand, gridSide, hitResult);
+    }
+
+    @Override
+    protected InteractionResult onScrewdriverClick(Player playerIn, InteractionHand hand, Direction gridSide, BlockHitResult hitResult) {
+        pour();
+        return super.onScrewdriverClick(playerIn, hand, gridSide, hitResult);
     }
 
     @Override
     public BronzeFoundryLogic getRecipeLogic() {
         return (BronzeFoundryLogic) super.getRecipeLogic();
     }
+    public BronzeFoundryLogic getAlloyingRecipeLogic() {
+        return new BronzeFoundryLogic(this);
+    }
+
+
 
     @Override
     public IHeatDominant getHeatSource() {
-        return null;
+        return this.heatSource;
     }
+
+
 
     @Override
     public void setHeatSource(@Nullable IHeatDominant source) {
         this.heatSource = source;
     }
 
+
+
     @Override
     public void addDisplayText(List<Component> textList) {
-        ArrayList<String> fluidText = new ArrayList<>();
-        for (FluidStack fluidStack : foundryTank.fluids) {
-            fluidText.add(fluidStack.getDisplayName().toString());
-        }
-        textList.add(Component.literal(fluidText.toString()));
+        String capacitytext = "Tank space: " + this.foundryTank.getStored() + "mb / " + totalCapacity + "b";
+        List<FluidStack> contained = this.foundryTank.getFluidStacksInDescendingOrder();
+
         super.addDisplayText(textList);
+        textList.add(Component.literal(capacitytext));
+        for (FluidStack fluidStack : contained) {
+            float percent = (float) (Math.floor(this.foundryTank.getPercentageOfFluid(fluidStack.getFluid()) * 1000) / 10);
+            textList.add(Component.literal(fluidStack.getDisplayName().getString() + ": " + percent + "%"));
+        }
+    }
+
+    @Override
+    public ModularUI createUI(Player entityPlayer) {
+        int[] pourButtonParams = new int[]{120, 70, 60, 20};
+        int[] alloyButtonParams = new int[]{120, 95, 60, 20};
+
+        LabelWidget pourText = new LabelWidget(pourButtonParams[0] + pourButtonParams[2] / 2 - 10, pourButtonParams[1] + pourButtonParams[3] / 2 - 4,"Pour");
+        ButtonWidget pourButton = new ButtonWidget(pourButtonParams[0], pourButtonParams[1], pourButtonParams[2], pourButtonParams[3], clickData -> {
+            if (!clickData.isRemote) {
+                pour();
+            }
+        }).setButtonTexture(GuiTextures.BUTTON);
+
+        LabelWidget alloyText = new LabelWidget(alloyButtonParams[0] + alloyButtonParams[2] / 2 - 10, alloyButtonParams[1] + alloyButtonParams[3] / 2 - 4, "Alloy");
+        ButtonWidget alloyButton = new ButtonWidget(alloyButtonParams[0], alloyButtonParams[1], alloyButtonParams[2], alloyButtonParams[3], clickData -> {
+            if (!clickData.isRemote) {
+                alloy();
+            }
+        }).setButtonTexture(GuiTextures.BUTTON);
+
+
+
+        return super.createUI(entityPlayer).widget(pourButton).widget(pourText).widget(alloyButton).widget(alloyText);
     }
 
     public void pour() {
-        this.setRecipeType(GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES);
+        FluidStack largestConsitute = foundryTank.getLargestFluidStack();
+
+        if (largestConsitute != null) {
+            GTRecipe pourRecipe = GTRecipeBuilder.ofRaw().outputFluids(largestConsitute).buildRawRecipe();
+            if (this.getRecipeLogic().handleRecipeIO(pourRecipe, IO.OUT).isSuccess()) {
+                this.foundryTank.drain(largestConsitute, IFluidHandler.FluidAction.EXECUTE);
+            }
+
+        }
+    }
+
+    public void alloy() {
+        setRecipeType(GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES);
+        this.getAlloyingRecipeLogic().findAndHandleRecipe();
+        setRecipeType(GTSACRecipeTypes.FOUNDRY_MELTING_RECIPES);
     }
 
 
@@ -137,7 +190,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
         @Persisted
         @DescSynced
         @Getter
-        private ArrayList<FluidStack> fluids = new ArrayList<>();
+        protected ArrayList<FluidStack> fluids = new ArrayList<>();
 
         public FoundryFluidTank(MetaMachine machine, int capacity) {
             super(machine);
@@ -222,8 +275,32 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
                 }
 
             }
-
             return inserted;
+        }
+
+        @Override
+        protected FoundryFluidTank clone() {
+            FoundryFluidTank newTank = new FoundryFluidTank(this.machine, this.capacity);
+            newTank.fluids = (ArrayList<FluidStack>) this.fluids.clone();
+
+            return newTank;
+        }
+
+        public List<FluidStack> getFluidStacksInDescendingOrder() {
+            ArrayList<FluidStack> copiedFluids = (ArrayList<FluidStack>) this.fluids.clone();
+            ArrayList<FluidStack> inOrder = new ArrayList<>();
+
+            while (!this.fluids.isEmpty()){
+                FluidStack largest = this.getLargestFluidStack();
+
+                if (largest != null) {
+                    inOrder.add(largest);
+                    this.fluids.remove(getIndexOfFluid(largest.getFluid()));
+                }
+            }
+
+            this.fluids = copiedFluids;
+            return inOrder;
         }
 
         @Override
@@ -302,6 +379,23 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
             if (!this.hasFluid(fluid)) return 0;
             return (float) this.getFluidStackOfFluid(fluid).getAmount() / this.getStored();
         }
+
+       public @Nullable FluidStack getLargestFluidStack() {
+            HashMap<Integer, FluidStack> inverseAmounts = new HashMap<>();
+
+            for (FluidStack fluidStack : fluids) {
+                inverseAmounts.put(fluidStack.getAmount(), fluidStack);
+            }
+
+            OptionalInt largestAmountOptional = fluids.stream().mapToInt(FluidStack::getAmount).max();
+            if (!largestAmountOptional.isPresent()) return null;
+
+           return inverseAmounts.get(largestAmountOptional.getAsInt());
+       }
+
+       public void voidFluids() {
+            fluids  = new ArrayList<>();
+       }
     }
 
     private class BronzeFoundryLogic extends RecipeLogic {
@@ -362,19 +456,19 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
 
         @Override
         public @NotNull Iterator<GTRecipe> searchRecipe() {
-            System.out.println("called func");
+
+            if (this.getMachine().getRecipeType() == GTSACRecipeTypes.FOUNDRY_MELTING_RECIPES) {
+                return super.searchRecipe();
+            }
 
             return searchRecipe(this.getMachine(), r -> {
-                System.out.println(r.recipeType.toString());
                 for (Content content : r.getInputContents(FluidRecipeCapability.CAP)) {
                     FluidStack fluidStack = FluidRecipeCapability.CAP.of(content.getContent()).getStacks()[0];
 
                     if (this.getMachine().foundryTank.drain(fluidStack, IFluidHandler.FluidAction.SIMULATE).getAmount() != fluidStack.getAmount()) {
-                        System.out.println(false);
                         return false;
                     }
                 }
-                System.out.println(true);
                 return true;
             });
         }
@@ -387,7 +481,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
             if (recipe.recipeType == GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES) {
                 return this.matchFoundryAlloyingRecipe(recipe);
             }
-            return ActionResult.FAIL_NO_REASON;
+            return super.matchRecipe(recipe);
         }
 
         @Override
@@ -398,7 +492,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
             if (recipe.recipeType == GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES) {
                 return this.handleFoundryAlloyingRecipe(recipe, io);
             }
-            return ActionResult.FAIL_NO_REASON;
+            return super.handleRecipeIO(recipe, io);
         }
 
         private ActionResult handleFoundryMeltingRecipe(GTRecipe recipe, IO io) {
@@ -421,22 +515,12 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
                     .append(FluidRecipeCapability.CAP.getName()), FluidRecipeCapability.CAP, IO.OUT);
         }
 
-        private ActionResult handleFoundryAlloyingRecipe(GTRecipe recipe, IO io) {
+        private boolean isAlloyRecipeWithinErr(GTRecipe recipe) {
+            //if (recipe.recipeType != GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES) return false;
+
             FoundryFluidTank foundryTank =  this.getMachine().foundryTank;
-            int storedAmountInTank = foundryTank.getStored();
 
-            //Material outputMat = ChemicalHelper.getMaterial(FluidRecipeCapability.CAP.of(recipe.getOutputContents(FluidRecipeCapability.CAP).get(0).getContent()).getStacks()[0].getFluid());
-            Material outputMat = ChemicalHelper.getMaterial(RecipeHelper.getOutputFluids(recipe).get(0).getFluid());
-            GTRecipe alloyRecipe = GTRecipeBuilder.ofRaw().outputFluids(outputMat.getFluid(storedAmountInTank)).buildRawRecipe();
-            GTRecipe slagRecipe = GTRecipeBuilder.ofRaw().outputFluids(GTSACMaterials.SLAG.getFluid(storedAmountInTank)).buildRawRecipe();
-
-            System.out.println(outputMat.getName());
-
-            if (io != IO.IN) {
-                return super.handleRecipeIO(alloyRecipe, io);
-            }
-
-            List<FluidStack> inputFluids = RecipeHelper.getOutputFluids(recipe);
+            List<FluidStack> inputFluids = RecipeHelper.getInputFluids(recipe);
             int amountSum = inputFluids.stream().mapToInt(FluidStack::getAmount).sum();
 
             HashMap<Fluid, Float> tankFractionMap = new HashMap<>();
@@ -452,11 +536,51 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
 
             for (Fluid fluid : reqFractionMap.keySet()) {
                 if (Math.abs(tankFractionMap.get(fluid) - reqFractionMap.get(fluid)) > 0.05) {
-                    return super.handleRecipeIO(slagRecipe, IO.OUT);
+                    return false;
                 }
             }
 
-            return super.handleRecipeIO(alloyRecipe, IO.OUT);
+            return true;
+        }
+        private int lastStoredAmountInTank = 1;
+        private boolean didLastRecipeFit;
+
+
+
+        private ActionResult handleFoundryAlloyingRecipe(GTRecipe recipe, IO io) {
+            FoundryFluidTank foundryTank =  this.getMachine().foundryTank;
+
+            if (io != IO.OUT) {
+                lastStoredAmountInTank = foundryTank.getStored();
+                didLastRecipeFit = isAlloyRecipeWithinErr(recipe);
+            }
+
+
+
+
+            Material outputMat = ChemicalHelper.getMaterial(RecipeHelper.getOutputFluids(recipe).get(0).getFluid());
+            Material failMat = ChemicalHelper.getMaterial(RecipeHelper.getOutputFluids(recipe).get(1).getFluid());
+
+
+
+
+            GTRecipe alloyRecipe = GTRecipeBuilder.ofRaw().recipeType(GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES).outputFluids(outputMat.getFluid(lastStoredAmountInTank)).buildRawRecipe();
+            GTRecipe failRecipe = GTRecipeBuilder.ofRaw().recipeType(GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES).outputFluids(failMat.getFluid(lastStoredAmountInTank)).buildRawRecipe();
+
+
+            GTRecipe actualRecipe = didLastRecipeFit ? alloyRecipe : failRecipe;
+
+            if (io != IO.IN) {
+                ActionResult result = applyTankOutput(actualRecipe, IFluidHandler.FluidAction.EXECUTE) ? ActionResult.SUCCESS : ActionResult.fail(
+                        Component.literal("Insufficient tank space!"), FluidRecipeCapability.CAP, IO.OUT);
+
+                return result;
+            }
+            foundryTank.voidFluids();
+            ActionResult result = applyTankInput(actualRecipe, IFluidHandler.FluidAction.EXECUTE) ? ActionResult.SUCCESS : ActionResult.fail(
+                    Component.literal("Insufficient inputs!"), FluidRecipeCapability.CAP, IO.IN);
+;
+            return result;
         }
 
         private ActionResult matchFoundryMeltingRecipe(GTRecipe recipe) {
@@ -470,14 +594,29 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
         }
 
         private ActionResult matchFoundryAlloyingRecipe(GTRecipe recipe) {
-            if (!recipe.getOutputContents(ItemRecipeCapability.CAP).isEmpty()) return ActionResult.FAIL_NO_REASON;
-            ActionResult result = RecipeHelper.handleRecipe(this.machine, recipe, IO.OUT, recipe.outputs, Collections.emptyMap(), false, true);
+            int outputAmount = this.getMachine().foundryTank.getStored();
+            FluidStack mainStack = new FluidStack(RecipeHelper.getOutputFluids(recipe).get(0).getFluid(), outputAmount);
+            FluidStack failStack = new FluidStack(RecipeHelper.getOutputFluids(recipe).get(1).getFluid(), outputAmount);
 
-            if (!result.isSuccess()) {
-                return result;
-            } else {
-                return !applyTankInput(recipe, IFluidHandler.FluidAction.SIMULATE) ? ActionResult.fail(Component.literal("Not enough fluids!"), FluidRecipeCapability.CAP, IO.IN) : ActionResult.SUCCESS;
-            }
+
+
+
+            GTRecipe mainOutputRecipe = GTRecipeBuilder.ofRaw().outputFluids(mainStack).inputFluids(FluidIngredient.of(RecipeHelper.getInputFluids(recipe))).buildRawRecipe();
+            GTRecipe failOutputRecipe = GTRecipeBuilder.ofRaw().outputFluids(failStack).inputFluids(FluidIngredient.of(RecipeHelper.getInputFluids(recipe))).buildRawRecipe();
+
+            if (!recipe.getOutputContents(ItemRecipeCapability.CAP).isEmpty()) return ActionResult.FAIL_NO_REASON;
+
+            boolean mainTankInput = applyTankInput(mainOutputRecipe, IFluidHandler.FluidAction.SIMULATE);
+            boolean mainTankOutput = applyTankOutput(mainOutputRecipe, IFluidHandler.FluidAction.SIMULATE);
+            boolean failTankInput = applyTankInput(failOutputRecipe, IFluidHandler.FluidAction.SIMULATE);
+            boolean failTankOutput = applyTankInput(failOutputRecipe, IFluidHandler.FluidAction.SIMULATE);
+
+            ActionResult inputResult = (mainTankInput || failTankInput) ? ActionResult.SUCCESS : ActionResult.fail(Component.literal("Insusfficient fluids!"), FluidRecipeCapability.CAP, IO.IN);
+            if (!inputResult.isSuccess()) return inputResult;
+
+            ActionResult outputResult = (mainTankOutput || failTankOutput) ? ActionResult.SUCCESS : ActionResult.fail(Component.literal("Insusfficient output space!"), FluidRecipeCapability.CAP, IO.OUT);
+            return outputResult;
+
         }
 
         private boolean applyTankInput(GTRecipe recipe, IFluidHandler.FluidAction action) {
@@ -497,17 +636,13 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
         }
 
         private boolean applyTankOutput(GTRecipe recipe, IFluidHandler.FluidAction action) {
-            List<Content> fluids = recipe.getOutputContents(FluidRecipeCapability.CAP);
+            List<FluidStack> fluidStacks = RecipeHelper.getOutputFluids(recipe);
 
-            if (fluids.isEmpty()) {
+            if (fluidStacks.isEmpty()) {
                 return true;
             }
-
-            for (Content content : fluids) {
-                FluidIngredient ingredient = FluidRecipeCapability.CAP.of(content.getContent());
-                FluidStack fluid = ingredient.getStacks()[0];
-
-                if (!(getMachine().foundryTank.fill(fluid, action) == fluid.getAmount())) {
+            for (FluidStack stack : fluidStacks) {
+                if (!(getMachine().foundryTank.fill(stack, action) == stack.getAmount())) {
                     return false;
                 }
             }

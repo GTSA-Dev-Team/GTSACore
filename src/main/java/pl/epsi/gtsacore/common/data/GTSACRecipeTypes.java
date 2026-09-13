@@ -47,17 +47,9 @@ public class GTSACRecipeTypes {
 
     public static final GTRecipeType FOUNDRY_ALLOYING_RECIPES = GTRecipeTypes
             .register("foundry_alloying", "multiblock")
-            .setMaxIOSize(0, 0, 3, 1)
+            .setMaxIOSize(0, 0, 3, 2)
             .setProgressBar(GuiTextures.PROGRESS_BAR_ARROW_MULTIPLE, ProgressTexture.FillDirection.LEFT_TO_RIGHT)
-            .setSound(GTSoundEntries.JET_ENGINE)
-            .addDataInfo(data -> {
-                if (data.contains("max_err")) {
-                    int err = data.getInt("max_err");
-                    return LocalizationUtils.format("emi_info.gtsac.foundry", err);
-                } else {
-                    return "";
-                }
-            });
+            .setSound(GTSoundEntries.JET_ENGINE);
 
 
 

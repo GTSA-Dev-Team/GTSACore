@@ -34,7 +34,7 @@ public class LargePrimitiveSmelterMachine extends WorkableFueledMultiblockMachin
 
 
     public LargePrimitiveSmelterMachine(IMachineBlockEntity holder, Object... args) {
-        super(holder, args);
+        super(holder, false, args);
     }
 
 

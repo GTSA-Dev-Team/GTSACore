@@ -7,16 +7,21 @@ import com.gregtechceu.gtceu.api.capability.GTCapabilityHelper;
 import com.gregtechceu.gtceu.api.capability.ICleanroomReceiver;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
+import com.gregtechceu.gtceu.api.machine.TickableSubscription;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
 import com.gregtechceu.gtceu.api.pattern.BlockPattern;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
 import com.gregtechceu.gtceu.api.pattern.Predicates;
 import com.gregtechceu.gtceu.api.pattern.TraceabilityPredicate;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
+import com.lowdragmc.lowdraglib.syncdata.ISubscription;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 import lombok.Getter;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
+import net.minecraft.server.TickTask;
+import net.minecraft.server.level.ServerLevel;
+import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.checkerframework.checker.nullness.qual.Nullable;
 import org.jetbrains.annotations.NotNull;
@@ -41,13 +46,47 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
     private int heat = 0;
     private Collection<IHeatSubmissive> heatTargets;
 
+    protected ISubscription heatSubs;
+    protected TickableSubscription dissipateHeatSubs;
+
 
     public LargeBronzeFireboxMachine(IMachineBlockEntity holder, Object... args) {
-        super(holder, args);
+        super(holder, true, args);
     }
 
     public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(LargeBronzeFireboxMachine.class,
             WorkableFueledMultiblockMachine.MANAGED_FIELD_HOLDER);
+
+    private void updateHeatSubs() {
+        dissipateHeatSubs = subscribeServerTick(dissipateHeatSubs, this::dissipateHeat);
+    }
+
+    private void dissipateHeat() {
+        if (getOffsetTimer() % 5 == 0) {
+            heat -= (heat / 100);
+            clampHeat();
+            updateHeatSubs();
+        }
+    }
+
+    @Override
+    public void onLoad() {
+        super.onLoad();
+        Level var2 = this.getLevel();
+        if (var2 instanceof ServerLevel serverLevel) {
+            serverLevel.getServer().tell(new TickTask(0, this::updateHeatSubs));
+        }
+    }
+
+    @Override
+    public void onUnload() {
+        super.onUnload();
+        if (this.heatSubs != null) {
+            this.heatSubs.unsubscribe();
+            this.heatSubs = null;
+        }
+
+    }
 
     @Override
     public void onStructureFormed() {
@@ -62,11 +101,13 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
 
         this.heatTargets = ImmutableSet.copyOf(receivers);
         this.heatTargets.forEach((target) -> target.setHeatSource(this));
+        ;
     }
 
     @Override
     public void onStructureInvalid() {
-        super.onStructureFormed();
+        super.onStructureInvalid();
+        this.updateActiveBlocks(false);
         if (this.heatTargets != null) {
             this.heatTargets.forEach((target) -> target.setHeatSource(null));
             this.heatTargets = null;
@@ -82,8 +123,13 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
     @Override
     public boolean onWorking() {
         heat = (int) Math.ceil (heat + (double) (maxHeat - heat) / 100L);
-        heat = Math.min(heat, maxHeat);
+        clampHeat();
         return super.onWorking();
+    }
+
+    public void clampHeat() {
+        heat = Math.min(heat, maxHeat);
+        heat = Math.max(0, heat);
     }
 
     @Override
@@ -97,11 +143,8 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
             BlockEntity blockEntity = blockWorldState.getTileEntity();
 
             if (blockEntity != null && blockEntity instanceof MetaMachineBlockEntity mbe) {
-                //IHeatSubmissive receiver = GTSACCapabilityHelper.getHeatSubmissive(blockWorldState.getWorld(), blockWorldState.getPos(),null);
-
                 if (mbe.getMetaMachine() instanceof IHeatSubmissive reciever) {
                     targets.add(reciever);
-                    System.out.println(blockEntity.getBlockPos() + "asdadasdffafasf");
                 }
             }
 
@@ -120,11 +163,11 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
     @Override
     public BlockPattern getPattern() {
         return  FactoryBlockPattern.start()
-                .aisle("BBBBB", "BFFFB", "BBBBB", "     ")
-                .aisle("BBBBB", "FFFFF", "B   B", "     ")
-                .aisle("BBBBB", "FFFFF", "B   B", "     ")
-                .aisle("BBBBB", "FFFFF", "B   B", "     ")
-                .aisle("BBBBB", "BF@FB", "BBBBB", "     ")
+                .aisle("BBBBB", "BFFFB", "BBBBB", "     ", "     ")
+                .aisle("BBBBB", "FFFFF", "B   B", "     ", "     ")
+                .aisle("BBBBB", "FFFFF", "B   B", "     ", "     ")
+                .aisle("BBBBB", "FFFFF", "B   B", "     ", "     ")
+                .aisle("BBBBB", "BF@FB", "BBBBB", "     ", "     ")
                 .where(" ", this.innerPredicate())
                 .where("@", Predicates.controller(Predicates.blocks(this.getDefinition().get())))
                 .where("F", blocks(GTBlocks.FIREBOX_BRONZE.get()))
