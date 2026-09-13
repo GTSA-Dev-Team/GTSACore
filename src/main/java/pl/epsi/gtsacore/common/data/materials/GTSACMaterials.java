@@ -17,6 +17,7 @@ import pl.epsi.gtsacore.GTSubatomicCore;
 public class GTSACMaterials {
 
     public static Material CLAVIUM;
+    public static Material SLAG;
 
     public static void register() {
         CLAVIUM = new Material.Builder(GTSubatomicCore.id("clavium"))
@@ -34,6 +35,13 @@ public class GTSACMaterials {
                 .element(GTSACElements.CLAVIUM)
                 .cableProperties(GTValues.VA[GTValues.UEV], 1024, 0, true)
                 .flags(MaterialFlags.SOLDER_MATERIAL, MaterialFlags.GENERATE_DENSE, MaterialFlags.GENERATE_BOLT_SCREW)
+                .buildAndRegister();
+
+        SLAG = new Material.Builder(GTSubatomicCore.id("slag"))
+                .liquid(1423)
+                .iconSet(MaterialIconSet.DULL)
+                .langValue("Slag")
+                .color(0xCF984C)
                 .buildAndRegister();
     }
 

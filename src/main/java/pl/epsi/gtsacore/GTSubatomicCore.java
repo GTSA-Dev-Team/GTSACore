@@ -3,16 +3,17 @@ package pl.epsi.gtsacore;
 import com.gregtechceu.gtceu.api.GTCEuAPI;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.MaterialEvent;
 import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
-import com.gregtechceu.gtceu.api.data.worldgen.GTOreDefinition;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.recipe.GTRecipeType;
-import com.gregtechceu.gtceu.api.registry.GTRegistry;
+import com.gregtechceu.gtceu.api.recipe.condition.RecipeConditionType;
+import com.gregtechceu.gtceu.api.registry.GTRegistries;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.common.data.GTCreativeModeTabs;
 import com.tterrag.registrate.util.entry.RegistryEntry;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.CreativeModeTab;
 import net.minecraftforge.common.MinecraftForge;
+import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
 import net.minecraftforge.event.RegisterCommandsEvent;
 import net.minecraftforge.eventbus.api.IEventBus;
 import net.minecraftforge.eventbus.api.SubscribeEvent;
@@ -20,10 +21,11 @@ import net.minecraftforge.fml.common.Mod;
 import net.minecraftforge.fml.javafmlmod.FMLJavaModLoadingContext;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.Logger;
+import pl.epsi.gtsacore.api.capability.GTSACCapability;
+import pl.epsi.gtsacore.api.condition.HeatCondition;
 import pl.epsi.gtsacore.common.data.GTSACBlocks;
 import pl.epsi.gtsacore.common.data.GTSACMachines;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
-import pl.epsi.gtsacore.common.data.GTSACWorldGen;
 import pl.epsi.gtsacore.common.data.item.GTSACItems;
 import pl.epsi.gtsacore.common.data.materials.GTSACMaterialFlags;
 import pl.epsi.gtsacore.common.data.materials.GTSACMaterials;
@@ -37,6 +39,8 @@ public class GTSubatomicCore {
     public static final String MOD_ID = "gtsac";
     public static final Logger LOGGER = LogManager.getLogger();
     public static final GTRegistrate GTSAC_REGISTRATE = GTRegistrate.create(GTSubatomicCore.MOD_ID);
+
+    public static RecipeConditionType<HeatCondition> HEAT_CONDITION;
 
     public static RegistryEntry<CreativeModeTab> GTSAC_CREATIVE_TAB = GTSAC_REGISTRATE
             .defaultCreativeTab(GTSubatomicCore.MOD_ID,
@@ -55,9 +59,7 @@ public class GTSubatomicCore {
 
         modEventBus.addGenericListener(GTRecipeType.class, this::registerRecipeTypes);
         modEventBus.addGenericListener(MachineDefinition.class, this::registerMachines);
-
-        // TODO: FIX THIS
-        GTSAC_REGISTRATE.addRawLang("config.jade.plugin_gtsac.crucible_provider", "[GTSAC] Crucible");
+        modEventBus.addGenericListener(RecipeConditionType.class, this::registerConditions);
 
         modEventBus.addListener(this::registerMaterials);
         modEventBus.addListener(this::modifyMaterials);
@@ -65,6 +67,11 @@ public class GTSubatomicCore {
         GTSAC_REGISTRATE.registerRegistrate();
 
         MinecraftForge.EVENT_BUS.register(this);
+    }
+
+    public void registerConditions(GTCEuAPI.RegisterEvent<String, RecipeConditionType<?>> event) {
+        HEAT_CONDITION = GTRegistries.RECIPE_CONDITIONS.register("heat_condition",
+                new RecipeConditionType<>(HeatCondition::new, HeatCondition.CODEC));
     }
 
     @SubscribeEvent
@@ -97,10 +104,6 @@ public class GTSubatomicCore {
         GTSACMachines.init();
     }
 
-    private void registerOres(GTCEuAPI.RegisterEvent<ResourceLocation, GTRegistry<?, ?>> reg) {
-
-    }
-
     private void registerMaterials(MaterialEvent event) {
         GTSACPeriodicTableMaterials.register();
         GTSACMaterials.register();
@@ -109,6 +112,11 @@ public class GTSubatomicCore {
     private void modifyMaterials(PostMaterialEvent event) {
         GTSACPeriodicTableMaterials.modifyMaterials();
         GTSACMaterials.modifyMaterials();
+    }
+
+    @SubscribeEvent
+    public void registerCapabilities(RegisterCapabilitiesEvent event) {
+        GTSACCapability.register(event);
     }
 
 
