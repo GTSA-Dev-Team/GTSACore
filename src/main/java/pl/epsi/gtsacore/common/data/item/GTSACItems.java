@@ -82,6 +82,21 @@ public class GTSACItems {
             .lang("Ceramic Crucible")
             .register();
 
+    public static final ItemEntry<Item> UNFIRED_INGOT_MOLD = GTSAC_REGISTRATE
+            .item("unfired_ceramic_ingot_mold", Item::new)
+            .lang("Unfired Ceramic Ingot Mold")
+            .register();
+
+    public static final ItemEntry<Item> UNFIRED_PLATE_MOLD = GTSAC_REGISTRATE
+            .item("unfired_ceramic_plate_mold", Item::new)
+            .lang("Unfired Ceramic Plate Mold")
+            .register();
+
+    public static final ItemEntry<Item> UNFIRED_ROD_MOLD = GTSAC_REGISTRATE
+            .item("unfired_ceramic_rod_mold", Item::new)
+            .lang("Unfired Ceramic Rod Mold")
+            .register();
+
 
     public static final ItemEntry<? extends AbstractCastItem> INGOT_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Ingot Mold", "ceramic_ingot_mold",
             "obj_models/mold/ingot.obj",
