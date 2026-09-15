@@ -11,7 +11,6 @@ import com.gregtechceu.gtceu.api.machine.feature.multiblock.IFluidRenderMulti;
 import com.gregtechceu.gtceu.api.machine.multiblock.WorkableMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
-import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
 import com.gregtechceu.gtceu.api.recipe.modifier.ParallelLogic;
@@ -38,7 +37,6 @@ import net.minecraft.world.phys.AABB;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
 import org.jetbrains.annotations.NotNull;
-import org.joml.Vector3i;
 
 import java.util.Collections;
 import java.util.HashSet;
@@ -46,7 +44,7 @@ import java.util.Set;
 
 public class SteelAugmentedPBFMachine extends WorkableMultiblockMachine implements IDisplayUIMachine, IFluidRenderMulti {
 
-    public static final int maxParallels = 8;
+    public static final int MAX_PARALLELS = 8;
 
     private TickableSubscription hurtSubscription;
 
@@ -123,7 +121,7 @@ public class SteelAugmentedPBFMachine extends WorkableMultiblockMachine implemen
     }
 
     public static ModifierFunction recipeModifier(@NotNull MetaMachine machine, @NotNull GTRecipe recipe) {
-        int parallel = ParallelLogic.getParallelAmount(machine, recipe, 8);
+        int parallel = ParallelLogic.getParallelAmount(machine, recipe, MAX_PARALLELS);
         return ModifierFunction.builder()
                 .inputModifier(ContentModifier.multiplier(parallel))
                 .outputModifier(ContentModifier.multiplier(parallel))

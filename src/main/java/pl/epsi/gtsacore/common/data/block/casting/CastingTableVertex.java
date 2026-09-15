@@ -43,10 +43,10 @@ public class CastingTableVertex implements Vertex {
         this.x = x;
         this.y = y;
         this.z = z;
-        this.r = ((rgba >>> 24) & 0xFF) / 255.0f;
-        this.g = ((rgba >>> 16) & 0xFF) / 255.0f;
-        this.b = ((rgba >>> 8)  & 0xFF) / 255.0f;
-        this.a = ( rgba         & 0xFF) / 255.0f;
+        this.a = ((rgba >>> 24)  & 0xFF) / 255.0f;
+        this.r = ((rgba >>> 16) & 0xFF) / 255.0f;
+        this.g = ((rgba >>> 8) & 0xFF) / 255.0f;
+        this.b = ((rgba      )  & 0xFF) / 255.0f;
         this.nx = nx;
         this.ny = ny;
         this.nz = nz;

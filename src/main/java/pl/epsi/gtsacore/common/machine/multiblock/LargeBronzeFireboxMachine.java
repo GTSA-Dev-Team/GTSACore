@@ -20,8 +20,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.common.data.GTSACPartAbilities;
-import pl.epsi.gtsacore.common.machine.IHeatProvider;
-import pl.epsi.gtsacore.common.machine.IHeatReceiver;
+import pl.epsi.gtsacore.api.machine.feature.IHeatProvider;
+import pl.epsi.gtsacore.api.machine.feature.IHeatReceiver;
 import pl.epsi.gtsacore.common.machine.WorkableFueledMultiblockMachine;
 
 import java.util.Collection;

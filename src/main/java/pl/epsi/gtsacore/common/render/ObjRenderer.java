@@ -49,7 +49,6 @@ public class ObjRenderer {
         slotToTextureID.put(1, LIGHTMAP_TEXTURE_GL_ID);
         if (restoreState) {
             state.saveVAO();
-            state.saveTextures(slotToTextureID.keySet().toArray(new Integer[]{}));
         }
 
         buf.bind();
@@ -65,7 +64,6 @@ public class ObjRenderer {
 
         if (restoreState) {
             state.restoreVAO();
-            state.restoreTextures();
         }
     }
 

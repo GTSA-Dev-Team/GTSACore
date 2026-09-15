@@ -6,9 +6,6 @@
   "mixins": [
     "MixinCampfireBlockEntity"
   ],
-  "client": [
-    "MixinBlockEntityRenderDispatcher"
-  ],
   "injectors": {
     "defaultRequire": 1
   }

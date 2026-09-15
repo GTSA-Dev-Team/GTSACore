@@ -25,20 +25,6 @@ import static pl.epsi.gtsacore.common.data.GTSACRecipeTypes.*;
 public class GTSACRecipes {
 
     public static void init(Consumer<FinishedRecipe> provider) {
-        PRIMITIVE_SMELTER_RECIPES.recipeBuilder("test")
-                .inputItems(new ItemStack(Items.IRON_ORE))
-                .outputItems(new ItemStack(Items.IRON_INGOT))
-                .addData("FU/t", 2)
-                .addData("duration", 30*20)
-                .duration(30*20).save(provider);
-        CLARIFIER_RECIPES.recipeBuilder("somethingsth")
-                .inputItems(new ItemStack[]{ new ItemStack(Items.STICK) })
-                .inputFluids(GTMaterials.Radon, 1)
-                .outputItems(new ItemStack[]{ new ItemStack(Items.STICK) })
-                .EUt(8)
-                .duration(20 * 60)
-                .save(provider);
-
         CRUCIBLE_ASSEMBLY_RECIPES.recipeBuilder("crucible_bronze_alloying")
                 .inputFluids(GTMaterials.Copper, 432)
                 .inputFluids(GTMaterials.Tin, 144)

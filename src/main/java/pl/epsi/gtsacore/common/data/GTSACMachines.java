@@ -210,7 +210,7 @@ public class GTSACMachines {
 
     public static final MultiblockMachineDefinition STEEL_AUGMENTED_PBF = GTSAC_REGISTRATE
             .multiblock("steel_augmented_pbf", SteelAugmentedPBFMachine::new)
-            .langValue("Steel-Augmented Bricked (Up) Blast Furnace")
+            .langValue("Steel-Augmented Bricked Blast Furnace")
             .rotationState(RotationState.ALL)
             .recipeType(GTRecipeTypes.PRIMITIVE_BLAST_FURNACE_RECIPES)
             .appearanceBlock(GTBlocks.CASING_PRIMITIVE_BRICKS)
@@ -313,33 +313,6 @@ public class GTSACMachines {
                     GTCEu.id("block/multiblock/primitive_blast_furnace")))
             .register();
 
-    public static final MultiblockMachineDefinition TEST_FUEL_MULTI = GTSAC_REGISTRATE
-            .multiblock("test_fuel_multi", WorkableElectricMultiblockMachine::new)
-            .langValue("Skibidi rizz")
-            .rotationState(RotationState.ALL)
-            .recipeType(GTSACRecipeTypes.TEST_FUEL_RECIPES)
-            .recipeModifiers(OC_PERFECT_SUBTICK, BATCH_MODE)
-            .appearanceBlock(CASING_PTFE_INERT)
-            .pattern(definition -> {
-                var casing = blocks(CASING_PTFE_INERT.get()).setMinGlobalLimited(10);
-                var abilities = Predicates.autoAbilities(definition.getRecipeTypes())
-                        .or(Predicates.autoAbilities(true, false, false))
-                        .or(Predicates.abilities(GTSACPartAbilities.FUEL_HATCH));
-                return FactoryBlockPattern.start()
-                        .aisle("XXX", "XCX", "XXX")
-                        .aisle("XCX", "CPC", "XCX")
-                        .aisle("XXX", "XSX", "XXX")
-                        .where('S', Predicates.controller(blocks(definition.getBlock())))
-                        .where('X', casing.or(abilities))
-                        .where('P', blocks(CASING_POLYTETRAFLUOROETHYLENE_PIPE.get()))
-                        .where('C', Predicates.heatingCoils().setExactLimit(1)
-                                .or(abilities)
-                                .or(casing))
-                        .build();
-            })
-            .workableCasingModel(GTCEu.id("block/casings/solid/machine_casing_inert_ptfe"),
-                    GTCEu.id("block/multiblock/large_chemical_reactor"))
-            .register();
 
     public static final MachineDefinition PRIMITIVE_ITEM_IMPORT_HATCH = GTSAC_REGISTRATE
             .machine("primitive_input_bus", (holder) ->

@@ -9,7 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.GTSubatomicCore;
-import pl.epsi.gtsacore.common.machine.IHeatReceiver;
+import pl.epsi.gtsacore.api.machine.feature.IHeatReceiver;
 
 public class HeatCondition extends RecipeCondition<HeatCondition> {
 

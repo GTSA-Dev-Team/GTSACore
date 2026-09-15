@@ -1,14 +1,12 @@
 package pl.epsi.gtsacore.datagen;
 
 import com.tterrag.registrate.providers.ProviderType;
-import pl.epsi.gtsacore.common.lang.GTSACLang;
-import pl.epsi.gtsacore.datagen.lang.GTSACMaterialLangHandler;
+import pl.epsi.gtsacore.datagen.lang.GTSACLang;
 
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
 
 public class GTSACDatagen {
     public static void init() {
-        GTSAC_REGISTRATE.addDataGenerator(ProviderType.LANG, GTSACMaterialLangHandler::init);
         GTSAC_REGISTRATE.addDataGenerator(ProviderType.LANG, GTSACLang::init);
     }
 }

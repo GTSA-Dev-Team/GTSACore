@@ -4,7 +4,7 @@ import net.minecraftforge.common.capabilities.Capability;
 import net.minecraftforge.common.capabilities.CapabilityManager;
 import net.minecraftforge.common.capabilities.CapabilityToken;
 import net.minecraftforge.common.capabilities.RegisterCapabilitiesEvent;
-import pl.epsi.gtsacore.common.machine.IHeatReceiver;
+import pl.epsi.gtsacore.api.machine.feature.IHeatReceiver;
 
 public class GTSACCapability {
     public static final Capability<IHeatReceiver> CAPABILITY_HEAT_SUBMISSIVE = CapabilityManager.get(new CapabilityToken<>() {

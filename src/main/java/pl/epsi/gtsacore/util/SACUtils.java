@@ -5,6 +5,7 @@ import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialStack;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
+import com.gregtechceu.gtceu.common.data.GTMaterials;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -65,6 +66,8 @@ public class SACUtils {
 
         Material material = materialStack.material();
         long amount = (int) (144 * materialStack.amount() / GTValues.M);
+
+        if (material.getFluid().getFluidType().getTemperature() > GTMaterials.Copper.getFluid().getFluidType().getTemperature()) return null;
 
         return material.getFluid((int) amount);
     }

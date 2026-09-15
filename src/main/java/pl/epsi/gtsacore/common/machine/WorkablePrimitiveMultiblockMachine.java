@@ -20,7 +20,6 @@ import java.util.List;
 
 public class WorkablePrimitiveMultiblockMachine extends WorkableMultiblockMachine implements IDisplayUIMachine {
 
-
     public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             WorkablePrimitiveMultiblockMachine.class, WorkableMultiblockMachine.MANAGED_FIELD_HOLDER);
 
@@ -40,26 +39,6 @@ public class WorkablePrimitiveMultiblockMachine extends WorkableMultiblockMachin
 
         IDisplayUIMachine.super.addDisplayText(textList);
     }
-
-    /*@Override
-    public Widget createUI() {
-        WidgetGroup group = new WidgetGroup(0, 0, 190, 125);
-        group.addWidget((new DraggableScrollableWidgetGroup(4, 4, 182, 117))
-                .setBackground(GuiTextures.PRIMITIVE_BACKGROUND)
-                .addWidget(new LabelWidget(4, 5, this.self().getBlockState().getBlock().getDescriptionId()))
-                .addWidget((new ComponentPanelWidget(4, 17, this::addDisplayText))
-                        .textSupplier(this.getLevel().isClientSide ? null : this::addDisplayText)
-                        .setMaxWidthLimit(200)
-                        .clickHandler(this::handleDisplayClick)));
-        group.setBackground(GuiTextures.PRIMITIVE_BACKGROUND);
-        return group;
-    }*/
-
-
-    /*@Override
-    public ModularUI createUI(Player entityPlayer) {
-        return (new ModularUI(198, 208, this, entityPlayer)).widget(new FancyMachineUIWidget(this, 198, 208));
-    }*/
 
     @Override
     public IGuiTexture getScreenTexture() {

@@ -1,5 +1,4 @@
-package pl.epsi.gtsacore.common.machine;
-
+package pl.epsi.gtsacore.api.machine.feature;
 
 import org.jetbrains.annotations.Nullable;
 

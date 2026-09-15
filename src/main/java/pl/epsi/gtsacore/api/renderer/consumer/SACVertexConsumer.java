@@ -45,9 +45,9 @@ public class SACVertexConsumer<T extends Vertex> {
     }
 
     protected void init(int vc, int ic) {
-        this.VBO = GL45.glGenBuffers();
-        this.VAO = GL45.glGenVertexArrays();
-        this.IBO = GL45.glGenBuffers();
+        this.VBO = GL45.glCreateBuffers();
+        this.VAO = GL45.glCreateVertexArrays();
+        this.IBO = GL45.glCreateBuffers();
 
         reallocVertexBuffer(vc);
         reallocIndexBuffer(ic);
@@ -75,7 +75,8 @@ public class SACVertexConsumer<T extends Vertex> {
         this.frozenIndex = currentVertexCount;
     }
 
-    public void putVertices(T... verts) {
+    @SafeVarargs
+    public final void putVertices(T... verts) {
         ensureVertexSpace(verts.length);
 
         for (T vert : verts) {
@@ -87,8 +88,8 @@ public class SACVertexConsumer<T extends Vertex> {
 
     public void putIndices(int... indices) {
         ensureIndexSpace(indices.length);
-        for (int i = 0; i < indices.length; i++) {
-            indicesBuffer.put(indices[i] + frozenIndex);
+        for (int index : indices) {
+            indicesBuffer.put(index + frozenIndex);
         }
         this.currentIndexCount += indices.length;
     }
@@ -158,14 +159,16 @@ public class SACVertexConsumer<T extends Vertex> {
     }
 
     public void reallocVertexBuffer(int vertexCount) {
-        MemoryUtil.memFree(verticesBuffer);
+        if (verticesBuffer != null)
+            MemoryUtil.memFree(verticesBuffer);
         verticesBuffer = genVertexBuffer(vertexCount);
 
         GL45.glNamedBufferData(VBO, (long) vertexCount * template.size(), GL45.GL_STREAM_DRAW);
     }
 
     public void reallocIndexBuffer(int indexCount) {
-        MemoryUtil.memFree(indicesBuffer);
+        if (indicesBuffer != null)
+            MemoryUtil.memFree(indicesBuffer);
         indicesBuffer = genIndexBuffer(indexCount);
 
         GL45.glNamedBufferData(IBO, indexCount * 4L, GL45.GL_STREAM_DRAW);

@@ -11,13 +11,14 @@ import pl.epsi.gtsacore.util.ChemistryUtil;
 
 public class ElementRenderer {
 
-    public final SACVertexConsumer<DefaultVertex> vc = new SACVertexConsumer<>(DefaultVertex.TEMPLATE, new SACShaderProgram(GTSubatomicCore.id("shader/element/base.vsh"), GTSubatomicCore.id("shader/element/base.fsh")));
+    private final SACVertexConsumer<DefaultVertex> vc = new SACVertexConsumer<>(DefaultVertex.TEMPLATE);
+    private final SACShaderProgram base =  new SACShaderProgram(GTSubatomicCore.id("shader/element/base.vsh"), GTSubatomicCore.id("shader/element/base.fsh"));
 
     public static final ElementRenderer INSTANCE = new ElementRenderer();
 
     // LD_PRELOAD=/opt/renderdoc/lib/librenderdoc.so
     public void draw(GuiGraphics ctx, ElementInfo el) {
-        var mat = ctx.pose().last().pose();
+        var local = ctx.pose().last().pose();
         var proj = new Matrix4f().ortho(0, ctx.guiWidth(), ctx.guiHeight(), 0, 0, 1000);
         int middleX = 176 / 2;
         int middleY = 166 / 2;
@@ -26,10 +27,9 @@ public class ElementRenderer {
             drawOrbital(i, middleX, middleY);
         }
 
-        vc.setUniformSetup((s) -> {
-            s.uniformMat4f("localMatrix", mat);
-            s.uniformMat4f("projMatrix", proj);
-        });
+        base.use();
+        base.uniformMat4f("localMatrix", local);
+        base.uniformMat4f("projMatrix", proj);
 
         vc.drawLines();
 

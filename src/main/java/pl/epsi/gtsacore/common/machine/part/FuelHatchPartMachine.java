@@ -5,16 +5,11 @@ import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.gui.widget.SlotWidget;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.TickableSubscription;
-import com.gregtechceu.gtceu.api.machine.feature.IFancyUIMachine;
-import com.gregtechceu.gtceu.api.machine.feature.IMachineLife;
-import com.gregtechceu.gtceu.api.machine.feature.multiblock.IDisplayUIMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.part.TieredIOPartMachine;
 import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
-import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
 import com.lowdragmc.lowdraglib.gui.widget.Widget;
 import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import com.lowdragmc.lowdraglib.jei.IngredientIO;
-import com.lowdragmc.lowdraglib.syncdata.IContentChangeAware;
 import com.lowdragmc.lowdraglib.syncdata.ISubscription;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
@@ -25,7 +20,6 @@ import net.minecraft.server.TickTask;
 import net.minecraft.server.level.ServerLevel;
 import net.minecraft.world.InteractionHand;
 import net.minecraft.world.InteractionResult;
-import net.minecraft.world.entity.LivingEntity;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.RecipeType;
@@ -39,8 +33,8 @@ import javax.annotation.Nullable;
 import java.util.List;
 
 public class FuelHatchPartMachine extends TieredIOPartMachine {
-    protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER;
 
+    private static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(FuelHatchPartMachine.class, TieredIOPartMachine.MANAGED_FIELD_HOLDER);;
 
     @Persisted
     public final NotifiableFuelHandler fuelHandler;
@@ -49,10 +43,6 @@ public class FuelHatchPartMachine extends TieredIOPartMachine {
     protected @Nullable ISubscription inventorySubs;
     protected @Nullable TickableSubscription consumeFuelSubs;
 
-    public ManagedFieldHolder getFieldHolder() {
-        return MANAGED_FIELD_HOLDER;
-    }
-
     public FuelHatchPartMachine(IMachineBlockEntity holder, int tier, IO io) {
         super(holder, tier, io);
         this.inventory = this.createInventory();
@@ -60,16 +50,8 @@ public class FuelHatchPartMachine extends TieredIOPartMachine {
         this.fuelHandler = new NotifiableFuelHandler(this, io);
     }
 
-    @Override
-    protected InteractionResult onHardHammerClick(Player playerIn, InteractionHand hand, Direction gridSide, BlockHitResult hitResult) {
-        if(isRemote()) return InteractionResult.SUCCESS;
-        consumeFuel();
-        if(fuelHandler.addFuel(1, false)){
-            playerIn.sendSystemMessage(Component.literal("Fuel! Total fuel stored: " + fuelHandler.getFuel()));
-            return InteractionResult.CONSUME;
-        }
-
-        return super.onHardHammerClick(playerIn, hand, gridSide, hitResult);
+    public @NotNull ManagedFieldHolder getFieldHolder() {
+        return MANAGED_FIELD_HOLDER;
     }
 
     @Override
@@ -96,14 +78,14 @@ public class FuelHatchPartMachine extends TieredIOPartMachine {
     @Override
     public void saveCustomPersistedData(@NotNull CompoundTag tag, boolean forDrop) {
         super.saveCustomPersistedData(tag, forDrop);
-        tag.putInt("CustomFuelAmount", this.fuelHandler.getFuel());
+        tag.putInt("fuel_hatch_fuel_amount", this.fuelHandler.getFuel());
     }
 
     @Override
     public void loadCustomPersistedData(CompoundTag tag) {
         super.loadCustomPersistedData(tag);
-        if (tag.contains("CustomFuelAmount")) {
-            this.fuelHandler.setFuel(tag.getInt("CustomFuelAmount"), false);
+        if (tag.contains("fuel_hatch_fuel_amount")) {
+            this.fuelHandler.setFuel(tag.getInt("fuel_hatch_fuel_amount"), false);
         }
     }
 
@@ -157,11 +139,5 @@ public class FuelHatchPartMachine extends TieredIOPartMachine {
         super.addMultiText(textList);
         textList.add(Component.literal("Fuel: " + this.fuelHandler.getFuel() + "/" + NotifiableFuelHandler.MAX_FUEl));
     }
-
-    static {
-        MANAGED_FIELD_HOLDER = new ManagedFieldHolder(FuelHatchPartMachine.class, TieredIOPartMachine.MANAGED_FIELD_HOLDER);
-    }
-
-
 
 }

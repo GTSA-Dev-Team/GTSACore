@@ -100,7 +100,8 @@ public class CastingTableBlockEntityRenderer implements BlockEntityRenderer<Cast
                 shader.use();
                 shader.uniformMat4f("projMatrix", RenderSystem.getProjectionMatrix());
                 shader.uniformMat4f("localMatrix", poseStack.last().pose());
-                shader.uniformTexture("tex0", at.getId());
+                shader.uniformTexture("tex0", 0);
+                GL45.glBindTextureUnit(0, at.getId());
                 builder.drawTriangles();
 
                 poseStack.popPose();

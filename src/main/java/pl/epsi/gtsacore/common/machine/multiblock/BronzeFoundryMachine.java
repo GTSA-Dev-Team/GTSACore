@@ -38,8 +38,8 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
-import pl.epsi.gtsacore.common.machine.IHeatProvider;
-import pl.epsi.gtsacore.common.machine.IHeatReceiver;
+import pl.epsi.gtsacore.api.machine.feature.IHeatProvider;
+import pl.epsi.gtsacore.api.machine.feature.IHeatReceiver;
 import pl.epsi.gtsacore.common.machine.WorkablePrimitiveMultiblockMachine;
 
 import javax.annotation.Nullable;
