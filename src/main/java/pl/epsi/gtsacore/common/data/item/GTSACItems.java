@@ -57,6 +57,32 @@ public class GTSACItems {
             .lang("Ceramic")
             .register();
 
+    public static final ItemEntry<Item> WOOD_INGOT = GTSAC_REGISTRATE
+            .item("ingot_wood", Item::new)
+            .lang("Suspiciously Ingot-Shaped Piece of Wood™")
+            .register();
+
+    public static final ItemEntry<Item> WOOD_PLATE = GTSAC_REGISTRATE
+            .item("plate_wood", Item::new)
+            .lang("Suspiciously Plate-Shaped Piece of Wood™")
+            .register();
+
+    public static final ItemEntry<Item> WOOD_ROD = GTSAC_REGISTRATE
+            .item("rod_wood", Item::new)
+            .lang("Suspiciously Rod-Shaped Piece of Wood™")
+            .register();
+
+    public static final ItemEntry<Item> COPPER_HANDLE = GTSAC_REGISTRATE
+            .item("copper_handle", Item::new)
+            .lang("Copper Handle")
+            .register();
+
+    public static final ItemEntry<Item> CERAMIC_CRUCIBLE = GTSAC_REGISTRATE
+            .item("ceramic_crucible", Item::new)
+            .lang("Ceramic Crucible")
+            .register();
+
+
     public static final ItemEntry<? extends AbstractCastItem> INGOT_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Ingot Mold", "ceramic_ingot_mold",
             "obj_models/mold/ingot.obj",
             new AABB(-0.09375, 0.125, -0.1875, 0.09375, 0.1875, 0.1875), 0.46875f);
