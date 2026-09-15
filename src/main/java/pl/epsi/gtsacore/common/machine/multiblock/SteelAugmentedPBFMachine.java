@@ -50,9 +50,6 @@ public class SteelAugmentedPBFMachine extends WorkableMultiblockMachine implemen
 
     private TickableSubscription hurtSubscription;
 
-
-
-
     @Getter
     @Setter
     @DescSynced

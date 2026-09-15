@@ -9,7 +9,7 @@ import com.mojang.serialization.codecs.RecordCodecBuilder;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.GTSubatomicCore;
-import pl.epsi.gtsacore.common.machine.IHeatSubmissive;
+import pl.epsi.gtsacore.common.machine.IHeatReceiver;
 
 public class HeatCondition extends RecipeCondition<HeatCondition> {
 
@@ -44,7 +44,7 @@ public class HeatCondition extends RecipeCondition<HeatCondition> {
 
     @Override
     protected boolean testCondition(@NotNull GTRecipe gtRecipe, @NotNull RecipeLogic recipeLogic) {
-        if (!(recipeLogic.getMachine() instanceof IHeatSubmissive heatMachine)) return false;
+        if (!(recipeLogic.getMachine() instanceof IHeatReceiver heatMachine)) return false;
         if (heatMachine.getHeatSource() == null) return false;
         return heatMachine.getHeatSource().getHeatLevel() > heat;
     }

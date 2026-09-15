@@ -38,21 +38,21 @@ import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
-import pl.epsi.gtsacore.common.machine.IHeatDominant;
-import pl.epsi.gtsacore.common.machine.IHeatSubmissive;
+import pl.epsi.gtsacore.common.machine.IHeatProvider;
+import pl.epsi.gtsacore.common.machine.IHeatReceiver;
 import pl.epsi.gtsacore.common.machine.WorkablePrimitiveMultiblockMachine;
 
 import javax.annotation.Nullable;
 import java.util.*;
 import java.util.function.Predicate;
 
-public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine implements IHeatSubmissive {
+public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine implements IHeatReceiver {
     @Nullable
-    private IHeatDominant heatSource;
+    private IHeatProvider heatSource;
 
     @Persisted
     @DescSynced
-    private FoundryFluidTank foundryTank;
+    private final FoundryFluidTank foundryTank;
 
     private final int MAX_CAPACITY = 27000;
     public BronzeFoundryMachine(IMachineBlockEntity holder, Object... args) {
@@ -64,32 +64,31 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
             WorkablePrimitiveMultiblockMachine.MANAGED_FIELD_HOLDER);
 
     @Override
-    protected RecipeLogic createRecipeLogic(Object... args) {
+    protected @NotNull RecipeLogic createRecipeLogic(Object @NotNull ... args) {
         return new BronzeFoundryLogic(this);
     }
 
     @Override
-    public ManagedFieldHolder getFieldHolder() {
+    public @NotNull ManagedFieldHolder getFieldHolder() {
         return MANAGED_FIELD_HOLDER;
     }
 
     @Override
-    public BronzeFoundryLogic getRecipeLogic() {
+    public @NotNull BronzeFoundryLogic getRecipeLogic() {
         return (BronzeFoundryLogic) super.getRecipeLogic();
     }
     public BronzeFoundryLogic getAlloyingRecipeLogic() {
         return new BronzeFoundryLogic(this);
     }
 
+
     @Override
-    public IHeatDominant getHeatSource() {
+    public @Nullable IHeatProvider getHeatSource() {
         return this.heatSource;
     }
 
-
-
     @Override
-    public void setHeatSource(@Nullable IHeatDominant source) {
+    public void setHeatSource(@Nullable IHeatProvider source) {
         this.heatSource = source;
     }
 
@@ -145,9 +144,9 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
     }
 
     public void alloy() {
-        setRecipeType(GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES);
+        setActiveRecipeType(1);
         this.getAlloyingRecipeLogic().findAndHandleRecipe();
-        setRecipeType(GTSACRecipeTypes.FOUNDRY_MELTING_RECIPES);
+        setActiveRecipeType(0);
     }
 
 
@@ -175,8 +174,8 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
                 ResourceLocation registryName = BuiltInRegistries.FLUID.getKey(fluidStack.getFluid());
                 String idString = registryName.toString().replace("gtceu:", "");
 
-                subTag.putInt("amount_" + Integer.toString(i), fluidStack.getAmount());
-                subTag.putString("fluid_" + Integer.toString(i), idString);
+                subTag.putInt("amount_" + i, fluidStack.getAmount());
+                subTag.putString("fluid_" + i, idString);
                 tag.put(String.valueOf(i), subTag);
             }
         }
@@ -191,11 +190,10 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
                 for (int i = 0; i < listSize; i++) {
                     CompoundTag subTag = tag.getCompound(String.valueOf(i));
 
-                    int amount = subTag.getInt("amount_" + Integer.toString(i));
-                    String matName = subTag.getString("fluid_" + Integer.toString(i));
+                    int amount = subTag.getInt("amount_" + i);
+                    String matName = subTag.getString("fluid_" + i);
 
                     fluids.add(GTMaterials.get(matName).getFluid(amount));
-
                 }
             }
 
@@ -355,7 +353,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
             }
 
             OptionalInt largestAmountOptional = fluids.stream().mapToInt(FluidStack::getAmount).max();
-            if (!largestAmountOptional.isPresent()) return null;
+            if (largestAmountOptional.isEmpty()) return null;
 
            return inverseAmounts.get(largestAmountOptional.getAsInt());
        }
@@ -365,7 +363,10 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
        }
     }
 
-    private class BronzeFoundryLogic extends RecipeLogic {
+    public class BronzeFoundryLogic extends RecipeLogic {
+
+        private int lastStoredAmountInTank = 1;
+        private boolean didLastRecipeFit;
 
         public @NotNull BronzeFoundryMachine getMachine() {
             return (BronzeFoundryMachine) super.getMachine();
@@ -423,7 +424,6 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
 
         @Override
         public @NotNull Iterator<GTRecipe> searchRecipe() {
-
             if (this.getMachine().getRecipeType() == GTSACRecipeTypes.FOUNDRY_MELTING_RECIPES) {
                 return super.searchRecipe();
             }
@@ -483,9 +483,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
         }
 
         private boolean isAlloyRecipeWithinErr(GTRecipe recipe) {
-            //if (recipe.recipeType != GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES) return false;
-
-            FoundryFluidTank foundryTank =  this.getMachine().foundryTank;
+            FoundryFluidTank foundryTank = this.getMachine().foundryTank;
 
             List<FluidStack> inputFluids = RecipeHelper.getInputFluids(recipe);
             int amountSum = inputFluids.stream().mapToInt(FluidStack::getAmount).sum();
@@ -509,10 +507,6 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
 
             return true;
         }
-        private int lastStoredAmountInTank = 1;
-        private boolean didLastRecipeFit;
-
-
 
         private ActionResult handleFoundryAlloyingRecipe(GTRecipe recipe, IO io) {
             FoundryFluidTank foundryTank =  this.getMachine().foundryTank;
@@ -522,14 +516,8 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
                 didLastRecipeFit = isAlloyRecipeWithinErr(recipe);
             }
 
-
-
-
             Material outputMat = ChemicalHelper.getMaterial(RecipeHelper.getOutputFluids(recipe).get(0).getFluid());
             Material failMat = ChemicalHelper.getMaterial(RecipeHelper.getOutputFluids(recipe).get(1).getFluid());
-
-
-
 
             GTRecipe alloyRecipe = GTRecipeBuilder.ofRaw().recipeType(GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES).outputFluids(outputMat.getFluid(lastStoredAmountInTank)).buildRawRecipe();
             GTRecipe failRecipe = GTRecipeBuilder.ofRaw().recipeType(GTSACRecipeTypes.FOUNDRY_ALLOYING_RECIPES).outputFluids(failMat.getFluid(lastStoredAmountInTank)).buildRawRecipe();
@@ -538,10 +526,8 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
             GTRecipe actualRecipe = didLastRecipeFit ? alloyRecipe : failRecipe;
 
             if (io != IO.IN) {
-                ActionResult result = applyTankOutput(actualRecipe, IFluidHandler.FluidAction.EXECUTE) ? ActionResult.SUCCESS : ActionResult.fail(
+                return applyTankOutput(actualRecipe, IFluidHandler.FluidAction.EXECUTE) ? ActionResult.SUCCESS : ActionResult.fail(
                         Component.literal("Insufficient tank space!"), FluidRecipeCapability.CAP, IO.OUT);
-
-                return result;
             }
             foundryTank.voidFluids();
             ActionResult result = applyTankInput(actualRecipe, IFluidHandler.FluidAction.EXECUTE) ? ActionResult.SUCCESS : ActionResult.fail(
@@ -564,9 +550,6 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
             int outputAmount = this.getMachine().foundryTank.getStored();
             FluidStack mainStack = new FluidStack(RecipeHelper.getOutputFluids(recipe).get(0).getFluid(), outputAmount);
             FluidStack failStack = new FluidStack(RecipeHelper.getOutputFluids(recipe).get(1).getFluid(), outputAmount);
-
-
-
 
             GTRecipe mainOutputRecipe = GTRecipeBuilder.ofRaw().outputFluids(mainStack).inputFluids(FluidIngredient.of(RecipeHelper.getInputFluids(recipe))).buildRawRecipe();
             GTRecipe failOutputRecipe = GTRecipeBuilder.ofRaw().outputFluids(failStack).inputFluids(FluidIngredient.of(RecipeHelper.getInputFluids(recipe))).buildRawRecipe();

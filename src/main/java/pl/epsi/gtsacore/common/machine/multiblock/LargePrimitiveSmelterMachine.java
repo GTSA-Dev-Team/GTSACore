@@ -6,10 +6,7 @@ import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
 import com.gregtechceu.gtceu.config.ConfigHolder;
-import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
-import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
-import lombok.Getter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
 import net.minecraft.core.particles.ParticleTypes;
@@ -22,51 +19,15 @@ import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.common.machine.WorkableFueledMultiblockMachine;
 
 public class LargePrimitiveSmelterMachine extends WorkableFueledMultiblockMachine {
-    public static final int maxParallels = 4;
 
-    @Getter
-    @Persisted
-    @DescSynced
-    private GTRecipe lastSavedRecipe = null;
-
-    public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(LargePrimitiveSmelterMachine.class,
-            WorkableFueledMultiblockMachine.MANAGED_FIELD_HOLDER);
-
+    public static final int MAX_PARALLELS = 4;
 
     public LargePrimitiveSmelterMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, false, args);
     }
 
-
-
-    @Override
-    public @NotNull ManagedFieldHolder getFieldHolder() {
-        return MANAGED_FIELD_HOLDER;
-    }
-
-    /*@Override
-    public boolean beforeWorking(@Nullable GTRecipe recipe) {
-        if (!super.beforeWorking(recipe)) {
-            return false;
-        }
-        if (recipe == null) {
-            return false;
-        }
-
-        fuel = fuelHatch.fuelHandler.getFuel();
-
-        if (fuel > 0) {
-            lastSavedRecipe = recipe;
-            return true;
-        } else {
-            RecipeLogic.putFailureReason(this, recipe, Component.literal("Not enough fuel! (Maybe feed it some Oh-How-Delicous Coal?)"));
-            return false;
-        }
-    }*/
-
-
     public static ModifierFunction recipeModifier(@NotNull MetaMachine machine, @NotNull GTRecipe recipe) {
-        return WorkableFueledMultiblockMachine.recipeModifier(machine, recipe, maxParallels);
+        return WorkableFueledMultiblockMachine.recipeModifier(machine, recipe, MAX_PARALLELS);
     }
 
     @Override

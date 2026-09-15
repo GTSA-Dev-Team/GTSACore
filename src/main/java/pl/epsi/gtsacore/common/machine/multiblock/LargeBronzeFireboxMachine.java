@@ -12,7 +12,6 @@ import com.gregtechceu.gtceu.api.pattern.Predicates;
 import com.gregtechceu.gtceu.api.pattern.TraceabilityPredicate;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.lowdragmc.lowdraglib.syncdata.ISubscription;
-import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 import lombok.Getter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.TickTask;
@@ -21,8 +20,8 @@ import net.minecraft.world.level.Level;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.common.data.GTSACPartAbilities;
-import pl.epsi.gtsacore.common.machine.IHeatDominant;
-import pl.epsi.gtsacore.common.machine.IHeatSubmissive;
+import pl.epsi.gtsacore.common.machine.IHeatProvider;
+import pl.epsi.gtsacore.common.machine.IHeatReceiver;
 import pl.epsi.gtsacore.common.machine.WorkableFueledMultiblockMachine;
 
 import java.util.Collection;
@@ -31,23 +30,20 @@ import java.util.Set;
 
 import static com.gregtechceu.gtceu.api.pattern.Predicates.blocks;
 
-public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine implements IHeatDominant {
-    private static final int maxHeat = 14230;
+public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine implements IHeatProvider {
+
+    private static final int MAX_HEAT = 14230;
 
     @Getter
     private int heat = 0;
-    private Collection<IHeatSubmissive> heatTargets;
+    private Collection<IHeatReceiver> heatTargets;
 
     protected ISubscription heatSubs;
     protected TickableSubscription dissipateHeatSubs;
 
-
     public LargeBronzeFireboxMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, true, args);
     }
-
-    public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(LargeBronzeFireboxMachine.class,
-            WorkableFueledMultiblockMachine.MANAGED_FIELD_HOLDER);
 
     private void updateHeatSubs() {
         dissipateHeatSubs = subscribeServerTick(dissipateHeatSubs, this::dissipateHeat);
@@ -89,11 +85,10 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
             this.heatTargets = null;
         }
 
-        Set<IHeatSubmissive> receivers = this.getMultiblockState().getMatchContext().getOrCreate("heatSubmissive", Sets::newHashSet);
+        Set<IHeatReceiver> receivers = this.getMultiblockState().getMatchContext().getOrCreate("heatSubmissive", Sets::newHashSet);
 
         this.heatTargets = ImmutableSet.copyOf(receivers);
         this.heatTargets.forEach((target) -> target.setHeatSource(this));
-        ;
     }
 
     @Override
@@ -109,18 +104,18 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
     @Override
     public void addDisplayText(List<Component> textList) {
         super.addDisplayText(textList);
-        textList.add(Component.literal("Heat: " + (heat/10 + 295) + "K/" + (maxHeat/10 + 295) + "K"));
+        textList.add(Component.literal("Heat: " + (heat / 10 + 295) + "K/" + (MAX_HEAT / 10 + 295) + "K"));
     }
 
     @Override
     public boolean onWorking() {
-        heat = (int) Math.ceil (heat + (double) (maxHeat - heat) / 100L);
+        heat = (int) Math.ceil (heat + (double) (MAX_HEAT - heat) / 100L);
         clampHeat();
         return super.onWorking();
     }
 
     public void clampHeat() {
-        heat = Math.min(heat, maxHeat);
+        heat = Math.min(heat, MAX_HEAT);
         heat = Math.max(0, heat);
     }
 
@@ -131,12 +126,12 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
 
     protected @NotNull TraceabilityPredicate innerPredicate() {
         return new TraceabilityPredicate(blockWorldState -> {
-            Set<IHeatSubmissive> targets = blockWorldState.getMatchContext().getOrCreate("heatSubmissive", Sets::newHashSet);
+            Set<IHeatReceiver> targets = blockWorldState.getMatchContext().getOrCreate("heatSubmissive", Sets::newHashSet);
             BlockEntity blockEntity = blockWorldState.getTileEntity();
 
-            if (blockEntity != null && blockEntity instanceof MetaMachineBlockEntity mbe) {
-                if (mbe.getMetaMachine() instanceof IHeatSubmissive reciever) {
-                    targets.add(reciever);
+            if (blockEntity instanceof MetaMachineBlockEntity mbe) {
+                if (mbe.getMetaMachine() instanceof IHeatReceiver receiver) {
+                    targets.add(receiver);
                 }
             }
 
