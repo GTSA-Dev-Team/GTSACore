@@ -1,6 +1,11 @@
 package pl.epsi.gtsacore.common.data.item;
 
+import com.gregtechceu.gtceu.api.item.tool.GTToolItem;
+import com.gregtechceu.gtceu.api.item.tool.GTToolType;
+import com.gregtechceu.gtceu.api.item.tool.IGTToolDefinition;
+import com.gregtechceu.gtceu.api.item.tool.MaterialToolTier;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
+import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.phys.AABB;
@@ -97,6 +102,7 @@ public class GTSACItems {
             .lang("Unfired Ceramic Rod Mold")
             .register();
 
+    public static final ItemEntry<Item> GRASS_FIBRE = registerSimpleItem("grass_fibre", "Grass Fibre");
 
     public static final ItemEntry<? extends AbstractCastItem> INGOT_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Ingot Mold", "ceramic_ingot_mold",
             "obj_models/mold/ingot.obj",
@@ -107,6 +113,13 @@ public class GTSACItems {
     public static final ItemEntry<? extends AbstractCastItem> ROD_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Rod Mold", "ceramic_rod_mold",
             "obj_models/mold/rod.obj",
             new AABB(-0.04375, 0.125, -0.1875, 0.04375, 0.1875, 0.1875), 0.46875f);
+
+    public static ItemEntry<Item> registerSimpleItem(String id, String displayName) {
+        return GTSAC_REGISTRATE
+                .item(id, Item::new)
+                .lang(displayName)
+                .register();
+    }
 
     public static ItemEntry<? extends AbstractCastItem> registerMold(GTRegistrate registrate, String lang, String name, String objPath,
                                                                      AABB aabb, float xOffset) {
