@@ -1,4 +1,4 @@
-package pl.epsi.gtsacore.api.lang;
+package pl.epsi.gtsacore.common.lang;
 
 import com.tterrag.registrate.providers.RegistrateLangProvider;
 

@@ -15,7 +15,7 @@ public class HeatCondition extends RecipeCondition<HeatCondition> {
 
     public static final Codec<HeatCondition> CODEC = RecordCodecBuilder.create(instance -> RecipeCondition.isReverse(instance)
             .and(Codec.INT.fieldOf("heat").forGetter(val -> val.heat)
-            ).apply(instance, HeatCondition::new));
+    ).apply(instance, HeatCondition::new));
 
     public int heat;
 

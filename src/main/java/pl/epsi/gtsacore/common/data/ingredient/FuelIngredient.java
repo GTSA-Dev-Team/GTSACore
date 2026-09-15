@@ -1,4 +1,4 @@
-package pl.epsi.gtsacore.api.ingredient;
+package pl.epsi.gtsacore.common.data.ingredient;
 
 import com.gregtechceu.gtceu.api.recipe.content.IContentSerializer;
 import com.mojang.serialization.Codec;

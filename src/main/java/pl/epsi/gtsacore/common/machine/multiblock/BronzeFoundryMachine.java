@@ -1,6 +1,5 @@
 package pl.epsi.gtsacore.common.machine.multiblock;
 
-import com.gregtechceu.gtceu.api.blockentity.MetaMachineBlockEntity;
 import com.gregtechceu.gtceu.api.capability.recipe.*;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
@@ -8,9 +7,7 @@ import com.gregtechceu.gtceu.api.gui.GuiTextures;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
-import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.trait.MachineTrait;
-import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.ActionResult;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
@@ -21,36 +18,26 @@ import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.api.recipe.lookup.RecipeDB;
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.AbstractMapIngredient;
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.MapIngredientTypeManager;
-import com.gregtechceu.gtceu.api.transfer.fluid.CustomFluidTank;
-import com.gregtechceu.gtceu.api.transfer.fluid.IFluidHandlerModifiable;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 import com.lowdragmc.lowdraglib.gui.modular.ModularUI;
 import com.lowdragmc.lowdraglib.gui.widget.ButtonWidget;
 import com.lowdragmc.lowdraglib.gui.widget.LabelWidget;
-import com.lowdragmc.lowdraglib.syncdata.ISubscription;
 import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import lombok.Getter;
-import net.minecraft.core.Direction;
 import net.minecraft.core.registries.BuiltInRegistries;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.chat.Component;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraft.world.InteractionHand;
-import net.minecraft.world.InteractionResult;
 import net.minecraft.world.entity.player.Player;
 import net.minecraft.world.level.material.Fluid;
-import net.minecraft.world.phys.BlockHitResult;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.fluids.capability.IFluidHandler;
-import org.checkerframework.checker.units.qual.C;
 import org.jetbrains.annotations.NotNull;
-import pl.epsi.gtsacore.common.data.GTSACMaterialRegistry;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
-import pl.epsi.gtsacore.common.data.materials.GTSACMaterials;
 import pl.epsi.gtsacore.common.machine.IHeatDominant;
 import pl.epsi.gtsacore.common.machine.IHeatSubmissive;
 import pl.epsi.gtsacore.common.machine.WorkablePrimitiveMultiblockMachine;
@@ -67,15 +54,11 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
     @DescSynced
     private FoundryFluidTank foundryTank;
 
-
-
-    private int totalCapacity = 27000;
+    private final int MAX_CAPACITY = 27000;
     public BronzeFoundryMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, args);
-        this.foundryTank = new FoundryFluidTank(this, totalCapacity);
+        this.foundryTank = new FoundryFluidTank(this, MAX_CAPACITY);
     }
-
-
 
     public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(BronzeFoundryMachine.class,
             WorkablePrimitiveMultiblockMachine.MANAGED_FIELD_HOLDER);
@@ -85,7 +68,10 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
         return new BronzeFoundryLogic(this);
     }
 
-
+    @Override
+    public ManagedFieldHolder getFieldHolder() {
+        return MANAGED_FIELD_HOLDER;
+    }
 
     @Override
     public BronzeFoundryLogic getRecipeLogic() {
@@ -94,8 +80,6 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
     public BronzeFoundryLogic getAlloyingRecipeLogic() {
         return new BronzeFoundryLogic(this);
     }
-
-
 
     @Override
     public IHeatDominant getHeatSource() {
@@ -113,7 +97,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
 
     @Override
     public void addDisplayText(List<Component> textList) {
-        String capacitytext = "Tank space: " + this.foundryTank.getStored() + "mB / " + totalCapacity/1000 + "B";
+        String capacitytext = "Tank space: " + this.foundryTank.getStored() + "mB / " + MAX_CAPACITY /1000 + "B";
         List<FluidStack> contained = this.foundryTank.getFluidStacksInDescendingOrder();
 
         super.addDisplayText(textList);
@@ -165,9 +149,6 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
         this.getAlloyingRecipeLogic().findAndHandleRecipe();
         setRecipeType(GTSACRecipeTypes.FOUNDRY_MELTING_RECIPES);
     }
-
-
-
 
 
     public static class FoundryFluidTank extends MachineTrait implements IFluidHandler{

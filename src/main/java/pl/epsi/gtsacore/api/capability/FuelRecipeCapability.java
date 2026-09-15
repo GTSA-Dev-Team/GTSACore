@@ -9,8 +9,8 @@ import com.lowdragmc.lowdraglib.gui.widget.WidgetGroup;
 import it.unimi.dsi.fastutil.objects.ObjectArrayList;
 import org.apache.commons.lang3.mutable.MutableInt;
 import org.jetbrains.annotations.Nullable;
-import pl.epsi.gtsacore.api.ingredient.FuelIngredient;
-import pl.epsi.gtsacore.api.ingredient.MapFuelIngredient;
+import pl.epsi.gtsacore.common.data.ingredient.FuelIngredient;
+import pl.epsi.gtsacore.common.data.ingredient.MapFuelIngredient;
 
 import java.util.Collection;
 import java.util.Collections;

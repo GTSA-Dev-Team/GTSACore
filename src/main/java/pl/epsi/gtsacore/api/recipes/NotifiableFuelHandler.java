@@ -13,7 +13,7 @@ import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 import lombok.Getter;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.api.capability.FuelRecipeCapability;
-import pl.epsi.gtsacore.api.ingredient.FuelIngredient;
+import pl.epsi.gtsacore.common.data.ingredient.FuelIngredient;
 
 import java.util.List;
 

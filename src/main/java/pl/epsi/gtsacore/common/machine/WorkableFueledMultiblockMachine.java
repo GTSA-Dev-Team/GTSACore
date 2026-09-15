@@ -3,7 +3,6 @@ package pl.epsi.gtsacore.common.machine;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
-import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
 import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
@@ -21,7 +20,7 @@ import lombok.Getter;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
-import pl.epsi.gtsacore.api.ingredient.FuelIngredient;
+import pl.epsi.gtsacore.common.data.ingredient.FuelIngredient;
 import pl.epsi.gtsacore.common.data.GTSACRecipeCapabilities;
 import pl.epsi.gtsacore.common.machine.multiblock.LargePrimitiveSmelterMachine;
 

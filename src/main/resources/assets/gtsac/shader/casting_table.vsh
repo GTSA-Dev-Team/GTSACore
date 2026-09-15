@@ -12,9 +12,10 @@ out vec2 fUV;
 out flat float fProgress;
 
 uniform mat4 projMatrix;
+uniform mat4 localMatrix;
 
 void main() {
-    gl_Position = projMatrix * vec4(vPos, 1);
+    gl_Position = projMatrix * localMatrix * vec4(vPos, 1);
     fColor = vColor;
     fNormal = vNormal;
     fUV = vUV;

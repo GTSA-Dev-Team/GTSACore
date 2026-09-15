@@ -31,19 +31,13 @@ public class SACVertexConsumer<T extends Vertex> {
 
     private int frozenIndex;
 
-    private final SACShaderProgram shader;
-
-    @Setter
-    private Consumer<SACShaderProgram> uniformSetup = (s) -> {};
-
-    public SACVertexConsumer(T template, SACShaderProgram shader) {
-        this(template, 1536, 1536, shader);
+    public SACVertexConsumer(T template) {
+        this(template, 1536, 1536);
     }
 
-    public SACVertexConsumer(T template, int vertexCount, int indexCount, SACShaderProgram shader) {
+    public SACVertexConsumer(T template, int vertexCount, int indexCount) {
         this.template = template;
         this.state = new SACRenderState();
-        this.shader = shader;
         this.maxVertexCount = vertexCount;
         this.maxIndexCount = indexCount;
 
@@ -121,9 +115,6 @@ public class SACVertexConsumer<T extends Vertex> {
     public void draw(int mode) {
         this.bind();
         this.upload();
-
-        shader.use();
-        uniformSetup.accept(shader);
 
         GL45.glDrawElements(mode, this.currentIndexCount, GL45.GL_UNSIGNED_INT, 0);
 

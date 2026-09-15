@@ -1,4 +1,4 @@
-package pl.epsi.gtsacore.api.data;
+package pl.epsi.gtsacore.common.data;
 
 import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconType;
 

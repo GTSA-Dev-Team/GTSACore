@@ -8,7 +8,7 @@ import com.gregtechceu.gtceu.common.data.GTRecipeTypes;
 import net.minecraft.data.recipes.FinishedRecipe;
 import net.minecraft.world.item.ItemStack;
 import org.jetbrains.annotations.NotNull;
-import pl.epsi.gtsacore.api.data.GTSACTagPrefix;
+import pl.epsi.gtsacore.common.data.GTSACTagPrefix;
 
 import java.util.function.Consumer;
 

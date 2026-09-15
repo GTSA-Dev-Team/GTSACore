@@ -28,7 +28,6 @@ import java.util.Map;
 
 public class CustomObjDynamicMultiRenderer extends DynamicRender<ICustomObjRendererMulti, CustomObjDynamicMultiRenderer> {
 
-    // spotless:off
     public static final Codec<CustomObjDynamicMultiRenderer> CODEC = RecordCodecBuilder.create(instance -> instance.group(
             ResourceLocation.CODEC.fieldOf("obj_ident").forGetter(CustomObjDynamicMultiRenderer::getObjIdent),
             ResourceLocation.CODEC.fieldOf("tex_ident").forGetter(CustomObjDynamicMultiRenderer::getTextureIdent),
@@ -36,7 +35,6 @@ public class CustomObjDynamicMultiRenderer extends DynamicRender<ICustomObjRende
     ).apply(instance, CustomObjDynamicMultiRenderer::new));
 
     public static final DynamicRenderType<ICustomObjRendererMulti, CustomObjDynamicMultiRenderer> TYPE = new DynamicRenderType<>(CODEC);
-    // spotless:on
 
     @Getter
     private final ResourceLocation objIdent, textureIdent;
@@ -84,8 +82,6 @@ public class CustomObjDynamicMultiRenderer extends DynamicRender<ICustomObjRende
         ObjRenderer.render(buf, poseStack, packedLight, textures, true);
 
         poseStack.popPose();
-        //GL45.glPolygonMode(GL45.GL_FRONT_AND_BACK, GL45.GL_LINE);
-        //GL45.glPolygonMode(GL45.GL_FRONT_AND_BACK, GL45.GL_FILL);
 
         GL45.glDisable(GL45.GL_DEPTH_TEST);
     }

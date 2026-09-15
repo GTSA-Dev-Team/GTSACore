@@ -6,19 +6,17 @@ import com.gregtechceu.gtceu.api.addon.IGTAddon;
 import com.gregtechceu.gtceu.api.recipe.lookup.ingredient.MapIngredientTypeManager;
 import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.client.renderer.machine.DynamicRenderManager;
-import com.gregtechceu.gtceu.data.pack.GTDynamicDataPack;
 import net.minecraft.data.recipes.FinishedRecipe;
-import pl.epsi.gtsacore.api.data.GTSACMaterialIconType;
-import pl.epsi.gtsacore.api.data.GTSACTagPrefix;
-import pl.epsi.gtsacore.api.ingredient.FuelIngredient;
-import pl.epsi.gtsacore.api.ingredient.MapFuelIngredient;
+import pl.epsi.gtsacore.common.data.GTSACMaterialIconType;
+import pl.epsi.gtsacore.common.data.GTSACTagPrefix;
+import pl.epsi.gtsacore.common.data.ingredient.FuelIngredient;
+import pl.epsi.gtsacore.common.data.ingredient.MapFuelIngredient;
 import pl.epsi.gtsacore.api.recipes.GTSACMaterialRecipeHandlers;
 import pl.epsi.gtsacore.api.renderer.machine.CustomObjDynamicMultiRenderer;
 import pl.epsi.gtsacore.common.data.GTSACRecipeCapabilities;
 import pl.epsi.gtsacore.common.data.GTSACRecipes;
 import pl.epsi.gtsacore.common.data.GTSACWorldGen;
 import pl.epsi.gtsacore.common.data.materials.GTSACElements;
-import pl.epsi.gtsacore.common.data.materials.GTSACPeriodicTableMaterials;
 
 import java.util.function.Consumer;
 
