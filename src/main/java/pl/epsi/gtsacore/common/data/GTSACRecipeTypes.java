@@ -34,13 +34,6 @@ public class GTSACRecipeTypes {
 
     public static final GTRecipeType HEATING_RECIPES = registerFuelRecipeType("heating", 1, 0, 0, 0);
 
-
-    public static final GTRecipeType TEST_FUEL_RECIPES = GTRecipeTypes
-            .register("large_bonk_reactor", "multiblock")
-            .setMaxIOSize(3, 3, 5, 4)
-            .setMaxSize(IO.IN, FuelRecipeCapability.CAP, 1)
-            .setEUIO(IO.IN);
-
     public static final GTRecipeType CRUCIBLE_ASSEMBLY_RECIPES = GTRecipeTypes
             .register("crucible_assembly", "dummy")
             .setMaxIOSize(0, 0, 4, 1)
