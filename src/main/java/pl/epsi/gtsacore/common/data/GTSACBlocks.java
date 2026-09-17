@@ -138,7 +138,8 @@ public class GTSACBlocks {
 
     public static final BlockEntry<Block> BRONZE_PLATED_BRICKS = createCasingBlock("bronze_plated_bricks", GTSubatomicCore.id("block/casings/solid/bronze_plated_bricks"));
 
-
+    public static final BlockEntry<Block> GTSA_BLOCK = registerSimpleBlock(
+            "GregTech: Subatomic Age Block", "gtsa_block", "gtsa_logo", BlockItem::new);
 
     public static final BlockEntry<CastingTableBlock> CASTING_TABLE = GTSAC_REGISTRATE
             .block("casting_table", CastingTableBlock::new)

@@ -8,6 +8,7 @@ import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.Tiers;
 import net.minecraft.world.phys.AABB;
 import org.joml.Matrix4f;
 import org.joml.Vector3f;
@@ -29,7 +30,7 @@ public class GTSACItems {
 
     public static final ItemEntry<Item> ZETA_FLUXON = GTSAC_REGISTRATE
             .item("zeta_fluxon", Item::new)
-            .lang("Zeta Fluxon")
+            .lang("ζ Fluxon")
             .register();
 
     public static final ItemEntry<Item> PRIMITIVE_BRICK = GTSAC_REGISTRATE
@@ -101,6 +102,13 @@ public class GTSACItems {
             .item("unfired_ceramic_rod_mold", Item::new)
             .lang("Unfired Ceramic Rod Mold")
             .register();
+
+    public static final ItemEntry<FluxonSwordItem> ZETA_FLUXON_SWORD = GTSAC_REGISTRATE
+            .item("zeta_fluxon_sword", p -> new FluxonSwordItem(Tiers.NETHERITE, 4, 7, p))
+            .lang("ζ Fluxon Sword")
+            .register();
+
+    public static final ItemEntry<Item> LOGO = registerSimpleItem("gtsa_logo", "GregTech: Subatomic Age");
 
     public static final ItemEntry<Item> GRASS_FIBRE = registerSimpleItem("grass_fibre", "Grass Fibre");
 
