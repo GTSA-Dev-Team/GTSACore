@@ -82,8 +82,6 @@ public class CustomObjDynamicMultiRenderer extends DynamicRender<ICustomObjRende
         ObjRenderer.render(buf, poseStack, packedLight, textures, true);
 
         poseStack.popPose();
-
-        GL45.glDisable(GL45.GL_DEPTH_TEST);
     }
 
     public static DynamicRender<?, ?> makeObjRenderer(ResourceLocation obj, ResourceLocation tex, boolean alwaysRender) {

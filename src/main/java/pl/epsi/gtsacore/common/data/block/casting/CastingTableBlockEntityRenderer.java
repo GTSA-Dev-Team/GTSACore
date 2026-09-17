@@ -107,7 +107,7 @@ public class CastingTableBlockEntityRenderer implements BlockEntityRenderer<Cast
                 poseStack.popPose();
             }
 
-            GL45.glDisable(GL45.GL_DEPTH_TEST);
+//            GL45.glDisable(GL45.GL_DEPTH_TEST);
         }
     }
 

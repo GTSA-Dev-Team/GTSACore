@@ -10,6 +10,7 @@ import java.util.Map;
 
 public class SACRenderState {
 
+    private final Map<Integer, Integer> textures = new HashMap<>();
     private int VAO;
 
     public SACRenderState() {}
@@ -24,6 +25,32 @@ public class SACRenderState {
     }
 
     public void bindTextures(Map<Integer, Integer> textures) {
+        textures.forEach(GL45::glBindTextureUnit);
+    }
+
+    public void saveTextures(int... slots) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer buf = stack.callocInt(1);
+            for (int slot : slots) {
+                GL45.glGetIntegeri_v(GL45.GL_TEXTURE_BINDING_2D, slot, buf);
+                textures.put(slot, buf.get(0));
+                buf.clear();
+            }
+        }
+    }
+
+    public void saveTextures(Integer[] slots) {
+        try (MemoryStack stack = MemoryStack.stackPush()) {
+            IntBuffer buf = stack.callocInt(1);
+            for (int slot : slots) {
+                GL45.glGetIntegeri_v(GL45.GL_TEXTURE_BINDING_2D, slot, buf);
+                textures.put(slot, buf.get(0));
+                buf.clear();
+            }
+        }
+    }
+
+    public void restoreTextures() {
         textures.forEach(GL45::glBindTextureUnit);
     }
 

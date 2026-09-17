@@ -29,6 +29,7 @@ public class ObjRenderer {
         slotToTextureID = new HashMap<>(slotToTextureID);
         slotToTextureID.put(1, LIGHTMAP_TEXTURE_GL_ID);
         if (restoreState) {
+            state.saveTextures(slotToTextureID.keySet().toArray(new Integer[]{}));
             state.saveVAO();
         }
 
@@ -44,6 +45,7 @@ public class ObjRenderer {
         buf.draw();
 
         if (restoreState) {
+            state.restoreTextures();
             state.restoreVAO();
         }
     }
