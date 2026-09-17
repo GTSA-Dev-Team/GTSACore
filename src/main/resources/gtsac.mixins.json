@@ -9,5 +9,8 @@
   "injectors": {
     "defaultRequire": 1
   },
-  "refmap": "mixins.gtsac.refmap.json"
+  "refmap": "mixins.gtsac.refmap.json",
+  "client": [
+    "MixinLightTexture"
+  ]
 }

@@ -14,7 +14,7 @@ import pl.epsi.gtsacore.common.data.block.casting.CrucibleAssemblyBlockEntity;
 @Mixin(CampfireBlockEntity.class)
 public class MixinCampfireBlockEntity {
 
-    @Inject(method = "particleTick", at = @At(target = "net/minecraft/world/level/Level.random : Lnet/minecraft/util/RandomSource;", value = "FIELD", opcode = Opcodes.GETFIELD), cancellable = true)
+    @Inject(method = "particleTick", at = @At(value = "HEAD"), cancellable = true)
     private static void gtsac$disableCampfireSmoke(Level level, BlockPos pos, BlockState state, CampfireBlockEntity blockEntity, CallbackInfo ci) {
         if (level.getBlockEntity(pos.above()) instanceof CrucibleAssemblyBlockEntity) ci.cancel();
     }

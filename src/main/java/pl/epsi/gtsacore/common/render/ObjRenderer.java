@@ -6,7 +6,6 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.renderer.LightTexture;
 import net.minecraft.client.renderer.texture.AbstractTexture;
 import net.minecraft.resources.ResourceLocation;
-import net.minecraftforge.fml.util.ObfuscationReflectionHelper;
 import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.api.renderer.data.StaticVertexBuffer;
 import pl.epsi.gtsacore.api.renderer.shader.SACShaderProgram;
@@ -16,27 +15,9 @@ import java.util.Map;
 
 public class ObjRenderer {
 
-    public static ResourceLocation LIGHTMAP_TEXTURE_ID;
     public static int LIGHTMAP_TEXTURE_GL_ID;
 
     private static final SACShaderProgram SHADER = new SACShaderProgram(GTSubatomicCore.id("shader/default.vsh"), GTSubatomicCore.id("shader/default.fsh"));
-
-    static {
-        RenderSystem.recordRenderCall(() -> {
-            Minecraft mc = Minecraft.getInstance();
-
-            LIGHTMAP_TEXTURE_ID =
-                    ObfuscationReflectionHelper.getPrivateValue(
-                            LightTexture.class,
-                            mc.gameRenderer.lightTexture(),
-                            "lightTextureLocation" // verify mapped name
-                    );
-
-            AbstractTexture tex =
-                    mc.getTextureManager().getTexture(LIGHTMAP_TEXTURE_ID);
-            LIGHTMAP_TEXTURE_GL_ID = tex.getId();
-        });
-    }
 
     private static final SACRenderState state = new SACRenderState();
 
