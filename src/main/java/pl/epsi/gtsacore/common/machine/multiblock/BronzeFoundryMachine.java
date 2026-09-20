@@ -150,7 +150,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
     }
 
 
-    public static class FoundryFluidTank extends MachineTrait implements IFluidHandler{
+    public static class FoundryFluidTank extends MachineTrait implements IFluidHandler {
         protected static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(FoundryFluidTank.class);
         private int capacity;
         @Persisted

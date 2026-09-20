@@ -1,5 +1,6 @@
 package pl.epsi.gtsacore.common.data.item;
 
+import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.item.tool.GTToolItem;
 import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.api.item.tool.IGTToolDefinition;
@@ -17,6 +18,8 @@ import pl.epsi.gtsacore.common.data.item.casting.AbstractCastItem;
 import pl.epsi.gtsacore.common.data.item.casting.ICastingTableable;
 import pl.epsi.gtsacore.common.data.item.casting.IronBloomItem;
 
+import java.util.Map;
+
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_CREATIVE_TAB;
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
 
@@ -24,9 +27,12 @@ public class GTSACItems {
 
     static {
         GTSAC_REGISTRATE.creativeModeTab(() -> GTSAC_CREATIVE_TAB);
+
     }
 
-    public static void init() {}
+    public static void init() {
+
+    }
 
     public static final ItemEntry<Item> ZETA_FLUXON = GTSAC_REGISTRATE
             .item("zeta_fluxon", Item::new)
@@ -121,6 +127,13 @@ public class GTSACItems {
     public static final ItemEntry<? extends AbstractCastItem> ROD_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Rod Mold", "ceramic_rod_mold",
             "obj_models/mold/rod.obj",
             new AABB(-0.04375, 0.125, -0.1875, 0.04375, 0.1875, 0.1875), 0.46875f);
+
+    public static final ItemEntry<Item> IVE_SPONTANEOUSLY_COMBUSTED = registerSimpleItem("ive_spontaneously_combusted", "I've spontaneously combusted!");
+    public static final ItemEntry<Item> MORTY_IM_A_LEG = registerSimpleItem("morty_im_a_leg", "Hey Morty! I'm a leg! A LEG MORTY!");
+    public static final ItemEntry<Item> NAY_MYO_AUNG = registerSimpleItem("nay_myo_aung", "Nay Myo Aung");
+    public static final ItemEntry<Item> THE_FOX_FROM_ZOOTOPIA = registerSimpleItem("the_fox_from_zootopia", "You can see it's THE FOX FROM ZOOTOPIA!");
+    public static final ItemEntry<Item> TUNG = registerSimpleItem("tung", "Władysław, wraz z Tung Tung Tung Sahurem");
+    public static final ItemEntry<Item> WOWIE_ZOWIE = registerSimpleItem("wowie_zowie", "Starteck in school? Wowie Zowie!");
 
     public static ItemEntry<Item> registerSimpleItem(String id, String displayName) {
         return GTSAC_REGISTRATE
