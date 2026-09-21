@@ -1,1 +1,14 @@
-To fix in 0.2.1:
+To fix in 0.2.2:
+- Ore gen
+- Iron Bloom recipe
+- Wood breaking
+- Remove redundant mods from instance
+- Foundry Melting recipes
+- Add GTCEu stone tools and recipes (normal + component tools)
+- Make flint tools require Grass Fibre
+- Add Sword Recipe
+- Add Primitive FLuid Hatch and Bus recipes
+- Make Foundry accept up to 8 output hatches
+- Make ores higher mining tier
+- Fix LPS Recipes not correctly implementing fuel data
+- Add ceramic block recipe
