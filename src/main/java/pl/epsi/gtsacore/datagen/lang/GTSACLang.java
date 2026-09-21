@@ -11,6 +11,7 @@ public class GTSACLang {
 
         provider.add("config.jade.plugin_gtsac.crucible_provider", "[GTSAC] Crucible");
         provider.add("config.jade.plugin_gtsac.casting_table_provider", "[GTSAC] Casting Table");
+        provider.add("config.jade.plugin_gtsac.incomplete_crafting_table_provider", "[GTSAC] Crafting Table [Incomplete]");
 
         //////////////////////////
         ////       TAGS       ////

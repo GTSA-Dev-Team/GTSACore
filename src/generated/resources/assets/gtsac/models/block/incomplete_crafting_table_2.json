@@ -1,0 +1,8 @@
+{
+  "parent": "minecraft:block/cube_bottom_top",
+  "textures": {
+    "bottom": "gtsac:block/ict/ict_bottom_2",
+    "side": "gtsac:block/ict/ict_side_2",
+    "top": "gtsac:block/ict/ict_top_2"
+  }
+}

@@ -43,8 +43,16 @@ public class GTSACRecipes {
 
         HEATING_RECIPES.recipeBuilder("ski")
                 .notConsumable(new ItemStack(Items.FLINT))
-                .addData("FU/t", 1)
+                .addData("fuel_per_tick", 1)
                 .duration(10*20).save(provider);
+
+        PRIMITIVE_SMELTER_RECIPES.recipeBuilder("fsdasd")
+                .inputItems(new ItemStack(Items.COAL_ORE, 1))
+                .outputItems(new ItemStack(Items.COAL, 1))
+                .duration(6*20)
+                .addData("fuel_per_tick", 2)
+                .addData("duration", 6*20)
+                .save(provider);
 
         createFoundryMeltingRecipe(provider, new ItemStack(Items.COPPER_INGOT), GTMaterials.Copper.getFluid(144));
         createFoundryMeltingRecipe(provider, ChemicalHelper.getIngot(GTMaterials.Tin, GTValues.M), GTMaterials.Tin.getFluid(144));

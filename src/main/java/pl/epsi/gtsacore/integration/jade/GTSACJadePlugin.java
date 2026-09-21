@@ -1,5 +1,6 @@
 package pl.epsi.gtsacore.integration.jade;
 
+import pl.epsi.gtsacore.common.data.block.IncompleteCraftingTableBlock;
 import pl.epsi.gtsacore.common.data.block.casting.CastingTableBlock;
 import pl.epsi.gtsacore.common.data.block.casting.CastingTableBlockEntity;
 import pl.epsi.gtsacore.common.data.block.casting.CrucibleAssemblyBlock;
@@ -16,12 +17,14 @@ public class GTSACJadePlugin implements IWailaPlugin {
     public void register(IWailaCommonRegistration registration) {
         registration.registerBlockDataProvider(new CrucibleAssemblyBlockProvider(), CrucibleAssemblyBlockEntity.class);
         registration.registerBlockDataProvider(new CastingTableBlockProvider(), CastingTableBlockEntity.class);
+
     }
 
     @Override
     public void registerClient(IWailaClientRegistration registration) {
         registration.registerBlockComponent(new CrucibleAssemblyBlockProvider(), CrucibleAssemblyBlock.class);
         registration.registerBlockComponent(new CastingTableBlockProvider(), CastingTableBlock.class);
+        registration.registerBlockComponent(new IncompleteCraftingTableBlockProvider(), IncompleteCraftingTableBlock.class);
     }
 
 }

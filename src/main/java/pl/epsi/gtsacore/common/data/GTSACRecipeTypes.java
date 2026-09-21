@@ -64,8 +64,8 @@ public class GTSACRecipeTypes {
                 .setMaxSize(IO.IN, GTSACRecipeCapabilities.FUEL, 1)
                 .setSteamProgressBar(GuiTextures.PROGRESS_BAR_BOILER_FUEL, ProgressTexture.FillDirection.DOWN_TO_UP)
                 .addDataInfo(data -> {
-                    if (data.contains("FU/t")) {
-                        int fuelPerTick = data.getInt("FU/t");
+                    if (data.contains("fuel_per_tick")) {
+                        int fuelPerTick = data.getInt("fuel_per_tick");
                         int fuelUsed = fuelPerTick * data.getInt("duration");
                         String total = LocalizationUtils.format("emi_info.gtsac.fuel.1", fuelUsed) + "\n";
                         String usage = LocalizationUtils.format("emi_info.gtsac.fuel.2", fuelPerTick);

@@ -16,8 +16,11 @@ import net.minecraft.world.level.block.Block;
 import net.minecraft.world.level.block.Blocks;
 import net.minecraft.world.level.block.*;
 import net.minecraft.world.level.block.state.BlockBehaviour;
+import net.minecraftforge.client.model.generators.ConfiguredModel;
+import net.minecraftforge.client.model.generators.ModelFile;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.GTSubatomicCore;
+import pl.epsi.gtsacore.common.data.block.IncompleteCraftingTableBlock;
 import pl.epsi.gtsacore.common.data.block.casting.*;
 import pl.epsi.gtsacore.common.data.item.casting.IronBloomItem;
 
@@ -70,6 +73,24 @@ public class GTSACBlocks {
                 .build()
                 .register();
     }
+
+    private static @NotNull BlockEntry<Block> registerSimpleBlockProperties(String name, String id, String texture, Block block,
+                                                                  NonNullBiFunction<Block, Item.Properties, ? extends BlockItem> func) {
+        return GTSAC_REGISTRATE
+                .block(id, Block::new)
+                .initialProperties(() -> block)
+                .tag(BlockTags.MINEABLE_WITH_PICKAXE)
+                .properties(p -> p.isValidSpawn((state, level, pos, ent) -> false)
+                        .strength(5.0f, 6.0f)
+                        .requiresCorrectToolForDrops())
+                .blockstate((ctx, prov) -> prov.simpleBlock(ctx.getEntry(),
+                        prov.models().cubeAll(ctx.getName(), GTSubatomicCore.id("block/" + texture))))
+                .lang(name)
+                .item(func)
+                .build()
+                .register();
+    }
+
 
     private static @NotNull BlockEntry<StairBlock> registerStairBlock(String name, String id, String texture,
                                                                   NonNullBiFunction<StairBlock, Item.Properties, ? extends BlockItem> func) {
@@ -141,6 +162,9 @@ public class GTSACBlocks {
     public static final BlockEntry<Block> GTSA_BLOCK = registerSimpleBlock(
             "GregTech: Subatomic Age Block", "gtsa_block", "gtsa_logo", BlockItem::new);
 
+    public static final BlockEntry<Block> CERAMIC_BLOCK = registerSimpleBlockProperties(
+            "Ceramic Block", "ceramic_block", "ceramic_block",Blocks.BRICKS, BlockItem::new);
+
     public static final BlockEntry<CastingTableBlock> CASTING_TABLE = GTSAC_REGISTRATE
             .block("casting_table", CastingTableBlock::new)
             .initialProperties(() -> Blocks.IRON_BLOCK)
@@ -192,6 +216,39 @@ public class GTSACBlocks {
             .blockEntity("faucet", FaucetBlockEntity::new)
             .validBlocks(FAUCET)
             .renderer(() -> ctx -> new FaucetBlockEntityRenderer())
+            .register();
+
+    public static final BlockEntry<IncompleteCraftingTableBlock> INCOMPLETE_CRAFTING_TABLE = GTSAC_REGISTRATE
+            .block("incomplete_crafting_table", IncompleteCraftingTableBlock::new)
+            .initialProperties(() -> Blocks.CRAFTING_TABLE)
+            .tag(BlockTags.MINEABLE_WITH_AXE)
+            .blockstate((ctx, prov) -> {
+                var block = ctx.get();
+
+                var models = new ModelFile[4];
+
+                for (int i = 1; i <= 4; i++) {
+                    models[i-1] = prov.models().cubeBottomTop(
+                            "incomplete_crafting_table_" + i,
+                            GTSubatomicCore.id("block/ict/ict_side_" + i),
+                            GTSubatomicCore.id("block/ict/ict_bottom_" + i),
+                            GTSubatomicCore.id("block/ict/ict_top_" + i)
+                    );
+                }
+
+                prov.getVariantBuilder(block)
+                        .forAllStates(state -> {
+                            int stage = state.getValue(IncompleteCraftingTableBlock.PROGRESS);
+
+                            return ConfiguredModel.builder()
+                                    .modelFile(models[stage])
+                                    .build();
+                        });
+            })
+            .lang("Crafting Table [Incomplete]")
+            .item(BlockItem::new)
+            .model((ctx, prov) -> prov.withExistingParent(
+                    ctx.getName(), GTSubatomicCore.id("block/incomplete_crafting_table_1"))).build()
             .register();
 
     public static final BlockEntry<Block> IRON_BLOOM = GTSAC_REGISTRATE

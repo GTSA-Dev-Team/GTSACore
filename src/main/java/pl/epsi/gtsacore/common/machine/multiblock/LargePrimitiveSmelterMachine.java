@@ -4,6 +4,7 @@ import com.gregtechceu.gtceu.api.GTValues;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.MetaMachine;
 import com.gregtechceu.gtceu.api.recipe.GTRecipe;
+import com.gregtechceu.gtceu.api.recipe.content.ContentModifier;
 import com.gregtechceu.gtceu.api.recipe.modifier.ModifierFunction;
 import com.gregtechceu.gtceu.config.ConfigHolder;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
@@ -15,12 +16,22 @@ import net.minecraft.sounds.SoundSource;
 import net.minecraft.util.RandomSource;
 import net.minecraftforge.api.distmarker.Dist;
 import net.minecraftforge.api.distmarker.OnlyIn;
+import net.minecraftforge.fml.common.Mod;
 import org.jetbrains.annotations.NotNull;
+import org.jetbrains.annotations.Nullable;
+import pl.epsi.gtsacore.api.machine.feature.IHeatProvider;
+import pl.epsi.gtsacore.api.machine.feature.IHeatReceiver;
+import pl.epsi.gtsacore.common.data.ingredient.FuelIngredient;
 import pl.epsi.gtsacore.common.machine.WorkableFueledMultiblockMachine;
 
-public class LargePrimitiveSmelterMachine extends WorkableFueledMultiblockMachine {
+public class LargePrimitiveSmelterMachine extends WorkableFueledMultiblockMachine implements IHeatReceiver {
 
     public static final int MAX_PARALLELS = 4;
+
+    private boolean isHeatBoosted  = false;
+
+    @Nullable
+    private IHeatProvider heatSource;
 
     public LargePrimitiveSmelterMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, false, args);
@@ -60,6 +71,30 @@ public class LargePrimitiveSmelterMachine extends WorkableFueledMultiblockMachin
     }
 
     @Override
+    public boolean beforeWorking(@Nullable GTRecipe recipe) {
+        this.requireFuelForOperation = true;
+        this.isHeatBoosted = false;
+
+        if (heatSource != null) {
+            if (heatSource.getHeatLevel() > 11000) {
+                this.requireFuelForOperation = false;
+                this.isHeatBoosted = true;
+            }
+        }
+        return super.beforeWorking(recipe);
+    }
+
+    public static ModifierFunction heatModifier(@NotNull MetaMachine machine, GTRecipe recipe) {
+        if (!(machine instanceof LargePrimitiveSmelterMachine lps)) return ModifierFunction.IDENTITY;
+        if (lps.isHeatBoosted) {
+            return ModifierFunction.builder()
+                    .durationMultiplier(0.5).build();
+        }
+        return ModifierFunction.IDENTITY;
+
+    }
+
+    @Override
     @OnlyIn(Dist.CLIENT)
     public void clientTick() {
         super.clientTick();
@@ -73,5 +108,15 @@ public class LargePrimitiveSmelterMachine extends WorkableFueledMultiblockMachin
             float ySpd = facing.getStepY() * 0.1F + 0.2F + 0.1F * GTValues.RNG.nextFloat();
             getLevel().addParticle(ParticleTypes.CAMPFIRE_SIGNAL_SMOKE, xPos, yPos, zPos, 0, ySpd, 0);
         }
+    }
+
+    @Override
+    public @Nullable IHeatProvider getHeatSource() {
+        return heatSource;
+    }
+
+    @Override
+    public void setHeatSource(IHeatProvider source) {
+        this.heatSource = source;
     }
 }
