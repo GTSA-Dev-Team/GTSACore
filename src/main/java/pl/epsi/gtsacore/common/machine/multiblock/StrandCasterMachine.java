@@ -2,13 +2,18 @@ package pl.epsi.gtsacore.common.machine.multiblock;
 
 import com.google.common.collect.ImmutableSet;
 import com.google.common.collect.Sets;
+import com.gregtechceu.gtceu.api.capability.recipe.FluidRecipeCapability;
 import com.gregtechceu.gtceu.api.capability.recipe.IO;
+import com.gregtechceu.gtceu.api.capability.recipe.IRecipeHandler;
+import com.gregtechceu.gtceu.api.capability.recipe.ItemRecipeCapability;
 import com.gregtechceu.gtceu.api.data.chemical.ChemicalHelper;
 import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.IMachineBlockEntity;
 import com.gregtechceu.gtceu.api.machine.feature.IRecipeLogicMachine;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
+import com.gregtechceu.gtceu.api.machine.trait.NotifiableFluidTank;
+import com.gregtechceu.gtceu.api.machine.trait.NotifiableItemStackHandler;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.BlockPattern;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
@@ -20,6 +25,7 @@ import com.gregtechceu.gtceu.api.recipe.RecipeHelper;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.data.recipe.builder.GTRecipeBuilder;
 import com.mojang.datafixers.util.Either;
+import lombok.Getter;
 import net.minecraft.core.Direction;
 import net.minecraft.network.chat.Component;
 import net.minecraft.world.InteractionHand;
@@ -30,7 +36,12 @@ import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.material.Fluid;
 import net.minecraft.world.phys.BlockHitResult;
+import net.minecraftforge.common.capabilities.ForgeCapabilities;
 import net.minecraftforge.fluids.FluidStack;
+import net.minecraftforge.fluids.capability.IFluidHandler;
+import net.minecraftforge.items.IItemHandler;
+import net.minecraftforge.items.IItemHandlerModifiable;
+import net.minecraftforge.items.ItemHandlerHelper;
 import org.jetbrains.annotations.NotNull;
 import pl.epsi.gtsacore.common.data.GTSACBlocks;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
@@ -45,28 +56,12 @@ import java.util.*;
 import static com.gregtechceu.gtceu.api.pattern.Predicates.blocks;
 
 public class StrandCasterMachine extends WorkablePrimitiveMultiblockMachine {
-    private static final Map<AbstractCastItem, Integer> moldAmountMap = Map.of(
-            GTSACItems.INGOT_MOLD.get(), 144,
-            GTSACItems.PLATE_MOLD.get(), 72,
-            GTSACItems.ROD_MOLD.get(), 72
-    );
 
-    private static final Map<AbstractCastItem, TagPrefix> moldTagPrefixMap = Map.of(
-            GTSACItems.INGOT_MOLD.get(), TagPrefix.ingot,
-            GTSACItems.PLATE_MOLD.get(), TagPrefix.plate,
-            GTSACItems.ROD_MOLD.get(), TagPrefix.rod
-    );
-
+    @Getter
     private Collection<CastingTableBlockEntity> castingTables = new HashSet<>();
 
     public StrandCasterMachine(IMachineBlockEntity holder, Object... args) {
         super(holder, args);
-    }
-
-    @Override
-    protected InteractionResult onHardHammerClick(Player playerIn, InteractionHand hand, Direction gridSide, BlockHitResult hitResult) {
-        System.out.println(castingTables.size());
-        return super.onHardHammerClick(playerIn, hand, gridSide, hitResult);
     }
 
     @Override
@@ -81,34 +76,6 @@ public class StrandCasterMachine extends WorkablePrimitiveMultiblockMachine {
 
     @Override
     public void onStructureFormed() {
-        /*castingTableCount = 0;
-
-        Object2IntOpenHashMap<SimplePredicate> blockMap = this.getMultiblockState().getGlobalCount();
-        System.out.println(blockMap.size());
-
-        for (SimplePredicate predicate : blockMap.keySet()) {
-            System.out.println("looking next");
-            if (!predicate.getCandidates().isEmpty()) {
-                System.out.println(predicate.getCandidates().get(0).getItem().getDescription());
-                System.out.println(predicate.getCandidates().get(0).getCount());
-            }
-
-            List<Item> predItems = predicate.getCandidates().stream().map(ItemStack::getItem).collect(Collectors.toUnmodifiableList());
-            System.out.println(predItems);
-
-            if (predItems.contains(GTSACBlocks.CASTING_TABLE.asItem())) {
-                System.out.println("has casting tabel");
-                castingTableCount++;
-                if (predicate.test(this.getMultiblockState())) {
-                    System.out.println("tested");
-                    castingTableCount++;
-                }
-            }
-
-        }
-
-        System.out.println("casting tables: " + castingTableCount);*/
-
         super.onStructureFormed();
 
         this.castingTables = null;
@@ -120,24 +87,11 @@ public class StrandCasterMachine extends WorkablePrimitiveMultiblockMachine {
 
     @Override
     public void onStructureInvalid() {
+        this.castingTables.forEach(castingTable -> castingTable.setOnRecipeFinished((c) -> {}));
+
         super.onStructureInvalid();
+
         this.castingTables = null;
-    }
-
-    @Override
-    public void addDisplayText(List<Component> textList) {
-        var moldMap = getMoldMap();
-        textList.add(Component.literal(String.valueOf(castingTables.size())));
-
-        for (AbstractCastItem castItem : moldMap.keySet()) {
-            String moldStr = castItem.getDescriptionId() + ": ";
-            String countStr = String.valueOf(moldMap.get(castItem));
-            textList.add(Component.literal(moldStr + countStr));
-        }
-
-
-        super.addDisplayText(textList);
-
     }
 
     protected @NotNull TraceabilityPredicate innerPredicate() {
@@ -147,6 +101,7 @@ public class StrandCasterMachine extends WorkablePrimitiveMultiblockMachine {
 
             if (blockEntity instanceof CastingTableBlockEntity cbe) {
                 targets.add(cbe);
+                cbe.setOnRecipeFinished(getRecipeLogic()::finished);
             }
 
             return true;
@@ -186,50 +141,7 @@ public class StrandCasterMachine extends WorkablePrimitiveMultiblockMachine {
                 .build();
     }
 
-    private HashMap<AbstractCastItem, Integer> getMoldMap() {
-        HashMap<AbstractCastItem, Integer> moldMap = new HashMap<>();
 
-        for (CastingTableBlockEntity table : castingTables) {
-            ItemStack moldStack = table.getMoldItem();
-            Item moldItem = moldStack.getItem();
-
-            if (moldStack != ItemStack.EMPTY && moldItem instanceof AbstractCastItem castItem) {
-                if (moldMap.containsKey(castItem)) {
-                    moldMap.compute(castItem, (k, count) -> count + 1);
-                } else {
-                    moldMap.put(castItem, 1);
-                }
-            }
-        }
-
-        return moldMap;
-    }
-
-
-
-
-    private List<ItemStack> getMoldItemsOfMat(Material material) {
-        ArrayList<ItemStack> itemStacks = new ArrayList<>();
-
-        for (AbstractCastItem mold : getMoldMap().keySet()) {
-            TagPrefix tagPrefix = moldTagPrefixMap.get(mold);
-            ItemStack materialStack = ChemicalHelper.get(tagPrefix, material);
-
-            if (materialStack != null) {
-                itemStacks.add(new ItemStack(materialStack.getItem(), getMoldMap().get(mold)));
-            }
-        }
-
-        return itemStacks;
-    }
-
-    private int getMoldCountSum() {
-        return getMoldMap().keySet().stream().mapToInt(m -> getMoldMap().containsKey(m) ? getMoldMap().get(m) : 0).sum();
-    }
-
-    private int getMoldAmountSum() {
-        return getMoldMap().keySet().stream().mapToInt(m -> moldAmountMap.get(m)).sum();
-    }
 
     public class StrandCasterLogic extends RecipeLogic {
 
@@ -237,40 +149,85 @@ public class StrandCasterMachine extends WorkablePrimitiveMultiblockMachine {
             super(machine);
         }
 
+        public void finished(CastingTableBlockEntity be) {
+            if (!(getMachine() instanceof StrandCasterMachine)) {
+                return;
+            }
+
+            ItemStack output = be.getReturnItem().copy();
+
+            if (tryOutputItem(output))
+                be.takeOutReturnItem(be.getBlockPos());
+        }
+
+        private boolean tryOutputItem(ItemStack stack) {
+            if (stack.isEmpty()) return true;
+
+            var itemHandlers = getCapabilitiesFlat(IO.OUT, ItemRecipeCapability.CAP);
+            if (itemHandlers.isEmpty()) return false;
+
+            ItemStack remainder = stack.copy();
+            for (var handler : itemHandlers) {
+                if (!(handler instanceof NotifiableItemStackHandler itemHandler)) continue;
+
+                for (int slot = 0; slot < itemHandler.getSlots() && !remainder.isEmpty(); slot++) {
+                    remainder = itemHandler.insertItemInternal(slot, remainder, false);
+                }
+                if (remainder.isEmpty()) return true;
+            }
+
+            return remainder.isEmpty();
+        }
+
         @Override
-        public @NotNull Iterator<GTRecipe> searchRecipe() {
-            return this.machine.getRecipeType().searchRecipe(this.machine, r -> {
-                return true;
-            });
+        public void serverTick() {
+            if (isSuspend()) return;
+
+            if (!(getMachine() instanceof StrandCasterMachine multiblock)) {
+                return;
+            }
+
+            Collection<CastingTableBlockEntity> castingTables = multiblock.getCastingTables();
+            if (castingTables == null || castingTables.isEmpty()) {
+                return;
+            }
+
+            var fluidHandlers = multiblock.getCapabilitiesFlat(IO.IN, FluidRecipeCapability.CAP);
+            if (fluidHandlers.isEmpty()) {
+                return;
+            }
+
+            var itemHandlers = multiblock.getCapabilitiesFlat(IO.OUT, ItemRecipeCapability.CAP);
+            if (itemHandlers.isEmpty()) {
+                return;
+            }
+
+            for (IRecipeHandler<?> handler : fluidHandlers) {
+                if (!(handler instanceof NotifiableFluidTank fluidHandler)) continue;
+
+                for (int tank = 0; tank < fluidHandler.getTanks(); tank++) {
+                    FluidStack currentFluid = fluidHandler.getFluidInTank(tank);
+                    if (currentFluid.isEmpty()) continue;
+
+                    for (CastingTableBlockEntity table : castingTables) {
+                        currentFluid = fluidHandler.getFluidInTank(tank);
+                        if (currentFluid.isEmpty()) break;
+
+                        FluidStack fluidToOffer = currentFluid.copy();
+                        int initialAmount = fluidToOffer.getAmount();
+
+                        table.startRecipe(fluidToOffer);
+
+                        int consumedAmount = initialAmount - fluidToOffer.getAmount();
+                        if (consumedAmount > 0) {
+                            FluidStack drainStack = currentFluid.copy();
+                            drainStack.setAmount(consumedAmount);
+                            fluidHandler.drainInternal(drainStack, IFluidHandler.FluidAction.EXECUTE);
+                        }
+                    }
+                }
+            }
         }
 
-        private GTRecipe getActualRecipeOfCastingRecipe(GTRecipe recipe) {
-            if (recipe.recipeType != GTSACRecipeTypes.CASTING_RECIPES) return recipe;
-            Fluid inputFluid = RecipeHelper.getInputFluids(recipe).get(0).getFluid();
-            FluidStack actualFluidInput = new FluidStack(inputFluid, getMoldAmountSum());
-            List<ItemStack> actualItemOutputs = getMoldItemsOfMat(ChemicalHelper.getMaterial(inputFluid));
-
-            GTRecipe actualRecipe = GTRecipeBuilder.ofRaw().inputFluids(actualFluidInput).outputItems(actualItemOutputs).duration(6 * actualItemOutputs.size() / 2).buildRawRecipe();
-
-            return actualRecipe;
-        }
-
-        @Override
-        protected ActionResult matchRecipe(GTRecipe recipe) {
-            if (recipe.recipeType != GTSACRecipeTypes.CASTING_RECIPES) return super.matchRecipe(recipe);
-            return super.matchRecipe(getActualRecipeOfCastingRecipe(recipe));
-        }
-
-        @Override
-        protected ActionResult handleRecipeIO(GTRecipe recipe, IO io) {
-            if (recipe.recipeType != GTSACRecipeTypes.CASTING_RECIPES) return super.handleRecipeIO(recipe, io);
-            Fluid inputFluid = RecipeHelper.getInputFluids(recipe).get(0).getFluid();
-            FluidStack actualFluidInput = new FluidStack(inputFluid, getMoldAmountSum());
-            List<ItemStack> actualItemOutputs = getMoldItemsOfMat(ChemicalHelper.getMaterial(inputFluid));
-
-            GTRecipe actualRecipe = GTRecipeBuilder.ofRaw().inputFluids(actualFluidInput).outputItems(actualItemOutputs).duration(6 * actualItemOutputs.size() / 2).buildRawRecipe();
-
-            return super.handleRecipeIO(actualRecipe, io);
-        }
     }
 }

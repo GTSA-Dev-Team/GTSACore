@@ -97,15 +97,7 @@ public class CastingTableBlock extends BaseEntityBlock {
                 ItemStack holding = player.getItemInHand(hand);
                 if (be.getReturnItem() != null && !be.getReturnItem().isEmpty()) {
                     player.addItem(be.getReturnItem());
-                    be.takeOutReturnItem();
-                    int used = AbstractCastItem.onUsed(level.random, be.getMoldItem());
-                    level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1f, 0.7f);
-                    if (used == 1) {
-                        be.setMoldItem(ItemStack.EMPTY);
-                        level.playSound(null, pos, SoundEvents.ANVIL_DESTROY, SoundSource.BLOCKS, 1f, 1f);
-                    } else if (used == 2) {
-                        level.playSound(null, pos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 1f, 1f);
-                    }
+                    be.takeOutReturnItem(pos);
                     return InteractionResult.SUCCESS;
                 }
 
@@ -121,7 +113,7 @@ public class CastingTableBlock extends BaseEntityBlock {
                     return InteractionResult.sidedSuccess(false);
                 }
 
-                if (holding.is(Items.AIR)) {
+                if (holding.is(Items.AIR) && !be.getMoldItem().isEmpty()) {
                     level.playSound(null, pos, SoundEvents.ITEM_FRAME_REMOVE_ITEM, SoundSource.BLOCKS, 1f, 1.1f);
                     tryGiveBack(player, be);
                 }
