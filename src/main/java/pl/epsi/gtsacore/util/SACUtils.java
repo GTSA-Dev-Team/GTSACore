@@ -75,6 +75,8 @@ public class SACUtils {
         Material material = materialStack.material();
         long amount = (int) (144 * materialStack.amount() / GTValues.M);
 
+        if (!material.hasFluid()) return null;
+
         return material.getFluid((int) amount);
     }
 
