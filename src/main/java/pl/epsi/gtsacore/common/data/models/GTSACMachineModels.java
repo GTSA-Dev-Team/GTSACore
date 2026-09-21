@@ -26,5 +26,4 @@ public class GTSACMachineModels {
             builder.addReplaceableTextures("bottom", "top", "side");
         };
     }
-
 }

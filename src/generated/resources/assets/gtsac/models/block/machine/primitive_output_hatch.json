@@ -1,7 +1,7 @@
 {
   "parent": "minecraft:block/block",
   "loader": "gtceu:machine",
-  "machine": "gtsac:primitive_output_bus",
+  "machine": "gtsac:primitive_output_hatch",
   "replaceable_textures": [
     "bottom",
     "top",
@@ -13,8 +13,8 @@
         "parent": "gtceu:block/overlay/2_layer/front_emissive",
         "textures": {
           "bottom": "gtsac:block/casings/primitive_bricks/bottom",
-          "overlay": "gtsac:block/overlay/machine/primitive_output_bus_base",
-          "overlay_emissive": "gtsac:block/overlay/machine/primitive_output_bus_emissive",
+          "overlay": "gtsac:block/overlay/machine/primitive_output_hatch_base",
+          "overlay_emissive": "gtsac:block/overlay/machine/primitive_output_hatch_emissive",
           "side": "gtsac:block/casings/primitive_bricks/side",
           "top": "gtsac:block/casings/primitive_bricks/top"
         }
@@ -25,8 +25,8 @@
         "parent": "gtceu:block/overlay/2_layer/front_emissive",
         "textures": {
           "bottom": "gtsac:block/casings/primitive_bricks/bottom",
-          "overlay": "gtsac:block/overlay/machine/primitive_output_bus_base",
-          "overlay_emissive": "gtsac:block/overlay/machine/primitive_output_bus_emissive",
+          "overlay": "gtsac:block/overlay/machine/primitive_output_hatch_base",
+          "overlay_emissive": "gtsac:block/overlay/machine/primitive_output_hatch_emissive",
           "side": "gtsac:block/casings/primitive_bricks/side",
           "top": "gtsac:block/casings/primitive_bricks/top"
         }

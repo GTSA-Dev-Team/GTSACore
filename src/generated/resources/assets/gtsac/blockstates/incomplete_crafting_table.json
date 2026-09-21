@@ -1,0 +1,16 @@
+{
+  "variants": {
+    "progress=0": {
+      "model": "gtsac:block/incomplete_crafting_table_1"
+    },
+    "progress=1": {
+      "model": "gtsac:block/incomplete_crafting_table_2"
+    },
+    "progress=2": {
+      "model": "gtsac:block/incomplete_crafting_table_3"
+    },
+    "progress=3": {
+      "model": "gtsac:block/incomplete_crafting_table_4"
+    }
+  }
+}

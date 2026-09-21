@@ -10,7 +10,6 @@ import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.api.machine.MachineDefinition;
 import com.gregtechceu.gtceu.api.machine.MultiblockMachineDefinition;
 import com.gregtechceu.gtceu.api.machine.multiblock.PartAbility;
-import com.gregtechceu.gtceu.api.machine.multiblock.WorkableElectricMultiblockMachine;
 import com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties;
 import com.gregtechceu.gtceu.api.machine.trait.RecipeLogic;
 import com.gregtechceu.gtceu.api.pattern.FactoryBlockPattern;
@@ -23,6 +22,7 @@ import com.gregtechceu.gtceu.common.data.*;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.FluidHatchPartMachine;
 import com.gregtechceu.gtceu.common.machine.multiblock.part.ItemBusPartMachine;
 import net.minecraft.network.chat.Component;
+import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.level.block.Blocks;
 import pl.epsi.gtsacore.GTSubatomicCore;
 import pl.epsi.gtsacore.api.renderer.machine.CustomObjDynamicMultiRenderer;
@@ -38,16 +38,14 @@ import static com.gregtechceu.gtceu.api.GTValues.ULV;
 import static com.gregtechceu.gtceu.api.GTValues.ZPM;
 import static com.gregtechceu.gtceu.api.machine.property.GTMachineModelProperties.IS_FORMED;
 import static com.gregtechceu.gtceu.api.pattern.Predicates.blocks;
-import static com.gregtechceu.gtceu.common.data.GTBlocks.CASING_POLYTETRAFLUOROETHYLENE_PIPE;
-import static com.gregtechceu.gtceu.common.data.GTBlocks.CASING_PTFE_INERT;
-import static com.gregtechceu.gtceu.common.data.GTRecipeModifiers.BATCH_MODE;
-import static com.gregtechceu.gtceu.common.data.GTRecipeModifiers.OC_PERFECT_SUBTICK;
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.*;
 
 import static com.gregtechceu.gtceu.common.data.models.GTMachineModels.createWorkableCasingMachineModel;
 import static pl.epsi.gtsacore.GTSubatomicCore.GTSAC_REGISTRATE;
 
 public class GTSACMachines {
+
+    public static final ResourceLocation PRIMITIVE_BRICKS_RES_LOC = GTSubatomicCore.id("block/casings/primitive_bricks");
 
     public static void init() {}
 
@@ -242,8 +240,8 @@ public class GTSACMachines {
             .langValue("Large Primitive Smelter")
             .rotationState(RotationState.ALL)
             .recipeTypes(GTSACRecipeTypes.PRIMITIVE_SMELTER_RECIPES)
-            .appearanceBlock(() -> Blocks.NETHER_BRICKS)
-            .recipeModifiers(true, LargePrimitiveSmelterMachine::recipeModifier, GTRecipeModifiers.BATCH_MODE)
+            .appearanceBlock(() -> GTSACBlocks.PRIMITIVE_BRICKS.get())
+            .recipeModifiers(true, LargePrimitiveSmelterMachine::recipeModifier, LargePrimitiveSmelterMachine::heatModifier,GTRecipeModifiers.BATCH_MODE)
             .pattern(definition -> FactoryBlockPattern.start()
                     .aisle("BBB", "BFB", "SSS")
                     .aisle("BBB", "F F", "B B")
@@ -354,28 +352,54 @@ public class GTSACMachines {
             .rotationState(RotationState.ALL)
             .abilities(PartAbility.IMPORT_ITEMS)
             .modelProperty(IS_FORMED, false)
-            .colorOverlayTieredHullModel(GTCEu.id("block/overlay/machine/" + OVERLAY_ITEM_HATCH_INPUT),
-                    GTCEu.id("block/overlay/machine/overlay_pipe"), GTCEu.id("block/overlay/machine/overlay_pipe_in_emissive"))
+            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_input_bus", PRIMITIVE_BRICKS_RES_LOC))
             .langValue("§7Primitive Input Bus")
             .tooltips(Component.literal("Low-Tech Item Input for Multiblocks"),
                     Component.translatable("gtceu.universal.tooltip.item_storage_capacity",
                             1))
             .allowCoverOnFront(true)
             .register();
+
     public static final MachineDefinition PRIMITIVE_ITEM_EXPORT_HATCH = GTSAC_REGISTRATE
             .machine("primitive_output_bus", (holder) ->
                     new ItemBusPartMachine(holder, GTValues.ULV, IO.OUT))
             .rotationState(RotationState.ALL)
             .abilities(PartAbility.EXPORT_ITEMS)
             .modelProperty(IS_FORMED, false)
-            .colorOverlayTieredHullModel(GTCEu.id("block/overlay/machine/" + OVERLAY_ITEM_HATCH_OUTPUT),
-                    GTCEu.id("block/overlay/machine/overlay_pipe"), GTCEu.id("block/overlay/machine/overlay_pipe_out_emissive"))
+            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_output_bus", PRIMITIVE_BRICKS_RES_LOC))
             .langValue("§7Primitive Output Bus")
             .tooltips(Component.literal("Low-Tech Item Output for Multiblocks"),
                     Component.translatable("gtceu.universal.tooltip.item_storage_capacity",
                             1))
             .allowCoverOnFront(true)
             .register();
+
+    public static final MachineDefinition PRIMITIVE_FLUID_IMPORT_HATCH = GTSAC_REGISTRATE
+            .machine("primitive_input_hatch", holder -> new FluidHatchPartMachine(holder, ULV, IO.IN, 4000, 1))
+            .rotationState(RotationState.ALL)
+            .abilities(PartAbility.IMPORT_FLUIDS)
+            .modelProperty(IS_FORMED, false)
+            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_input_hatch", PRIMITIVE_BRICKS_RES_LOC))
+            .langValue("§7Primitive Input Hatch")
+            .tooltips(Component.literal("Low-Tech Fluid Input for Multiblocks"),
+                    Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity",
+                            4000))
+            .allowCoverOnFront(true)
+            .register();
+
+    public static final MachineDefinition PRIMITIVE_FLUID_EXPORT_HATCH = GTSAC_REGISTRATE
+            .machine("primitive_output_hatch", holder -> new FluidHatchPartMachine(holder, ULV, IO.OUT, 4000, 1))
+            .rotationState(RotationState.ALL)
+            .abilities(PartAbility.EXPORT_FLUIDS)
+            .modelProperty(IS_FORMED, false)
+            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_output_hatch", PRIMITIVE_BRICKS_RES_LOC))
+            .langValue("§7Primitive Output Hatch")
+            .tooltips(Component.literal("Low-Tech Fluid Output for Multiblocks"),
+                    Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity",
+                            4000))
+            .allowCoverOnFront(true)
+            .register();
+
 
 
 
@@ -385,7 +409,7 @@ public class GTSACMachines {
             .rotationState(RotationState.ALL)
             .tier(ZPM)
             .modelProperty(GTMachineModelProperties.IS_FORMED, false)
-            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_fuel_hatch", GTSubatomicCore.id("block/casings/primitive_bricks")))
+            .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_fuel_hatch", PRIMITIVE_BRICKS_RES_LOC))
             .abilities(GTSACPartAbilities.FUEL_HATCH)
             .register();
 

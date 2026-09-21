@@ -17,6 +17,7 @@ import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
 import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import com.lowdragmc.lowdraglib.syncdata.field.ManagedFieldHolder;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.network.chat.Component;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
@@ -27,14 +28,17 @@ import pl.epsi.gtsacore.common.machine.multiblock.LargePrimitiveSmelterMachine;
 import java.util.List;
 
 public class WorkableFueledMultiblockMachine extends WorkablePrimitiveMultiblockMachine {
+    @Setter
     private FuelIngredient FUEL_STACK = new FuelIngredient(20);
     private final boolean endRecipeWhenFuelInsufficient;
+
+    protected boolean requireFuelForOperation = true;
 
     @Getter
     @Persisted
     @DescSynced
     private GTRecipe lastSavedRecipe = null;
-    private int runningTimer = 0;
+    private int runningTimer = 1;
 
     public static final ManagedFieldHolder MANAGED_FIELD_HOLDER = new ManagedFieldHolder(
             WorkableFueledMultiblockMachine.class, WorkablePrimitiveMultiblockMachine.MANAGED_FIELD_HOLDER);
@@ -62,7 +66,11 @@ public class WorkableFueledMultiblockMachine extends WorkablePrimitiveMultiblock
             return false;
         }
 
-        if (RecipeHelper.handleRecipeIO(this, this.getFuelRecipe(), IO.IN, this.recipeLogic.getChanceCaches()).isSuccess()) {
+        if (recipe.data.contains("fuel_per_tick")) {
+            FUEL_STACK = new FuelIngredient(recipe.data.getInt("fuel_per_tick") * 20);
+        }
+
+        if (RecipeHelper.handleRecipe(this, this.getFuelRecipe(), IO.IN, this.getFuelRecipe().inputs, this.getRecipeLogic().getChanceCaches(), false, true).isSuccess()) {
             lastSavedRecipe = recipe;
             return true;
         } else {
@@ -73,20 +81,18 @@ public class WorkableFueledMultiblockMachine extends WorkablePrimitiveMultiblock
 
     @Override
     public boolean onWorking() {
-        var recipe = getRecipeLogic().getLastRecipe();
-        if (recipe != null && recipe.data.contains("fuel_per_tick")) {
-            FUEL_STACK = new FuelIngredient(recipe.data.getInt("fuel_per_tick") * 20);
-        }
-        if (this.runningTimer % 20 == 0 && !RecipeHelper.handleRecipeIO(this, this.getFuelRecipe(), IO.IN, this.recipeLogic.getChanceCaches()).isSuccess()) {
-            if (endRecipeWhenFuelInsufficient) {
-                this.recipeLogic.interruptRecipe();
+        if (requireFuelForOperation) {
+            if (this.runningTimer % 20 == 0 && !RecipeHelper.handleRecipeIO(this, this.getFuelRecipe(), IO.IN, this.recipeLogic.getChanceCaches()).isSuccess()) {
+                if (endRecipeWhenFuelInsufficient) {
+                    this.recipeLogic.interruptRecipe();
+                } else {
+                    this.recipeLogic.setProgress(0);
+                }
             } else {
-                this.recipeLogic.setProgress(0);
-            }
-        } else {
-            ++this.runningTimer;
-            if (this.runningTimer > 20000) {
-                this.runningTimer %= 20000;
+                ++this.runningTimer;
+                if (this.runningTimer > 20000) {
+                    this.runningTimer %= 20000;
+                }
             }
         }
         return super.onWorking();
@@ -96,7 +102,6 @@ public class WorkableFueledMultiblockMachine extends WorkablePrimitiveMultiblock
         if (machine instanceof WorkableFueledMultiblockMachine fueledMachine) {
             List<Content> itemOutput = recipe.getOutputContents(GTRecipeCapabilities.ITEM);
             List<Content> fluidOutput = recipe.getOutputContents(GTRecipeCapabilities.FLUID);
-            //List<Content> itemOutput = recipe.getOutputContents(GTRecipeCapabilities.ITEM);
             int parallel = ParallelLogic.getParallelAmount(machine, recipe, parallels);
 
             if (!itemOutput.isEmpty() && RecipeHelper.matchRecipe(fueledMachine, fueledMachine.getFuelRecipe()).isSuccess()) {
