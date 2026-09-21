@@ -53,8 +53,11 @@ public class CrucibleAssemblyBlockEntityRenderer implements BlockEntityRenderer<
             Direction facing = be.getBlockState().getValue(CrucibleAssemblyBlock.FACING);
             if (be.getLevel().getBlockEntity(be.getBlockPos().relative(facing)) instanceof FaucetBlockEntity fe && fe.getCastingState() == CastingState.FILLING) {
                 poseStack.pushPose();
-                poseStack.translate(0.75f, -0.0234375f, 0.5f);
-                poseStack.mulPose(Axis.YP.rotationDegrees(facing.toYRot()));
+                float angle = facing.toYRot();
+                if (facing == Direction.SOUTH || facing == Direction.NORTH) angle += 180;
+                poseStack.translate(0.5f, -0.0234375f, 0.5f);
+                poseStack.mulPose(Axis.YP.rotationDegrees(angle));
+                poseStack.translate(0, 0, -0.25f);
                 SACRenderUtil.renderPrism(consumer, poseStack.last().pose(), sprite, color, overlay, light, 0.25f, 0.4375f, 0.125f);
                 poseStack.popPose();
             }

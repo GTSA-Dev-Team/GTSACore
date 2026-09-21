@@ -3,14 +3,16 @@
   "package": "pl.epsi.gtsacore.mixin",
   "compatibilityLevel": "JAVA_17",
   "minVersion": "0.8",
+  "plugin": "pl.epsi.gtsacore.GTSACMixinPlugin",
   "mixins": [
-    "MixinCampfireBlockEntity"
+    "MixinCampfireBlockEntity",
+    "MixinMixinHelpers"
+  ],
+  "client": [
+    "MixinLightTexture"
   ],
   "injectors": {
     "defaultRequire": 1
   },
-  "refmap": "mixins.gtsac.refmap.json",
-  "client": [
-    "MixinLightTexture"
-  ]
+  "refmap": "mixins.gtsac.refmap.json"
 }

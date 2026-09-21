@@ -15,6 +15,7 @@ import net.minecraft.world.level.block.RenderShape;
 import net.minecraft.world.level.block.entity.BlockEntity;
 import net.minecraft.world.level.block.entity.BlockEntityTicker;
 import net.minecraft.world.level.block.entity.BlockEntityType;
+import net.minecraft.world.level.block.entity.CampfireBlockEntity;
 import net.minecraft.world.level.block.state.BlockState;
 import net.minecraft.world.level.block.state.StateDefinition;
 import net.minecraft.world.level.block.state.properties.BlockStateProperties;
@@ -121,7 +122,7 @@ public class CrucibleAssemblyBlock extends BaseEntityBlock {
     @Override
     public void entityInside(BlockState state, Level level, BlockPos pos, Entity entity) {
         if (level.isClientSide()) return;
-        if (!(entity instanceof ItemEntity item)) return;
+        if (!(entity instanceof ItemEntity item) || !(level.getBlockEntity(pos.below()) instanceof CampfireBlockEntity)) return;
         if (!(level.getBlockEntity(pos) instanceof CrucibleAssemblyBlockEntity be)) return;
 
         FluidStack fluid = SACUtils.getFluidForItem(item.getItem());

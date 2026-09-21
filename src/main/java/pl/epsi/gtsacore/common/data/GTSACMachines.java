@@ -313,6 +313,40 @@ public class GTSACMachines {
                     GTCEu.id("block/multiblock/primitive_blast_furnace")))
             .register();
 
+    public static final MultiblockMachineDefinition BRONZE_STRAND_CASTER = GTSAC_REGISTRATE
+            .multiblock("bronze_strand_caster", StrandCasterMachine::new)
+            .langValue("Bronze Strand Caster")
+            .rotationState(RotationState.ALL)
+            .recipeTypes(GTSACRecipeTypes.CASTING_RECIPES)
+            .recipeModifiers()
+            .appearanceBlock(GTSACBlocks.BRONZE_PLATED_BRICKS)
+            .pattern(definition -> FactoryBlockPattern.start()
+                    .aisle("BOOOB", "BBBBB", " BHB ")
+                    .aisle("BDDDB", " C C ", " FPF ")
+                    .aisle("BDBDB", " C C ", " FPF ")
+                    .aisle("BDBDB", " C C ", " FPF ")
+                    .aisle("BDBDB", " C C ", " FPF ")
+                    .aisle("BDBDB", " C C ", " FPF ")
+                    .aisle("BBBBB", "BB@BB", " BHB ")
+                    .where(" ", Predicates.any())
+                    .where("@", Predicates.controller(blocks(definition.get())))
+                    .where("B", blocks(GTSACBlocks.BRONZE_PLATED_BRICKS.get()))
+                    .where("D", blocks(GTSACBlocks.CASING_BRONZE_DUCT.get()))
+                    .where("C", blocks(GTSACBlocks.CASTING_TABLE.get()).setMinGlobalLimited(0, 10)
+                            .or(Predicates.any()))
+                    .where("F", blocks(GTSACBlocks.FAUCET.get()))
+                    .where("P", blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
+                    .where("H", blocks(GTSACBlocks.BRONZE_PLATED_BRICKS.get())
+                            .or(Predicates.abilities(PartAbility.IMPORT_FLUIDS)))
+                    .where("O", blocks(GTSACBlocks.BRONZE_PLATED_BRICKS.get())
+                            .or(Predicates.abilities(PartAbility.EXPORT_ITEMS)))
+                    .where("P", blocks(GTBlocks.CASING_BRONZE_PIPE.get()))
+                    .build())
+            .model(createWorkableCasingMachineModel(
+                    GTSubatomicCore.id("block/casings/solid/bronze_plated_bricks"),
+                    GTCEu.id("block/multiblock/primitive_blast_furnace")))
+            .register();
+
 
     public static final MachineDefinition PRIMITIVE_ITEM_IMPORT_HATCH = GTSAC_REGISTRATE
             .machine("primitive_input_bus", (holder) ->

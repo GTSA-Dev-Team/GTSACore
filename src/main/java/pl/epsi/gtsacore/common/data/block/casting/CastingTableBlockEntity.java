@@ -11,11 +11,14 @@ import com.gregtechceu.gtceu.api.recipe.ingredient.FluidIngredient;
 import com.gregtechceu.gtceu.common.data.GTItems;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import lombok.Getter;
+import lombok.Setter;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.NonNullList;
 import net.minecraft.nbt.CompoundTag;
 import net.minecraft.network.protocol.game.ClientboundBlockEntityDataPacket;
 import net.minecraft.resources.ResourceLocation;
+import net.minecraft.sounds.SoundEvents;
+import net.minecraft.sounds.SoundSource;
 import net.minecraft.world.Containers;
 import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.crafting.Ingredient;
@@ -28,9 +31,11 @@ import net.minecraftforge.registries.ForgeRegistries;
 import org.jetbrains.annotations.NotNull;
 import org.jetbrains.annotations.Nullable;
 import pl.epsi.gtsacore.common.data.GTSACRecipeTypes;
+import pl.epsi.gtsacore.common.data.item.casting.AbstractCastItem;
 import pl.epsi.gtsacore.common.data.item.casting.IronBloomItem;
 
 import java.util.*;
+import java.util.function.Consumer;
 
 public class CastingTableBlockEntity extends BlockEntity {
 
@@ -54,6 +59,10 @@ public class CastingTableBlockEntity extends BlockEntity {
     private int progress = 0;
     @Getter
     private int hammeringProgress = 0;
+
+    @Getter
+    @Setter
+    private Consumer<CastingTableBlockEntity> onRecipeFinished = (c) -> {};
 
     public CastingTableBlockEntity(BlockEntityType<?> type, BlockPos pos, BlockState blockState) {
         super(type, pos, blockState);
@@ -166,6 +175,7 @@ public class CastingTableBlockEntity extends BlockEntity {
                     this.setReturnItem(stacks[0].copy());
                 }
             }
+            onRecipeFinished.accept(this);
             currentRecipe = null;
         }
     }
@@ -185,10 +195,18 @@ public class CastingTableBlockEntity extends BlockEntity {
         update();
     }
 
-    public void takeOutReturnItem() {
+    public void takeOutReturnItem(BlockPos pos) {
         this.returnItem = ItemStack.EMPTY;
         this.setFluid(null);
         updateState(CastingState.IDLE);
+        int used = AbstractCastItem.onUsed(level.random, getMoldItem());
+        level.playSound(null, pos, SoundEvents.ITEM_PICKUP, SoundSource.BLOCKS, 1f, 0.7f);
+        if (used == 1) {
+            setMoldItem(ItemStack.EMPTY);
+            level.playSound(null, pos, SoundEvents.ANVIL_DESTROY, SoundSource.BLOCKS, 1f, 1f);
+        } else if (used == 2) {
+            level.playSound(null, pos, SoundEvents.ANVIL_LAND, SoundSource.BLOCKS, 1f, 1f);
+        }
     }
 
     @Override

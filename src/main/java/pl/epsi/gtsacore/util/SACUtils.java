@@ -6,6 +6,8 @@ import com.gregtechceu.gtceu.api.data.chemical.material.Material;
 import com.gregtechceu.gtceu.api.data.chemical.material.stack.MaterialStack;
 import com.gregtechceu.gtceu.api.data.tag.TagPrefix;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
+import com.lowdragmc.lowdraglib.syncdata.managed.IManagedVar;
+import it.unimi.dsi.fastutil.Hash;
 import net.minecraft.resources.ResourceLocation;
 import net.minecraft.world.item.Item;
 import net.minecraft.world.item.ItemStack;
@@ -16,16 +18,22 @@ import net.minecraftforge.common.Tags;
 import net.minecraftforge.common.data.ForgeItemTagsProvider;
 import net.minecraftforge.fluids.FluidStack;
 import net.minecraftforge.registries.ForgeRegistries;
+import org.antlr.v4.runtime.misc.MultiMap;
+import pl.epsi.gtsacore.common.data.item.GTSACItems;
+import pl.epsi.gtsacore.common.data.item.casting.AbstractCastItem;
 
 import javax.annotation.Nullable;
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.util.HashMap;
+import java.util.Map;
 
 public class SACUtils {
 
     public static final ResourceLocation EMPTY_IDENTIFIER = ResourceLocation.fromNamespaceAndPath("minecraft", "empty");
+
 
     public static InputStream asInputStream(ResourceLocation rl) {
         return SACUtils.class.getResourceAsStream("/assets/" + rl.getNamespace() + "/" + rl.getPath());
@@ -71,5 +79,6 @@ public class SACUtils {
 
         return material.getFluid((int) amount);
     }
+
 
 }

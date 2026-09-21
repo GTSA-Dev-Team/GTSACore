@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:block/cube_all",
+  "textures": {
+    "all": "gtsac:block/casings/duct/machine_casing_duct_bronze"
+  }
+}

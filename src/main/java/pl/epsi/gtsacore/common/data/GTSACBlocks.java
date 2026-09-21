@@ -1,5 +1,6 @@
 package pl.epsi.gtsacore.common.data;
 
+import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.gregtechceu.gtceu.common.data.models.GTModels;
 import com.gregtechceu.gtceu.data.recipe.CustomTags;
 import com.tterrag.registrate.util.entry.BlockEntityEntry;
@@ -136,10 +137,14 @@ public class GTSACBlocks {
     public static final BlockEntry<SlabBlock> PRIMITIVE_BRICK_SLAB = registerSlabBlock(
             "Primitive Brick Slab", "primitive_brick_slab", "primitive_bricks", BlockItem::new);
 
-    public static final BlockEntry<Block> BRONZE_PLATED_BRICKS = createCasingBlock("bronze_plated_bricks", GTSubatomicCore.id("block/casings/solid/bronze_plated_bricks"));
-
     public static final BlockEntry<Block> GTSA_BLOCK = registerSimpleBlock(
             "GregTech: Subatomic Age Block", "gtsa_block", "gtsa_logo", BlockItem::new);
+
+    public static final BlockEntry<Block> BRONZE_PLATED_BRICKS = createCasingBlock("bronze_plated_bricks",
+            GTSubatomicCore.id("block/casings/solid/bronze_plated_bricks"));
+
+    public static final BlockEntry<Block> CASING_BRONZE_DUCT = createCasingBlock("bronze_duct_casing",
+            GTSubatomicCore.id("block/casings/duct/machine_casing_duct_bronze"));
 
     public static final BlockEntry<CastingTableBlock> CASTING_TABLE = GTSAC_REGISTRATE
             .block("casting_table", CastingTableBlock::new)

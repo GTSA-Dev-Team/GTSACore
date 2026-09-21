@@ -41,6 +41,15 @@ public class GTSACRecipes {
                 .duration(40 + 80)
                 .save(provider);
 
+        CASTING_RECIPES.recipeBuilder("tin_casting_ingot")
+                .inputFluids(GTMaterials.Tin, 144)
+                .notConsumable(GTSACItems.INGOT_MOLD)
+                .outputItems(ChemicalHelper.getIngot(GTMaterials.Tin, GTValues.M))
+                .addData("pour_ticks", 40)
+                .addData("solidify_ticks", 80)
+                .duration(40 + 80)
+                .save(provider);
+
         HEATING_RECIPES.recipeBuilder("ski")
                 .notConsumable(new ItemStack(Items.FLINT))
                 .addData("FU/t", 1)
