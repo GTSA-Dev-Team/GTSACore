@@ -1,5 +1,6 @@
 package pl.epsi.gtsacore.common.data.block.casting;
 
+import com.gregtechceu.gtceu.common.data.GTMaterials;
 import net.minecraft.Util;
 import net.minecraft.core.BlockPos;
 import net.minecraft.core.Direction;
@@ -128,6 +129,7 @@ public class CrucibleAssemblyBlock extends BaseEntityBlock {
         FluidStack fluid = SACUtils.getFluidForItem(item.getItem());
 
         if (fluid == null) return;
+        if (fluid.getFluid().getFluidType().getTemperature() > GTMaterials.Copper.getFluid().getFluidType().getTemperature()) return;
 
         ItemStack stack = item.getItem();
 
