@@ -137,7 +137,7 @@ public class FuelHatchPartMachine extends TieredIOPartMachine {
     @Override
     public void addMultiText(List<Component> textList) {
         super.addMultiText(textList);
-        textList.add(Component.literal("Fuel: " + this.fuelHandler.getFuel() + "/" + NotifiableFuelHandler.MAX_FUEl));
+        textList.add(Component.translatable("gtsac.machine.fuel_hatch.multi").append(this.fuelHandler.getFuel() + "/" + NotifiableFuelHandler.MAX_FUEl));
     }
 
 }

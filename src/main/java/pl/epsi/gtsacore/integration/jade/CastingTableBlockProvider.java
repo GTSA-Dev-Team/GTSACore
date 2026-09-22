@@ -40,7 +40,7 @@ public class CastingTableBlockProvider extends CapabilityBlockProvider<CastingTa
             if (be.getHammeringProgress() != 0) {
                 tooltip.add(tooltip.getElementHelper().progress(
                         getProgress(be.getHammeringProgress(), CastingTableBlockEntity.HAMMER_HIT_COUNT),
-                        Component.literal("%s / %s Hits".formatted(be.getHammeringProgress(), CastingTableBlockEntity.HAMMER_HIT_COUNT)),
+                        Component.literal(Component.translatable("gtsac.jade.casting_table.hits").getString().formatted(be.getHammeringProgress(), CastingTableBlockEntity.HAMMER_HIT_COUNT)),
                         tooltip.getElementHelper().progressStyle().color(0xFF1269C7).textColor(-1),
                         Util.make(BoxStyle.DEFAULT, style -> style.borderColor = 0xFF555555),
                         true
@@ -52,10 +52,10 @@ public class CastingTableBlockProvider extends CapabilityBlockProvider<CastingTa
             int color = 0xFF4CBB17;
             int maxProgress = -1;
             if (cs == CastingState.FILLING) {
-                tooltip.add(Component.literal("Filling"));
+                tooltip.add(Component.translatable("gtsac.jade.casting_table.filling"));
                 maxProgress = be.getFillingTime();
             } else if (cs == CastingState.SOLIDIFYING) {
-                tooltip.add(Component.literal("Solidifying"));
+                tooltip.add(Component.translatable("gtsac.jade.casting_table.solidifying"));
                 maxProgress = be.getSolidifyingTime();
             }
 

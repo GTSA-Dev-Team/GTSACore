@@ -278,7 +278,7 @@ public class GTSACMachines {
                     .where("F", blocks(GTBlocks.BRONZE_HULL.get()).setMinGlobalLimited(3, 5)
                                     .or(Predicates.abilities(PartAbility.IMPORT_ITEMS)))
                     .where("H", blocks(GTSACBlocks.BRONZE_PLATED_BRICKS.get())
-                                    .or(Predicates.abilities(PartAbility.EXPORT_FLUIDS)))
+                                    .or(Predicates.abilities(PartAbility.EXPORT_FLUIDS)).setMaxGlobalLimited(8, 1))
                     .where("B", blocks(GTSACBlocks.BRONZE_PLATED_BRICKS.get()).setMinGlobalLimited(40))
                     .build())
             .model(createWorkableCasingMachineModel(
@@ -354,7 +354,7 @@ public class GTSACMachines {
             .modelProperty(IS_FORMED, false)
             .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_input_bus", PRIMITIVE_BRICKS_RES_LOC))
             .langValue("§7Primitive Input Bus")
-            .tooltips(Component.literal("Low-Tech Item Input for Multiblocks"),
+            .tooltips(Component.translatable("gtsac.machine.primitive_input_bus.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.item_storage_capacity",
                             1))
             .allowCoverOnFront(true)
@@ -368,7 +368,7 @@ public class GTSACMachines {
             .modelProperty(IS_FORMED, false)
             .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_output_bus", PRIMITIVE_BRICKS_RES_LOC))
             .langValue("§7Primitive Output Bus")
-            .tooltips(Component.literal("Low-Tech Item Output for Multiblocks"),
+            .tooltips(Component.translatable("gtsac.machine.primitive_output_bus.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.item_storage_capacity",
                             1))
             .allowCoverOnFront(true)
@@ -381,7 +381,7 @@ public class GTSACMachines {
             .modelProperty(IS_FORMED, false)
             .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_input_hatch", PRIMITIVE_BRICKS_RES_LOC))
             .langValue("§7Primitive Input Hatch")
-            .tooltips(Component.literal("Low-Tech Fluid Input for Multiblocks"),
+            .tooltips(Component.translatable("gtsac.machine.primitive_input_hatch.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity",
                             4000))
             .allowCoverOnFront(true)
@@ -394,7 +394,7 @@ public class GTSACMachines {
             .modelProperty(IS_FORMED, false)
             .model(GTSACMachineModels.createOverlayCasingMachineModel("primitive_output_hatch", PRIMITIVE_BRICKS_RES_LOC))
             .langValue("§7Primitive Output Hatch")
-            .tooltips(Component.literal("Low-Tech Fluid Output for Multiblocks"),
+            .tooltips(Component.translatable("gtsac.machine.primitive_output_hatch.tooltip"),
                     Component.translatable("gtceu.universal.tooltip.fluid_storage_capacity",
                             4000))
             .allowCoverOnFront(true)
@@ -405,7 +405,8 @@ public class GTSACMachines {
 
     public static final MachineDefinition FUEL_HATCH = GTSAC_REGISTRATE
             .machine("fuel_hatch", (holder) -> new FuelHatchPartMachine(holder, ULV, IO.IN))
-            .langValue("Fuel Hatch")
+            .langValue("§7Fuel Input Hatch")
+            .tooltips(Component.translatable("gtsac.machine.fuel_hatch.tooltip"))
             .rotationState(RotationState.ALL)
             .tier(ZPM)
             .modelProperty(GTMachineModelProperties.IS_FORMED, false)

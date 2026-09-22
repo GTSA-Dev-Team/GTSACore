@@ -96,11 +96,12 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
 
     @Override
     public void addDisplayText(List<Component> textList) {
-        String capacitytext = "Tank space: " + this.foundryTank.getStored() + "mB / " + MAX_CAPACITY /1000 + "B";
+        String capacitytext = this.foundryTank.getStored() + "mB / " + MAX_CAPACITY /1000 + "B";
         List<FluidStack> contained = this.foundryTank.getFluidStacksInDescendingOrder();
+        Component capacityComponent = Component.translatable("gtsac.machine.foundry.tank_space").append(capacitytext);
 
         super.addDisplayText(textList);
-        textList.add(Component.literal(capacitytext));
+        textList.add(capacityComponent);
         for (FluidStack fluidStack : contained) {
             float percent = (float) (Math.floor(this.foundryTank.getPercentageOfFluid(fluidStack.getFluid()) * 1000) / 10);
             textList.add(Component.literal(fluidStack.getDisplayName().getString() + ": " + percent + "%"));
@@ -112,14 +113,14 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
         int[] pourButtonParams = new int[]{120, 70, 60, 20};
         int[] alloyButtonParams = new int[]{120, 95, 60, 20};
 
-        LabelWidget pourText = new LabelWidget(pourButtonParams[0] + pourButtonParams[2] / 2 - 10, pourButtonParams[1] + pourButtonParams[3] / 2 - 4,"Pour");
+        LabelWidget pourText = new LabelWidget(pourButtonParams[0] + pourButtonParams[2] / 2 - 10, pourButtonParams[1] + pourButtonParams[3] / 2 - 4,Component.translatable("gtsac.machine.foundry.pour"));
         ButtonWidget pourButton = new ButtonWidget(pourButtonParams[0], pourButtonParams[1], pourButtonParams[2], pourButtonParams[3], clickData -> {
             if (!clickData.isRemote) {
                 pour();
             }
         }).setButtonTexture(GuiTextures.BUTTON);
 
-        LabelWidget alloyText = new LabelWidget(alloyButtonParams[0] + alloyButtonParams[2] / 2 - 10, alloyButtonParams[1] + alloyButtonParams[3] / 2 - 4, "Alloy");
+        LabelWidget alloyText = new LabelWidget(alloyButtonParams[0] + alloyButtonParams[2] / 2 - 10, alloyButtonParams[1] + alloyButtonParams[3] / 2 - 4, Component.translatable("gtsac.machine.foundry.alloy"));
         ButtonWidget alloyButton = new ButtonWidget(alloyButtonParams[0], alloyButtonParams[1], alloyButtonParams[2], alloyButtonParams[3], clickData -> {
             if (!clickData.isRemote) {
                 alloy();
@@ -527,11 +528,11 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
 
             if (io != IO.IN) {
                 return applyTankOutput(actualRecipe, IFluidHandler.FluidAction.EXECUTE) ? ActionResult.SUCCESS : ActionResult.fail(
-                        Component.literal("Insufficient tank space!"), FluidRecipeCapability.CAP, IO.OUT);
+                        Component.translatable("gtsac.machine.foundry.tank_fail_output"), FluidRecipeCapability.CAP, IO.OUT);
             }
             foundryTank.voidFluids();
             ActionResult result = applyTankInput(actualRecipe, IFluidHandler.FluidAction.EXECUTE) ? ActionResult.SUCCESS : ActionResult.fail(
-                    Component.literal("Insufficient inputs!"), FluidRecipeCapability.CAP, IO.IN);
+                    Component.translatable("gtsac.machine.foundry.tank_fail_input"), FluidRecipeCapability.CAP, IO.IN);
 ;
             return result;
         }
@@ -542,7 +543,7 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
             if (!result.isSuccess()) {
                 return result;
             } else {
-                return !applyTankOutput(recipe, IFluidHandler.FluidAction.SIMULATE) ? ActionResult.fail(Component.literal("Insufficient tank space!"), FluidRecipeCapability.CAP, IO.OUT) : ActionResult.SUCCESS;
+                return !applyTankOutput(recipe, IFluidHandler.FluidAction.SIMULATE) ? ActionResult.fail(Component.translatable("gtsac.machine.foundry.tank_fail_output"), FluidRecipeCapability.CAP, IO.OUT) : ActionResult.SUCCESS;
             }
         }
 
@@ -561,10 +562,10 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
             boolean failTankInput = applyTankInput(failOutputRecipe, IFluidHandler.FluidAction.SIMULATE);
             boolean failTankOutput = applyTankInput(failOutputRecipe, IFluidHandler.FluidAction.SIMULATE);
 
-            ActionResult inputResult = (mainTankInput || failTankInput) ? ActionResult.SUCCESS : ActionResult.fail(Component.literal("Insusfficient fluids!"), FluidRecipeCapability.CAP, IO.IN);
+            ActionResult inputResult = (mainTankInput || failTankInput) ? ActionResult.SUCCESS : ActionResult.fail(Component.translatable("gtsac.machine.foundry.tank_fail_input"), FluidRecipeCapability.CAP, IO.IN);
             if (!inputResult.isSuccess()) return inputResult;
 
-            ActionResult outputResult = (mainTankOutput || failTankOutput) ? ActionResult.SUCCESS : ActionResult.fail(Component.literal("Insusfficient output space!"), FluidRecipeCapability.CAP, IO.OUT);
+            ActionResult outputResult = (mainTankOutput || failTankOutput) ? ActionResult.SUCCESS : ActionResult.fail(Component.translatable("gtsac.machine.foundry.tank_fail_output"), FluidRecipeCapability.CAP, IO.OUT);
             return outputResult;
 
         }

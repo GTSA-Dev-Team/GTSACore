@@ -27,7 +27,7 @@ public class IncompleteCraftingTableBlockProvider implements IBlockComponentProv
         if (blockAccessor.getBlock() instanceof IncompleteCraftingTableBlock ict) {
             int progress = ict.getProgress(blockAccessor.getBlockState()) + 1;
 
-            iTooltip.add(Component.literal(progress + "/" + (IncompleteCraftingTableBlock.MAX_PROGRESS + 2) + " Chops"));
+            iTooltip.add(Component.literal(progress + "/" + (IncompleteCraftingTableBlock.MAX_PROGRESS + 2) + Component.translatable("gtsac.jade.ict")));
         }
     }
 

@@ -74,7 +74,7 @@ public class WorkableFueledMultiblockMachine extends WorkablePrimitiveMultiblock
             lastSavedRecipe = recipe;
             return true;
         } else {
-            RecipeLogic.putFailureReason(this, recipe, Component.literal("Not enough fuel! (Maybe feed it some Oh-How-Delicous Coal?)"));
+            RecipeLogic.putFailureReason(this, recipe, Component.translatable("Not enough fuel! (Maybe feed it some Oh-How-Delicous Coal?)"));
             return false;
         }
     }
