@@ -32,41 +32,13 @@ public class GTSACRecipes {
                 .duration(20)
                 .save(provider);
 
-        CASTING_RECIPES.recipeBuilder("bronze_casting_ingot")
-                .inputFluids(GTMaterials.Bronze, 144)
-                .notConsumable(GTSACItems.INGOT_MOLD)
-                .outputItems(ChemicalHelper.getIngot(GTMaterials.Bronze, GTValues.M))
-                .addData("pour_ticks", 40)
-                .addData("solidify_ticks", 80)
-                .duration(40 + 80)
-                .save(provider);
-
-        CASTING_RECIPES.recipeBuilder("tin_casting_ingot")
-                .inputFluids(GTMaterials.Tin, 144)
-                .notConsumable(GTSACItems.INGOT_MOLD)
-                .outputItems(ChemicalHelper.getIngot(GTMaterials.Tin, GTValues.M))
-                .addData("pour_ticks", 40)
-                .addData("solidify_ticks", 80)
-                .duration(40 + 80)
-                .save(provider);
-
-        HEATING_RECIPES.recipeBuilder("ski")
+        HEATING_RECIPES.recipeBuilder("firebox_heating_default")
                 .notConsumable(new ItemStack(Items.FLINT))
                 .addData("fuel_per_tick", 1)
                 .duration(10*20).save(provider);
 
-        PRIMITIVE_SMELTER_RECIPES.recipeBuilder("fsdasd")
-                .inputItems(new ItemStack(Items.COAL_ORE, 1))
-                .outputItems(new ItemStack(Items.COAL, 1))
-                .duration(6*20)
-                .addData("fuel_per_tick", 2)
-                .addData("duration", 6*20)
-                .save(provider);
-
         createFoundryMeltingRecipe(provider, new ItemStack(Items.COPPER_INGOT), GTMaterials.Copper.getFluid(144));
         createFoundryMeltingRecipe(provider, ChemicalHelper.getIngot(GTMaterials.Tin, GTValues.M), GTMaterials.Tin.getFluid(144));
-
-
 
         createFoundryAlloyingRecipe(provider, GTMaterials.Bronze.getFluid(4), GTSACMaterials.SLAG.getFluid(4),
                 GTMaterials.Copper.getFluid(3),
