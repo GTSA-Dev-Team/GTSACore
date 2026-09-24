@@ -278,7 +278,7 @@ public class GTSACMachines {
                     .where("F", blocks(GTBlocks.BRONZE_HULL.get()).setMinGlobalLimited(3, 5)
                                     .or(Predicates.abilities(PartAbility.IMPORT_ITEMS)))
                     .where("H", blocks(GTSACBlocks.BRONZE_PLATED_BRICKS.get())
-                                    .or(Predicates.abilities(PartAbility.EXPORT_FLUIDS)).setMaxGlobalLimited(8, 1))
+                                    .or(Predicates.abilities(PartAbility.EXPORT_FLUIDS).setMaxGlobalLimited(8,1)))
                     .where("B", blocks(GTSACBlocks.BRONZE_PLATED_BRICKS.get()).setMinGlobalLimited(40))
                     .build())
             .model(createWorkableCasingMachineModel(

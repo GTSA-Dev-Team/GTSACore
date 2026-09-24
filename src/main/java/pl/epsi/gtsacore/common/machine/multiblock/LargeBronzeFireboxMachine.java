@@ -12,6 +12,8 @@ import com.gregtechceu.gtceu.api.pattern.Predicates;
 import com.gregtechceu.gtceu.api.pattern.TraceabilityPredicate;
 import com.gregtechceu.gtceu.common.data.GTBlocks;
 import com.lowdragmc.lowdraglib.syncdata.ISubscription;
+import com.lowdragmc.lowdraglib.syncdata.annotation.DescSynced;
+import com.lowdragmc.lowdraglib.syncdata.annotation.Persisted;
 import lombok.Getter;
 import net.minecraft.network.chat.Component;
 import net.minecraft.server.TickTask;
@@ -32,9 +34,11 @@ import static com.gregtechceu.gtceu.api.pattern.Predicates.blocks;
 
 public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine implements IHeatProvider {
 
-    private static final int MAX_HEAT = 14230;
+    private static final int MAX_HEAT = 21000;
 
     @Getter
+    @Persisted
+    @DescSynced
     private int heat = 0;
     private Collection<IHeatReceiver> heatTargets;
 
@@ -51,7 +55,7 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
 
     private void dissipateHeat() {
         if (getOffsetTimer() % 5 == 0) {
-            heat -= (heat / 100);
+            heat -= (heat / 180);
             clampHeat();
             updateHeatSubs();
         }
@@ -104,7 +108,7 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
     @Override
     public void addDisplayText(List<Component> textList) {
         super.addDisplayText(textList);
-        textList.add(Component.literal("Heat: " + (heat / 10 + 295) + "K/" + (MAX_HEAT / 10 + 295) + "K"));
+        textList.add(Component.translatable("gtsac.machine.firebox.heat").append((heat / 10) + "K/" + (MAX_HEAT / 10) + "K") );
     }
 
     @Override
@@ -116,7 +120,7 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
 
     public void clampHeat() {
         heat = Math.min(heat, MAX_HEAT);
-        heat = Math.max(0, heat);
+        heat = Math.max(2930, heat);
     }
 
     @Override
