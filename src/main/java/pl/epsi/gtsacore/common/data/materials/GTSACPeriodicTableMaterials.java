@@ -20,7 +20,6 @@ public class GTSACPeriodicTableMaterials {
 
     public static Material MALZZIUM;
 
-    public static Material OG_PLASMA;
 
     public static void register() {
         MALZZIUM = new Material.Builder(GTSubatomicCore.id("malzzium"))
@@ -28,6 +27,7 @@ public class GTSACPeriodicTableMaterials {
                 .color(0x023812)
                 .iconSet(MaterialIconSet.FINE)
                 .element(GTSACElements.MALZZIUM)
+                .flags(GTSACMaterialFlags.GENERATE_LARGE_SPOOL)
                 .langValue("Malzzium")
                 .buildAndRegister();
 

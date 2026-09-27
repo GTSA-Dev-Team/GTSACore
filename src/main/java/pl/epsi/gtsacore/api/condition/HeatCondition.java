@@ -39,7 +39,7 @@ public class HeatCondition extends RecipeCondition<HeatCondition> {
 
     @Override
     public Component getTooltips() {
-        return Component.literal(Component.translatable("gtsac.condition.heat").getString().formatted(heat/10));
+        return Component.translatable("gtsac.condition.heat", heat/10);
     }
 
     @Override

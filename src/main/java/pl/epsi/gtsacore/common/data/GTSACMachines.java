@@ -406,7 +406,8 @@ public class GTSACMachines {
     public static final MachineDefinition FUEL_HATCH = GTSAC_REGISTRATE
             .machine("fuel_hatch", (holder) -> new FuelHatchPartMachine(holder, ULV, IO.IN))
             .langValue("§7Fuel Input Hatch")
-            .tooltips(Component.translatable("gtsac.machine.fuel_hatch.tooltip"))
+            .tooltips(Component.translatable("gtsac.machine.fuel_hatch.tooltip"),
+                    Component.translatable("gtsac.machine.fuel_capacity.tooltip", 32000))
             .rotationState(RotationState.ALL)
             .tier(ZPM)
             .modelProperty(GTMachineModelProperties.IS_FORMED, false)

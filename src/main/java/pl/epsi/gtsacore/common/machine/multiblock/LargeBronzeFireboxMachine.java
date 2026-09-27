@@ -108,7 +108,7 @@ public class LargeBronzeFireboxMachine extends WorkableFueledMultiblockMachine i
     @Override
     public void addDisplayText(List<Component> textList) {
         super.addDisplayText(textList);
-        textList.add(Component.translatable("gtsac.machine.firebox.heat").append((heat / 10) + "K/" + (MAX_HEAT / 10) + "K") );
+        textList.add(Component.translatable("gtsac.machine.firebox.heat", heat / 10, MAX_HEAT / 10));
     }
 
     @Override

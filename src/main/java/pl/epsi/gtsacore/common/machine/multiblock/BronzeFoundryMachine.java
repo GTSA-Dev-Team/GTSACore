@@ -96,9 +96,8 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
 
     @Override
     public void addDisplayText(List<Component> textList) {
-        String capacitytext = this.foundryTank.getStored() + "mB / " + MAX_CAPACITY /1000 + "B";
         List<FluidStack> contained = this.foundryTank.getFluidStacksInDescendingOrder();
-        Component capacityComponent = Component.translatable("gtsac.machine.foundry.tank_space").append(capacitytext);
+        Component capacityComponent = Component.translatable("gtsac.machine.foundry.tank_space", this.foundryTank.getStored(), MAX_CAPACITY /1000);
 
         super.addDisplayText(textList);
         textList.add(capacityComponent);

@@ -40,7 +40,7 @@ public class CastingTableBlockProvider extends CapabilityBlockProvider<CastingTa
             if (be.getHammeringProgress() != 0) {
                 tooltip.add(tooltip.getElementHelper().progress(
                         getProgress(be.getHammeringProgress(), CastingTableBlockEntity.HAMMER_HIT_COUNT),
-                        Component.literal(Component.translatable("gtsac.jade.casting_table.hits").getString().formatted(be.getHammeringProgress(), CastingTableBlockEntity.HAMMER_HIT_COUNT)),
+                        Component.translatable("gtsac.jade.casting_table.hits", be.getHammeringProgress(), CastingTableBlockEntity.HAMMER_HIT_COUNT),
                         tooltip.getElementHelper().progressStyle().color(0xFF1269C7).textColor(-1),
                         Util.make(BoxStyle.DEFAULT, style -> style.borderColor = 0xFF555555),
                         true

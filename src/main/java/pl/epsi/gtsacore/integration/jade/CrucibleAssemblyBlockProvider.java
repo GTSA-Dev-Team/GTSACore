@@ -40,7 +40,7 @@ public class CrucibleAssemblyBlockProvider extends CapabilityBlockProvider<Cruci
         if (accessor.getBlockEntity() instanceof CrucibleAssemblyBlockEntity be) {
             tooltip.add(tooltip.getElementHelper().progress(
                     getProgress(be.getTotalAmount(), CrucibleAssemblyBlockEntity.CAPACITY),
-                    Component.literal("%s / %s mB".formatted(be.getTotalAmount(), CrucibleAssemblyBlockEntity.CAPACITY)),
+                    Component.literal("%s/%smB".formatted(be.getTotalAmount(), CrucibleAssemblyBlockEntity.CAPACITY)),
                     tooltip.getElementHelper().progressStyle().color(0xFF1269C7).textColor(-1),
                     Util.make(BoxStyle.DEFAULT, style -> style.borderColor = 0xFF555555),
                     true
