@@ -1,10 +1,19 @@
-To fix in 0.2.2:
-- Ore gen
+To fix in 0.2.4:
+- Add Ca3(PO4)2 and Ca₅(PO₄)₃(F, Cl, OH) to sporadic gen
+- Add fertilizer
+- Make stone tools lower harvest tier
+- Glass blowing
+- Add stone morter
+- Change Crucible Assembly item model
+- Make hammering bloom take durability
+- Add Casting Table Hammering as recipe type
+- Change the 3 bronze multis to be Wrought Iron, Bronze and Cupronickel
 
-- Wood breaking
-- Foundry Melting recipes
-- Add Primitive FLuid Hatch and Bus recipes
-- Make ores higher mining tier
-- Add ceramic block recipe
+- Limestone shananigans
 
-
+- Fix bronze plated bricks recipe tag
+- Make ceramic molds not consume wood
+- Remove all smelting/smoking/blasting recipes
+- Add Foundry/Crucible Alloying recipes
+- Add Nickel and more metals to LPS
+- Fix Strand Caster recipe to use duct casing
