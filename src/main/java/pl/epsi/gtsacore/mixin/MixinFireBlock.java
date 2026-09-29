@@ -33,11 +33,11 @@ public class MixinFireBlock {
     private void gtsac$logBurningCheck(Level level, BlockPos pos, BlockState state, RandomSource rs) {
         if (state.is(BlockTags.LOGS)) {
             if (
-                    !level.getBlockState(pos.relative(Direction.NORTH)).isSolid() &&
-                            !level.getBlockState(pos.relative(Direction.SOUTH)).isSolid() &&
-                            !level.getBlockState(pos.relative(Direction.WEST)).isSolid() &&
-                            !level.getBlockState(pos.relative(Direction.EAST)).isSolid() &&
-                            !level.getBlockState(pos.below()).isSolid()
+                    level.getBlockState(pos.relative(Direction.NORTH)).isSolid() &&
+                            level.getBlockState(pos.relative(Direction.SOUTH)).isSolid() &&
+                            level.getBlockState(pos.relative(Direction.WEST)).isSolid() &&
+                            level.getBlockState(pos.relative(Direction.EAST)).isSolid() &&
+                            level.getBlockState(pos.below()).isSolid()
             ) {
                 if (rs.nextFloat() >= 0.15) {
                     level.setBlock(pos, GTBlocks.BRITTLE_CHARCOAL.getDefaultState(), 3);
