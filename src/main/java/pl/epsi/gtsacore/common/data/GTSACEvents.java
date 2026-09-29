@@ -1,5 +1,8 @@
 package pl.epsi.gtsacore.common.data;
 
+import com.gregtechceu.gtceu.api.data.chemical.material.event.PostMaterialEvent;
+import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
+import com.gregtechceu.gtceu.api.data.chemical.material.properties.ToolProperty;
 import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.api.item.tool.ToolHelper;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
@@ -28,4 +31,6 @@ public class GTSACEvents {
             clickedItem.hurtAndBreak(5, event.getEntity(), p -> p.broadcastBreakEvent(event.getHand()));
         }
     }
+
+
 }

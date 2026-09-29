@@ -1,14 +1,14 @@
-To fix in 0.2.2:
-- Ore gen
-- Iron Bloom recipe
-- Wood breaking
-- Remove redundant mods from instance
-- Foundry Melting recipes
-- Add GTCEu stone tools and recipes (normal + component tools)
-- Make flint tools require Grass Fibre
-- Add Sword Recipe
-- Add Primitive FLuid Hatch and Bus recipes
-- Make Foundry accept up to 8 output hatches
-- Make ores higher mining tier
-- Fix LPS Recipes not correctly implementing fuel data
-- Add ceramic block recipe
+To fix in 0.2.4:
+- Glass blowing
+- Make hammering bloom take durability
+- Add Casting Table Hammering as recipe type
+- Change the 3 bronze multis to be Wrought Iron, Bronze and Cupronickel
+
+- Limestone shananigans
+
+- Fix bronze plated bricks recipe tag
+- Make ceramic molds not consume wood
+- Remove all smelting/smoking/blasting recipes
+- Add Foundry/Crucible Alloying recipes
+- Add Nickel and more metals to LPS
+- Fix Strand Caster recipe to use duct casing

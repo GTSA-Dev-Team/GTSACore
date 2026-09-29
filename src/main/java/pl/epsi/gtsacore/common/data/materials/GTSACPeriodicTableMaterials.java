@@ -8,8 +8,10 @@ import com.gregtechceu.gtceu.api.data.chemical.material.info.MaterialIconSet;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.FluidProperty;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.IngotProperty;
 import com.gregtechceu.gtceu.api.data.chemical.material.properties.PropertyKey;
+import com.gregtechceu.gtceu.api.data.chemical.material.properties.ToolProperty;
 import com.gregtechceu.gtceu.api.fluids.FluidBuilder;
 import com.gregtechceu.gtceu.api.fluids.store.FluidStorageKeys;
+import com.gregtechceu.gtceu.api.item.tool.GTToolType;
 import com.gregtechceu.gtceu.common.data.GTElements;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import pl.epsi.gtsacore.GTSubatomicCore;
@@ -18,7 +20,6 @@ public class GTSACPeriodicTableMaterials {
 
     public static Material MALZZIUM;
 
-    public static Material OG_PLASMA;
 
     public static void register() {
         MALZZIUM = new Material.Builder(GTSubatomicCore.id("malzzium"))
@@ -26,12 +27,14 @@ public class GTSACPeriodicTableMaterials {
                 .color(0x023812)
                 .iconSet(MaterialIconSet.FINE)
                 .element(GTSACElements.MALZZIUM)
+                .flags(GTSACMaterialFlags.GENERATE_LARGE_SPOOL)
                 .langValue("Malzzium")
                 .buildAndRegister();
 
     }
 
     public static void modifyMaterials() {
+
         addIngotFluid(GTMaterials.Scandium);
         addIngotFluid(GTMaterials.Germanium);
         addIngotFluid(GTMaterials.Selenium);
