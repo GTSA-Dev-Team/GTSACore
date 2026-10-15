@@ -9,6 +9,7 @@ import com.gregtechceu.gtceu.api.registry.registrate.GTRegistrate;
 import com.gregtechceu.gtceu.common.data.GTMaterials;
 import com.tterrag.registrate.util.entry.ItemEntry;
 import net.minecraft.world.item.Item;
+import net.minecraft.world.item.ItemStack;
 import net.minecraft.world.item.Tiers;
 import net.minecraft.world.phys.AABB;
 import org.joml.Matrix4f;
@@ -127,6 +128,15 @@ public class GTSACItems {
     public static final ItemEntry<? extends AbstractCastItem> ROD_MOLD = registerMold(GTSAC_REGISTRATE, "Ceramic Rod Mold", "ceramic_rod_mold",
             "obj_models/mold/rod.obj",
             new AABB(-0.04375, 0.125, -0.1875, 0.04375, 0.1875, 0.1875), 0.46875f);
+
+    public static final ItemEntry<BlowpipeItem> CERAMIC_BLOWPIPE = GTSAC_REGISTRATE
+            .item("ceramic_blowpipe", p -> new BlowpipeItem(p.durability(1000)))
+            .lang("Ceramic Blowpipe")
+            .model((ctx, prov) -> {
+                prov.withExistingParent("abc", "generated");
+            })
+
+            .register();
 
     public static final ItemEntry<Item> IVE_SPONTANEOUSLY_COMBUSTED = registerSimpleItem("ive_spontaneously_combusted", "I've spontaneously combusted!");
     public static final ItemEntry<Item> MORTY_IM_A_LEG = registerSimpleItem("morty_im_a_leg", "Hey Morty! I'm a leg! A LEG MORTY!");

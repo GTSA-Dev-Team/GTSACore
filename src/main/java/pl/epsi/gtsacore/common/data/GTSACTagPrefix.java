@@ -21,5 +21,6 @@ public class GTSACTagPrefix {
                 .unificationEnabled(true)
                 .generateItem(true)
                 .generationCondition(hasWireProp);
+
     }
 }

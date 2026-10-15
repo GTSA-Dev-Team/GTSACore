@@ -199,6 +199,8 @@ public class BronzeFoundryMachine extends WorkablePrimitiveMultiblockMachine imp
 
         }
 
+
+
         @Override
         public ManagedFieldHolder getFieldHolder() {
             return MANAGED_FIELD_HOLDER;

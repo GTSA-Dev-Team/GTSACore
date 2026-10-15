@@ -48,9 +48,9 @@ public class GTSACMaterials {
 
     public static void modifyMaterials() {
         GTMaterials.Stone.setProperty(PropertyKey.TOOL, ToolProperty.Builder.of(
-                2, 1 , 128, 2,
+                2, 1 , 128, 1,
                 GTToolType.PICKAXE, GTToolType.SWORD, GTToolType.AXE, GTToolType.SHOVEL, GTToolType.HOE,
-                GTToolType.HARD_HAMMER, GTToolType.FILE, GTToolType.WRENCH, GTToolType.SAW
+                GTToolType.HARD_HAMMER, GTToolType.FILE, GTToolType.WRENCH, GTToolType.SAW, GTToolType.MORTAR
         ).build());
     }
 }

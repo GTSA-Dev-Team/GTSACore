@@ -5,8 +5,7 @@ import com.gregtechceu.gtceu.api.data.worldgen.WorldGenLayers;
 import com.gregtechceu.gtceu.api.data.worldgen.generator.indicators.SurfaceIndicatorGenerator;
 import com.gregtechceu.gtceu.api.data.worldgen.ores.OreVeinUtil;
 import com.gregtechceu.gtceu.api.registry.GTRegistries;
-import com.gregtechceu.gtceu.common.data.GTMaterials;
-import com.gregtechceu.gtceu.common.data.GTOres;
+import com.gregtechceu.gtceu.common.data.*;
 import net.minecraft.core.registries.Registries;
 import net.minecraft.resources.ResourceKey;
 import net.minecraft.resources.ResourceLocation;
@@ -35,7 +34,10 @@ public class GTSACWorldGen {
 
         sporadic(GTMaterials.Sphalerite);
 
-        sporadic(GTMaterials.Coal);
+        sporadic(GTMaterials.TricalciumPhosphate);
+        sporadic(GTMaterials.Apatite);
+
+
     }
 
     public static void removeGtOres() {

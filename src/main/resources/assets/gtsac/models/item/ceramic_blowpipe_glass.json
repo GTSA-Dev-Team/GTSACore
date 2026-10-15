@@ -1,0 +1,6 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "gtsac:item/ceramic_blowpipe_glass"
+  }
+}

@@ -170,6 +170,10 @@ public class GTSACBlocks {
     public static final BlockEntry<Block> CERAMIC_BLOCK = registerSimpleBlockProperties(
             "Ceramic Block", "ceramic_block", "ceramic_block",Blocks.BRICKS, BlockItem::new);
 
+    public static final BlockEntry<Block> LIMESTONE = registerSimpleBlockProperties(
+            "Limestone", "limestone", "limestone",Blocks.STONE, BlockItem::new);
+
+
     public static final BlockEntry<CastingTableBlock> CASTING_TABLE = GTSAC_REGISTRATE
             .block("casting_table", CastingTableBlock::new)
             .initialProperties(() -> Blocks.IRON_BLOCK)
@@ -196,7 +200,10 @@ public class GTSACBlocks {
                 prov.horizontalBlock(ctx.getEntry(), prov.models().getExistingFile(GTSubatomicCore.id("block/crucible_assembly")));
             })
             .lang("Crucible Assembly")
-            .item(BlockItem::new).build()
+            .item(BlockItem::new)
+            .model((ctx, prov) -> prov.generated(ctx, prov.modLoc("item/crucible_assembly_item"))
+            )
+            .build()
             .register();
 
     public static final BlockEntityEntry<CrucibleAssemblyBlockEntity> CRUCIBLE_ASSEMBLY_BE = GTSAC_REGISTRATE

@@ -1,0 +1,14 @@
+{
+  "parent": "minecraft:item/handheld",
+  "textures": {
+    "layer0": "gtsac:item/ceramic_blowpipe"
+  },
+  "overrides": [
+    {
+      "predicate": {
+        "gtsac:has_glass": 1
+      },
+      "model": "gtsac:item/ceramic_blowpipe_glass"
+    }
+  ]
+}

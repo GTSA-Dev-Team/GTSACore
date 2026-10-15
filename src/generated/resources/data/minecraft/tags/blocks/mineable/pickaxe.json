@@ -6,6 +6,7 @@
     "gtsac:primitive_brick_slab",
     "gtsac:gtsa_block",
     "gtsac:ceramic_block",
+    "gtsac:limestone",
     "gtsac:casting_table",
     "gtsac:crucible_assembly",
     "gtsac:faucet",
